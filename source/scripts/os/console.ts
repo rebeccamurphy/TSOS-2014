@@ -52,9 +52,9 @@ module TSOS {
 
                     //TODO Need to reset x and y to position minus last character
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
-                    this.currentXPosition = this.prevXposition; // reset x position
-                    this.currentYPosition = this.prevYposition; // reset y position
-                    this.putText(" ");
+                    //this.currentXPosition = this.prevXposition; // reset x position
+                    //this.currentYPosition = this.prevYposition; // reset y position
+                    this.eraseText();
 
                     //Also erase pervious character, paint over with space? 
 
@@ -86,7 +86,12 @@ module TSOS {
                 this.currentXPosition = this.currentXPosition + offset;
             }
          }
-
+        public eraseText() :void{
+            _DrawingContext.rect(this.prevXposition, this.prevYposition, 
+                this.currentXPosition -this.prevXposition,
+                this.prevYposition);
+            _DrawingContext.fill();
+        }
         public advanceLine(): void {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;

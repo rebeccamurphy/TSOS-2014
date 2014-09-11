@@ -54,9 +54,10 @@ var TSOS;
                 } else if (chr === String.fromCharCode(8)) {
                     //TODO Need to reset x and y to position minus last character
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
-                    this.currentXPosition = this.prevXposition; // reset x position
-                    this.currentYPosition = this.prevYposition; // reset y position
-                    this.putText(" ");
+
+                    //this.currentXPosition = this.prevXposition; // reset x position
+                    //this.currentYPosition = this.prevYposition; // reset y position
+                    this.eraseText();
                     //Also erase pervious character, paint over with space?
                 } else {
                     // This is a "normal" character, so ...
@@ -88,7 +89,10 @@ var TSOS;
                 this.currentXPosition = this.currentXPosition + offset;
             }
         };
-
+        Console.prototype.eraseText = function () {
+            _DrawingContext.rect(this.prevXposition, this.prevYposition, this.currentXPosition - this.prevXposition, this.prevYposition);
+            _DrawingContext.fill();
+        };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
