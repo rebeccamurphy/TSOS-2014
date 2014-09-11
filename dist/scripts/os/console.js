@@ -8,17 +8,21 @@ Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, prevXposition, prevYposition) {
             if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
             if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
             if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
             if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize; }
             if (typeof buffer === "undefined") { buffer = ""; }
+            if (typeof prevXposition === "undefined") { prevXposition = 0; }
+            if (typeof prevYposition === "undefined") { prevYposition = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.prevXposition = prevXposition;
+            this.prevYposition = prevYposition;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -49,6 +53,10 @@ var TSOS;
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)) {
                     //TODO Need to reset x and y to position minus last character
+                    this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
+                    this.currentXPosition = this.prevXposition; // reset x position
+                    this.currentYPosition = this.prevYposition; // reset y position
+                    this.putText(" ");
                     //Also erase pervious character, paint over with space?
                 } else {
                     // This is a "normal" character, so ...
@@ -75,6 +83,8 @@ var TSOS;
 
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                this.prevXposition = this.currentXPosition;
+                this.prevYposition = this.currentYPosition;
                 this.currentXPosition = this.currentXPosition + offset;
             }
         };

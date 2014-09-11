@@ -17,7 +17,9 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+                    public buffer = "",
+                    public prevXposition = 0, 
+                    public prevYposition = 0) {
 
         }
 
@@ -47,7 +49,13 @@ module TSOS {
                     // ... and reset our buffer.
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)){ //Backspace
+
                     //TODO Need to reset x and y to position minus last character
+                    this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
+                    this.currentXPosition = this.prevXposition; // reset x position
+                    this.currentYPosition = this.prevYposition; // reset y position
+                    this.putText(" ");
+
                     //Also erase pervious character, paint over with space? 
 
                 } else {
@@ -73,6 +81,8 @@ module TSOS {
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                this.prevXposition = this.currentXPosition;
+                this.prevYposition = this.currentYPosition;
                 this.currentXPosition = this.currentXPosition + offset;
             }
          }
