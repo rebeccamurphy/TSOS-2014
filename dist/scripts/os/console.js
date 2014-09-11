@@ -53,11 +53,10 @@ var TSOS;
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)) {
                     //TODO Need to reset x and y to position minus last character
-                    this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
-
                     //this.currentXPosition = this.prevXposition; // reset x position
                     //this.currentYPosition = this.prevYposition; // reset y position
-                    this.eraseText();
+                    this.eraseText(this.buffer.slice(-1));
+                    this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
                     //Also erase pervious character, paint over with space?
                 } else {
                     // This is a "normal" character, so ...
@@ -71,7 +70,7 @@ var TSOS;
             }
         };
 
-        Console.prototype.putText = function (text) {
+        Console.prototype.putText = function (text, color) {
             // My first inclination here was to write two functions: putChar() and putString().
             // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
             // between the two.  So rather than be like PHP and write two (or more) functions that
@@ -80,18 +79,23 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
 
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.prevXposition = this.currentXPosition;
                 this.prevYposition = this.currentYPosition;
                 this.currentXPosition = this.currentXPosition + offset;
+                console.log(this.currentXPosition);
             }
         };
-        Console.prototype.eraseText = function () {
-            _DrawingContext.rect(this.prevXposition, this.prevYposition, this.currentXPosition - this.prevXposition, _DefaultFontSize);
-            _DrawingContext.fill();
+        Console.prototype.eraseText = function (text) {
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            this.currentXPosition = this.currentXPosition - offset;
+            _DrawingContext.fillStyle = CONSOLE_BGC;
+            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin);
+            //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, "black");
+            //console.log(this.currentXPosition);
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;

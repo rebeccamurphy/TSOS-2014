@@ -18,6 +18,8 @@ var TIMER_IRQ = 0;
 
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+var CONSOLE_BGC = "#DFDBC3";
+var CONSOLE_TEXT_COLOR = "black";
 
 //
 // Global Variables

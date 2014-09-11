@@ -20,7 +20,8 @@ var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 10
 var TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                             // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ: number = 1;
-
+var CONSOLE_BGC: string = "#DFDBC3";
+var CONSOLE_TEXT_COLOR: string = "black";
 
 //
 // Global Variables

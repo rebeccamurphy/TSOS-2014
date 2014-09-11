@@ -42,7 +42,7 @@ var TSOS;
             return total;
         };
 
-        CanvasTextFunctions.draw = function (ctx, font, size, x, y, str) {
+        CanvasTextFunctions.draw = function (ctx, font, size, x, y, str, color) {
             var total = 0;
             var len = str.length;
             var mag = size / 25.0;
@@ -50,7 +50,7 @@ var TSOS;
             ctx.save();
             ctx.lineCap = "round";
             ctx.lineWidth = 2.0 * mag;
-            ctx.strokeStyle = "black";
+            ctx.strokeStyle = color;
 
             for (var i = 0; i < len; i++) {
                 var c = CanvasTextFunctions.letter(str.charAt(i));
@@ -81,8 +81,8 @@ var TSOS;
         };
 
         CanvasTextFunctions.enable = function (ctx) {
-            ctx.drawText = function (font, size, x, y, text) {
-                return CanvasTextFunctions.draw(ctx, font, size, x, y, text);
+            ctx.drawText = function (font, size, x, y, text, color) {
+                return CanvasTextFunctions.draw(ctx, font, size, x, y, text, color);
             };
             ctx.measureText = function (font, size, text) {
                 return CanvasTextFunctions.measure(font, size, text);
@@ -93,13 +93,13 @@ var TSOS;
             ctx.fontDescent = function (font, size) {
                 return CanvasTextFunctions.descent(font, size);
             };
-            ctx.drawTextRight = function (font, size, x, y, text) {
+            ctx.drawTextRight = function (font, size, x, y, text, color) {
                 var w = CanvasTextFunctions.measure(font, size, text);
-                return CanvasTextFunctions.draw(ctx, font, size, x - w, y, text);
+                return CanvasTextFunctions.draw(ctx, font, size, x - w, y, text, color);
             };
-            ctx.drawTextCenter = function (font, size, x, y, text) {
+            ctx.drawTextCenter = function (font, size, x, y, text, color) {
                 var w = CanvasTextFunctions.measure(font, size, text);
-                return CanvasTextFunctions.draw(ctx, font, size, x - w / 2, y, text);
+                return CanvasTextFunctions.draw(ctx, font, size, x - w / 2, y, text, color);
             };
         };
         CanvasTextFunctions.letters = {
