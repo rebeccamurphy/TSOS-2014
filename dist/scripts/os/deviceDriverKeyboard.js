@@ -26,6 +26,8 @@ var TSOS;
         };
 
         DeviceDriverKeyboard.prototype.krnKbdDispatchKeyPress = function (params) {
+            debugger;
+
             // Parse the params.    TODO: Check that they are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
