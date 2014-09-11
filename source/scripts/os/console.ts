@@ -89,7 +89,7 @@ module TSOS {
         public eraseText() :void{
             _DrawingContext.rect(this.prevXposition, this.prevYposition, 
                 this.currentXPosition -this.prevXposition,
-                this.prevYposition);
+                _DefaultFontSize);
             _DrawingContext.fill();
         }
         public advanceLine(): void {

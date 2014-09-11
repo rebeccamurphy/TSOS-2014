@@ -90,7 +90,7 @@ var TSOS;
             }
         };
         Console.prototype.eraseText = function () {
-            _DrawingContext.rect(this.prevXposition, this.prevYposition, this.currentXPosition - this.prevXposition, this.prevYposition);
+            _DrawingContext.rect(this.prevXposition, this.prevYposition, this.currentXPosition - this.prevXposition, _DefaultFontSize);
             _DrawingContext.fill();
         };
         Console.prototype.advanceLine = function () {
