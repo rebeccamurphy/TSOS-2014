@@ -51,13 +51,9 @@ var TSOS;
 
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else if (chr === String.fromCharCode(8)) {
-                    //TODO Need to reset x and y to position minus last character
-                    //this.currentXPosition = this.prevXposition; // reset x position
-                    //this.currentYPosition = this.prevYposition; // reset y position
-                    this.eraseText(this.buffer.slice(-1));
+                } else if (chr === String.fromCharCode(8) || chr === String.fromCharCode(46)) {
+                    this.eraseText(this.buffer.slice(-1)); //remove last character from canvas
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
-                    //Also erase pervious character, paint over with space?
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -94,8 +90,8 @@ var TSOS;
             this.currentXPosition = this.currentXPosition - offset;
             _DrawingContext.fillStyle = CONSOLE_BGC;
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin);
-            //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, "black");
-            //console.log(this.currentXPosition);
+            //leaving in next line for later virus mode or something
+            //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
