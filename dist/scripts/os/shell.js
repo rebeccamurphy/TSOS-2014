@@ -13,8 +13,9 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
-            this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
+            this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf], [ovgpu],[qhpx],[onol], [Wrfhf]";
             this.apologies = "[sorry]";
+            this.backdoors = "[jeff]";
         }
         Shell.prototype.init = function () {
             var sc = null;
@@ -51,6 +52,10 @@ var TSOS;
 
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+
+            // date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date.");
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
@@ -101,6 +106,8 @@ var TSOS;
                     this.execute(this.shellCurse);
                 } else if (this.apologies.indexOf("[" + cmd + "]") >= 0) {
                     this.execute(this.shellApology);
+                } else if (this.backdoors.indexOf("[" + cmd + "]") >= 0) {
+                    this.execute(this.shellBackdoor);
                 } else {
                     this.execute(this.shellInvalidCommand);
                 }
@@ -181,16 +188,29 @@ var TSOS;
                 _StdOut.putText("For what?");
             }
         };
+        Shell.prototype.shellBackdoor = function () {
+            if (_SarcasticMode) {
+                _StdOut.putText("Why would you think that would work? I wasn't born on the first of Jeff, 19JeffityJeff.");
+                _SarcasticMode = false;
+            } else {
+                _StdOut.putText("If you blocked the pop up, use this: http://youtu.be/k6C_HjWr3Nk?t=1m58s");
+                window.open("http://youtu.be/k6C_HjWr3Nk?t=1m58s", "_blank");
+            }
+        };
 
         Shell.prototype.shellVer = function (args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         };
 
         Shell.prototype.shellHelp = function (args) {
-            _StdOut.putText("Commands:");
-            for (var i in _OsShell.commandList) {
-                _StdOut.advanceLine();
-                _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+            if (_SarcasticMode) {
+                _StdOut.putText("There is no helping you.");
+            } else {
+                _StdOut.putText("Commands:");
+                for (var i in _OsShell.commandList) {
+                    _StdOut.advanceLine();
+                    _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+                }
             }
         };
 
@@ -262,6 +282,10 @@ var TSOS;
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        };
+
+        Shell.prototype.shellDate = function (args) {
+            _StdOut.putText(Date());
         };
         return Shell;
     })();

@@ -15,9 +15,9 @@ module TSOS {
         // Properties
         public promptStr = ">";
         public commandList = [];
-        public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
+        public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf], [ovgpu],[qhpx],[onol], [Wrfhf]";
         public apologies = "[sorry]";
-
+        public backdoors = "[jeff]";
         constructor() {
 
         }
@@ -75,6 +75,12 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            // date
+            sc = new ShellCommand(this.shellDate,
+                                  "date",
+                                  "- Displays the current date.");
+            this.commandList[this.commandList.length] = sc;
+
             // processes - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -121,7 +127,11 @@ module TSOS {
                     this.execute(this.shellCurse);
                 } else if (this.apologies.indexOf("[" + cmd + "]") >= 0) {    // Check for apologies. {
                     this.execute(this.shellApology);
-                } else { // It's just a bad command. {
+                } else if (this.backdoors.indexOf("[" + cmd + "]") >=0){    //Check for jeff
+                    this.execute(this.shellBackdoor);
+                } 
+
+                else { // It's just a bad command. {
                     this.execute(this.shellInvalidCommand);
                 }
             }
@@ -197,16 +207,30 @@ module TSOS {
               _StdOut.putText("For what?");
            }
         }
+        public shellBackdoor() {
+           if (_SarcasticMode) {
+              _StdOut.putText("Why would you think that would work? I wasn't born on the first of Jeff, 19JeffityJeff.");
+              _SarcasticMode = false;
+           } else {
+              _StdOut.putText("If you blocked the pop up, use this: http://youtu.be/k6C_HjWr3Nk?t=1m58s");
+              window.open("http://youtu.be/k6C_HjWr3Nk?t=1m58s", "_blank");
+           }
+        }
 
         public shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
         }
 
         public shellHelp(args) {
-            _StdOut.putText("Commands:");
-            for (var i in _OsShell.commandList) {
-                _StdOut.advanceLine();
-                _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+            if (_SarcasticMode) {
+              _StdOut.putText("There is no helping you.");
+            }
+            else {
+                _StdOut.putText("Commands:");
+                for (var i in _OsShell.commandList) {
+                    _StdOut.advanceLine();
+                    _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+                }
             }
         }
 
@@ -277,6 +301,11 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        }
+
+        public shellDate(args) {
+            _StdOut.putText(Date());
+            
         }
 
     }
