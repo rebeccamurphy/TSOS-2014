@@ -46,6 +46,10 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                } else if (chr === String.fromCharCode(8)){ //Backspace
+                    //TODO Need to reset x and y to position minus last character
+                    //Also erase pervious character, paint over with space? 
+
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
