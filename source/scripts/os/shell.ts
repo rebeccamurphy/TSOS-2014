@@ -81,6 +81,12 @@ module TSOS {
                                   "- Displays the current date.");
             this.commandList[this.commandList.length] = sc;
 
+            // whereami
+            sc = new ShellCommand(this.shellWhereAmI,
+                                  "whereami",
+                                  "- Displays your location.");
+            this.commandList[this.commandList.length] = sc;
+
             // processes - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -304,8 +310,23 @@ module TSOS {
         }
 
         public shellDate(args) {
-            _StdOut.putText(Date());
-            
+            if (_SarcasticMode){
+                _StdOut.putText(Date());
+            }
+        }
+
+        public shellWhereAmI(args) {
+
+            if (_SarcasticMode){
+                _StdOut.putText("Hopefully no where near me.");
+            }
+            else {
+                var currentDate = new Date();
+                if (currentDate.getHours() < 6)
+                    _StdOut.putText("Well, you should be in bed.");
+                else
+                    _StdOut.putText("I don't even know where I am, man.");
+            }
         }
 
     }
