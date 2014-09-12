@@ -18,6 +18,7 @@ var TSOS;
         function DeviceDriverKeyboard() {
             // Override the base method pointers.
             _super.call(this, this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
+            this.capslockOn = false;
         }
         DeviceDriverKeyboard.prototype.krnKbdDriverEntry = function () {
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
@@ -26,14 +27,18 @@ var TSOS;
         };
 
         DeviceDriverKeyboard.prototype.krnKbdDispatchKeyPress = function (params) {
-            debugger;
+            // Parse the params.    TODO: Check that they are valid and osTrapError if not.
             var keyCode = params[0];
-            if (keyCode == 20 && !this.isShifted)
-                this.isShifted = true;
-            else if (keyCode == 20 && !this.isShifted)
-                this.isShifted = false;
-            else
-                this.isShifted = params[1];
+            var isShifted = params[1];
+            if (keyCode == 20 && !this.capslockOn)
+                this.capslockOn = true;
+            else if (keyCode == 20 && this.capslockOn)
+                this.capslockOn = false;
+
+            if (this.capslockOn && params[1])
+                isShifted = false;
+            else if (this.capslockOn && !isShifted)
+                isShifted = this.capslockOn;
 
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
