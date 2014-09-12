@@ -85,9 +85,7 @@ var TSOS;
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
 
                 // Move the current X position.
-                console.log("Y: " + this.currentYPosition);
                 this.currentXPosition = this.currentXPosition + offset;
-                //console.log(this.currentXPosition);
             }
         };
         Console.prototype.eraseText = function (text) {
@@ -95,7 +93,7 @@ var TSOS;
             this.currentXPosition = this.currentXPosition - offset;
             if (this.currentXPosition < -.5)
                 this.backLine(offset);
-            _DrawingContext.fillStyle = "red";
+            _DrawingContext.fillStyle = CONSOLE_BGC;
 
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin + 1);
             //leaving in next line for later virus mode or something

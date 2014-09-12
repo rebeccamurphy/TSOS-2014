@@ -42,13 +42,138 @@ module TSOS {
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
+            } else if (((keyCode >= 48) && (keyCode <= 57) &&!isShifted) ||   // digits
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13)                     ||   // enter
-                        (keyCode == 8 )) {                       // backspace                      
-                chr = String.fromCharCode(keyCode);
-                _KernelInputQueue.enqueue(chr);
-            } 
+                        (keyCode == 8 )                     ||   // backspace
+                        (keyCode == 9))                          // tab
+                        
+                {                      
+                    chr = String.fromCharCode(keyCode);
+                    _KernelInputQueue.enqueue(chr);
+                    
+            } else if ((keyCode >= 186 && keyCode<= 192) || //punctuation
+                        (keyCode >=219 && keyCode <=222) ||
+                        ((keyCode >= 48) && (keyCode <= 57) &&isShifted)) { //number punctuation/symbols
+                    
+                    switch (keyCode)
+                    {
+                        //number punctation/symbols keys
+                        case 48: {
+                            //0
+                            chr = ")"
+                            break;
+                        }
+                        case 49: {
+                            //1
+                            chr = "!"
+                            break;
+                        }
+                        case 50: {
+                            //2
+                            chr = "@"
+                            break;
+                        }
+                        case 51: {
+                            //3
+                            chr = "#"
+                            break;
+                        }
+                        case 52: {
+                            //4
+                            chr = "$"
+                            break;
+                        }
+                        case 53: {
+                            //5
+                            chr = "%"
+                            break;
+                        }
+                        case 54: {
+                            //6
+                            chr = "^"
+                            break;
+                        }
+                        case 55: {
+                            //7
+                            chr = "&"
+                            break;
+                        }
+                        case 56: {
+                            //8
+                            chr = "*"
+                            break;
+                        }
+                        case 57: {
+                            //9
+                            chr = "("
+                            break;
+                        }
+
+                        //normal punctuation keys
+                        case 186: {
+                            //semicolon
+                            chr = (isShifted) ? ":" : ";";
+                            break;
+                        }
+                        case 187: {
+                            //equal
+                            chr = (isShifted) ? "+" : "=";
+                            break;
+                        }
+                        case 188: {
+                            //comma
+                            chr = (isShifted) ? "<" : ",";
+                            break;
+                        }
+                        case 189: {
+                            //dash
+                            chr = (isShifted) ? "_" : "-";
+                            break;
+                        }
+                        case 190: {
+                            //period
+                            chr = (isShifted) ? ">" : ".";
+                            break;
+                        }
+                        case 191: {
+                            //forward slash
+                            chr = (isShifted) ? "?" : "/";
+                            break;
+                        }
+                        case 192: {
+                            //grave accent
+                            chr = (isShifted) ? "~" : "`";
+                            break;
+                        }
+                        case 219: {
+                            //open bracket
+                            chr = (isShifted) ? "{" : "[";
+                            break;
+                        }
+                        case 220: {
+                            //backslash
+                            chr = (isShifted) ? "|" : "\\";
+                            break;
+                        }
+                        case 221: {
+                            //close bracket
+                            chr = (isShifted) ? "}" : "]";
+                            break;
+                        }
+                        case 222: {
+                            //close bracket
+                            chr = (isShifted) ? "\"" : "'";
+                            break;
+                        }
+                        default: {
+                            console.log("i hecked up.");
+                        }
+                    }
+                
+                    _KernelInputQueue.enqueue(chr);
+                    
+            }
 
         }
     }

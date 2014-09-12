@@ -80,17 +80,15 @@ module TSOS {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
                 // Move the current X position.
-                console.log("Y: " + this.currentYPosition);
                 this.currentXPosition = this.currentXPosition + offset;
-                //console.log(this.currentXPosition);
             }
          }
         public eraseText(text) :void{
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-            if (this.currentXPosition <-.5) //instead of zero because rounding nonsense
+            if (this.currentXPosition <-.5 ) //instead of zero because rounding nonsense
                 this.backLine(offset);
-            _DrawingContext.fillStyle = "red";
+            _DrawingContext.fillStyle = CONSOLE_BGC;
 
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
             //leaving in next line for later virus mode or something
