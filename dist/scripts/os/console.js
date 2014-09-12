@@ -54,6 +54,8 @@ var TSOS;
                 } else if (chr === String.fromCharCode(8)) {
                     this.eraseText(this.buffer.slice(-1)); //remove last character from canvas
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
+                } else if (chr === String.fromCharCode(9)) {
+                    this.matchCommand();
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -113,6 +115,23 @@ var TSOS;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
             console.log("Y advance " + this.currentYPosition);
             this.currentLine--;
+        };
+
+        Console.prototype.matchCommand = function () {
+            var matchingCommands = 0;
+            var matchingCommand = "";
+            for (var i = 0; i < _OsShell.commandList.length; i++) {
+                var msgLength = this.buffer.length;
+                var command = _OsShell.commandList[i].command;
+                if (this.buffer == command.substr(0, msgLength)) {
+                    matchingCommands++;
+                    matchingCommand = command.slice(msgLength);
+                }
+            }
+            if (matchingCommands === 1) {
+                this.buffer += matchingCommand;
+                this.putText(matchingCommand);
+            }
         };
         return Console;
     })();

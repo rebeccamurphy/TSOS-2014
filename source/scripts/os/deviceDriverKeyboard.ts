@@ -52,7 +52,6 @@ module TSOS {
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
-                // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57) &&!isShifted) ||   // digits
                         (keyCode == 32)                     ||   // space
@@ -182,7 +181,6 @@ module TSOS {
                             console.log("i hecked up.");
                         }
                     }
-                
                     _KernelInputQueue.enqueue(chr);
                     
             }

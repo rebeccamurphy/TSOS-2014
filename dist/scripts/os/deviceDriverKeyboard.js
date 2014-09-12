@@ -53,8 +53,6 @@ var TSOS;
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
-
-                // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || (keyCode == 32) || (keyCode == 13) || (keyCode == 8) || (keyCode == 9)) {
                 chr = String.fromCharCode(keyCode);
@@ -171,7 +169,6 @@ var TSOS;
                         console.log("i hecked up.");
                     }
                 }
-
                 _KernelInputQueue.enqueue(chr);
             }
         };
