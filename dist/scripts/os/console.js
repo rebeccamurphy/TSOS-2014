@@ -8,19 +8,21 @@ Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine, prevXLine) {
             if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
             if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
             if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
             if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize; }
             if (typeof buffer === "undefined") { buffer = ""; }
             if (typeof currentLine === "undefined") { currentLine = 0; }
+            if (typeof prevXLine === "undefined") { prevXLine = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
             this.currentLine = currentLine;
+            this.prevXLine = prevXLine;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -74,8 +76,10 @@ var TSOS;
             if (text !== "") {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
 
-                if (this.currentXPosition + offset > CONSOLE_WIDTH)
+                if (this.currentXPosition + offset > CONSOLE_WIDTH) {
+                    this.prevXLine = this.currentXPosition;
                     this.advanceLine();
+                }
 
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
@@ -89,11 +93,10 @@ var TSOS;
         Console.prototype.eraseText = function (text) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-            if (this.currentXPosition < 0)
+            if (this.currentXPosition < -.5)
                 this.backLine(offset);
-            _DrawingContext.fillStyle = CONSOLE_BGC;
+            _DrawingContext.fillStyle = "red";
 
-            //debugger;
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin + 1);
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
@@ -108,7 +111,7 @@ var TSOS;
             }
         };
         Console.prototype.backLine = function (offset) {
-            this.currentXPosition = CONSOLE_WIDTH - offset;
+            this.currentXPosition = this.prevXLine - offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
             console.log("Y advance " + this.currentYPosition);
             this.currentLine--;

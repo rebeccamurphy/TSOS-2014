@@ -18,7 +18,8 @@ module TSOS {
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
-                    public currentLine =0) {
+                    public currentLine = 0,
+                    public prevXLine = 0) {
 
         }
 
@@ -72,8 +73,10 @@ module TSOS {
             if (text !== "") {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
 
-                if (this.currentXPosition + offset > CONSOLE_WIDTH)
+                if (this.currentXPosition + offset > CONSOLE_WIDTH){
+                    this.prevXLine = this.currentXPosition;
                     this.advanceLine();
+                }
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
                 // Move the current X position.
@@ -85,10 +88,10 @@ module TSOS {
         public eraseText(text) :void{
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-            if (this.currentXPosition <0)
+            if (this.currentXPosition <-.5) //instead of zero because rounding nonsense
                 this.backLine(offset);
-            _DrawingContext.fillStyle = CONSOLE_BGC;
-            //debugger;
+            _DrawingContext.fillStyle = "red";
+
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
@@ -103,7 +106,7 @@ module TSOS {
             }
         }
         public backLine(offset): void{
-            this.currentXPosition = CONSOLE_WIDTH - offset;
+            this.currentXPosition = this.prevXLine- offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
             console.log("Y advance " + this.currentYPosition);
             this.currentLine--;
