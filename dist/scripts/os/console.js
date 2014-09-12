@@ -8,21 +8,19 @@ Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, prevXposition, prevYposition) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine) {
             if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
             if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
             if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
             if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize; }
             if (typeof buffer === "undefined") { buffer = ""; }
-            if (typeof prevXposition === "undefined") { prevXposition = 0; }
-            if (typeof prevYposition === "undefined") { prevYposition = 0; }
+            if (typeof currentLine === "undefined") { currentLine = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
-            this.prevXposition = prevXposition;
-            this.prevYposition = prevYposition;
+            this.currentLine = currentLine;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -83,22 +81,37 @@ var TSOS;
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
 
                 // Move the current X position.
+                console.log("Y: " + this.currentYPosition);
                 this.currentXPosition = this.currentXPosition + offset;
-                console.log(this.currentXPosition);
+                //console.log(this.currentXPosition);
             }
         };
         Console.prototype.eraseText = function (text) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
+            if (this.currentXPosition < 0)
+                this.backLine(offset);
             _DrawingContext.fillStyle = CONSOLE_BGC;
-            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin);
+
+            //debugger;
+            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin + 1);
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
-            // TODO: Handle scrolling. (Project 1)
+            this.currentLine++;
+
+            if (this.currentYPosition >= CONSOLE_HEIGHT) {
+                // TODO: Handle scrolling. (Project 1)
+            }
+        };
+        Console.prototype.backLine = function (offset) {
+            this.currentXPosition = CONSOLE_WIDTH - offset;
+            this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
+            console.log("Y advance " + this.currentYPosition);
+            this.currentLine--;
         };
         return Console;
     })();

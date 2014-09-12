@@ -18,8 +18,7 @@ module TSOS {
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
-                    public prevXposition = 0, 
-                    public prevYposition = 0) {
+                    public currentLine =0) {
 
         }
 
@@ -78,23 +77,36 @@ module TSOS {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
                 // Move the current X position.
-                
+                console.log("Y: " + this.currentYPosition);
                 this.currentXPosition = this.currentXPosition + offset;
-                console.log(this.currentXPosition);
+                //console.log(this.currentXPosition);
             }
          }
         public eraseText(text) :void{
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
+            if (this.currentXPosition <0)
+                this.backLine(offset);
             _DrawingContext.fillStyle = CONSOLE_BGC;
-            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition- _DefaultFontSize ,offset,_DefaultFontSize + _FontHeightMargin);
+            //debugger;
+            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         }
         public advanceLine(): void {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
+            this.currentLine++;
+            
+            if (this.currentYPosition >= CONSOLE_HEIGHT){
             // TODO: Handle scrolling. (Project 1)
+            }
+        }
+        public backLine(offset): void{
+            this.currentXPosition = CONSOLE_WIDTH - offset;
+            this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
+            console.log("Y advance " + this.currentYPosition);
+            this.currentLine--;
         }
     }
  }
