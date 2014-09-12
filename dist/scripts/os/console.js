@@ -75,20 +75,38 @@ var TSOS;
             // do the same thing, thereby encouraging confusion and decreasing readability, I
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
-            if (text !== "") {
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-
-                if (this.currentXPosition + offset > CONSOLE_WIDTH) {
-                    this.prevXLine = this.currentXPosition;
-                    this.advanceLine();
+            if (text !== "" && text.length === 1) {
+                if (color !== undefined)
+                    this.putChar(text, color); //might be  problem
+                else
+                    this.putChar(text); //might be  problem
+            } else if (text !== "" && text.length > 1) {
+                var words = text.split(" ");
+                for (var i = 0; i < words.length; i++) {
+                    var word = words[i];
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, word);
+                    word += " ";
+                    if (this.currentXPosition + offset > CONSOLE_WIDTH) {
+                        this.prevXLine = this.currentXPosition;
+                        this.advanceLine();
+                    }
+                    for (var j = 0; j < word.length; j++)
+                        this.putChar(word.charAt(j));
                 }
-
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
-
-                // Move the current X position.
-                this.currentXPosition = this.currentXPosition + offset;
             }
+        };
+        Console.prototype.putChar = function (text, color) {
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            if (this.currentXPosition + offset > CONSOLE_WIDTH) {
+                this.prevXLine = this.currentXPosition;
+                this.advanceLine();
+            }
+
+            // Draw the text at the current X and Y coordinates.
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
+
+            // Move the current X position.
+            this.currentXPosition = this.currentXPosition + offset;
         };
         Console.prototype.eraseText = function (text) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
@@ -118,20 +136,30 @@ var TSOS;
         };
 
         Console.prototype.matchCommand = function () {
-            var matchingCommands = 0;
+            var matchingCommands = [];
             var matchingCommand = "";
+            var currentBuffer = this.buffer;
             for (var i = 0; i < _OsShell.commandList.length; i++) {
                 var msgLength = this.buffer.length;
                 var command = _OsShell.commandList[i].command;
                 if (this.buffer == command.substr(0, msgLength)) {
-                    matchingCommands++;
+                    matchingCommands.push(command);
                     matchingCommand = command.slice(msgLength);
                 }
             }
-            if (matchingCommands === 1) {
+            if (matchingCommands.length === 1) {
                 this.buffer += matchingCommand;
                 this.putText(matchingCommand);
+            } else if (matchingCommands.length > 0) {
+                debugger;
+                this.advanceLine();
+                for (var i = 0; i < matchingCommands.length; i++)
+                    this.putText(matchingCommands[i] + " ");
+                this.advanceLine();
+                _OsShell.putPrompt();
+                this.putText(this.buffer);
             }
+            //else do nothing basically
         };
         return Console;
     })();
