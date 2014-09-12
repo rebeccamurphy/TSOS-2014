@@ -51,7 +51,7 @@ var TSOS;
 
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else if (chr === String.fromCharCode(8) || chr === String.fromCharCode(46)) {
+                } else if (chr === String.fromCharCode(8)) {
                     this.eraseText(this.buffer.slice(-1)); //remove last character from canvas
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
                 } else {
@@ -74,13 +74,15 @@ var TSOS;
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             if (text !== "") {
+                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+
+                if (this.currentXPosition + offset > CONSOLE_WIDTH)
+                    this.advanceLine();
+
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
 
                 // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.prevXposition = this.currentXPosition;
-                this.prevYposition = this.currentYPosition;
                 this.currentXPosition = this.currentXPosition + offset;
                 console.log(this.currentXPosition);
             }

@@ -22,7 +22,8 @@ var TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interr
 var KEYBOARD_IRQ: number = 1;
 var CONSOLE_BGC: string = "#DFDBC3";
 var CONSOLE_TEXT_COLOR: string = "black";
-
+var CONSOLE_WIDTH: number = 500;
+var CONSOLE_HEIGHT: number = 500;
 //
 // Global Variables
 //
