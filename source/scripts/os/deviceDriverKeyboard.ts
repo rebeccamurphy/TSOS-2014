@@ -12,10 +12,11 @@ module TSOS {
 
     // Extends DeviceDriver
     export class DeviceDriverKeyboard extends DeviceDriver {
-
+        isShifted:boolean;
         constructor() {
             // Override the base method pointers.
             super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
+            
         }
 
         public krnKbdDriverEntry() {
@@ -26,8 +27,15 @@ module TSOS {
 
         public krnKbdDispatchKeyPress(params) {
             // Parse the params.    TODO: Check that they are valid and osTrapError if not.
+            debugger;
             var keyCode = params[0];
-            var isShifted = params[1];
+            if (keyCode ==20 && !this.isShifted) //capslock turned on
+                this.isShifted = true;
+            else if (keyCode==20 && !this.isShifted)//capslock turned off
+                this.isShifted = false;
+            else 
+                this.isShifted = params[1];
+
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
