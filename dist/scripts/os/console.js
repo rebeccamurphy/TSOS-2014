@@ -54,10 +54,10 @@ var TSOS;
                     _OsShell.handleInput(this.buffer);
 
                     //add into the previous command list
-                    this.enteredCommandsList.unshift(this.buffer);
+                    this.enteredCommandsList.push(this.buffer);
 
                     //reset the enteredcommandlist index
-                    this.enteredCommandsIndex = 0;
+                    this.enteredCommandsIndex = this.enteredCommandsList.length;
 
                     // ... and reset our buffer.
                     this.buffer = "";
@@ -183,18 +183,20 @@ var TSOS;
 
         Console.prototype.enteredCommands = function (chr) {
             //debugger;
-            if ((chr === String.fromCharCode(38)) && (this.enteredCommandsIndex + 1 < this.enteredCommandsList.length)) {
-                this.clearLine();
-                _OsShell.putPrompt();
-                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
-                this.enteredCommandsIndex++;
-            } else if ((chr === String.fromCharCode(40)) && (this.enteredCommandsIndex - 1 >= 0)) {
-                this.clearLine();
-                _OsShell.putPrompt();
-                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+            if ((chr === String.fromCharCode(38)) && (this.enteredCommandsIndex > 1)) {
                 this.enteredCommandsIndex--;
+                this.clearLine();
+                _OsShell.putPrompt();
+                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+            } else if (chr === String.fromCharCode(40)) {
+                this.clearLine();
+                _OsShell.putPrompt();
+                if (this.enteredCommandsIndex < this.enteredCommandsList.length) {
+                    this.enteredCommandsIndex++;
+                    this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                    this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                }
             }
         };
         return Console;

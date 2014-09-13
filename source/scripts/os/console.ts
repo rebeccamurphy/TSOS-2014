@@ -50,9 +50,9 @@ module TSOS {
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     //add into the previous command list
-                    this.enteredCommandsList.unshift(this.buffer);
+                    this.enteredCommandsList.push(this.buffer);
                     //reset the enteredcommandlist index
-                    this.enteredCommandsIndex =0;
+                    this.enteredCommandsIndex =this.enteredCommandsList.length;
                     // ... and reset our buffer.
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)) { //Backspace
@@ -83,7 +83,7 @@ module TSOS {
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             console.log("x is off" + this.currentXPosition);
-            if (text !== "" && text.length ===1) { //only for characters
+            if (text !== "" &&text.length ===1) { //only for characters
                 if (color !==undefined)
                     this.putChar(text, color); //might be  problem    
                 else
@@ -178,21 +178,23 @@ module TSOS {
         public enteredCommands(chr) :void{
             //debugger;
             if ((chr === String.fromCharCode(38)) && //up arrow
-                (this.enteredCommandsIndex+1 < this.enteredCommandsList.length)){ //current index useable                  
+                (this.enteredCommandsIndex >1)){ //current index useable                  
+                this.enteredCommandsIndex--;
                 this.clearLine();
                 _OsShell.putPrompt();
                 this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex]; 
-                this.enteredCommandsIndex++;
+                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];                
                 
             }
-            else if ((chr === String.fromCharCode(40)) &&//down arrow
-                (this.enteredCommandsIndex-1 >= 0)){ //current index useable                  
+            else if (chr === String.fromCharCode(40)){//down arrow
                 this.clearLine();
                 _OsShell.putPrompt();
-                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
-                this.enteredCommandsIndex--;
+                if (this.enteredCommandsIndex < this.enteredCommandsList.length){ //current index useable                  
+                    this.enteredCommandsIndex++;
+                    this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                    this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                }
+                
             }
         }
             
