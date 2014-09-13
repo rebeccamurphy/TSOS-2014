@@ -176,10 +176,10 @@ module TSOS {
         }
 
         public enteredCommands(chr) :void{
-            //debugger;
+            
             if ((chr === String.fromCharCode(38)) && //up arrow
                 (this.enteredCommandsIndex >1)){ //current index useable                  
-                this.enteredCommandsIndex--;
+                this.enteredCommandsIndex--; //moves up item in list
                 this.clearLine();
                 _OsShell.putPrompt();
                 this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
@@ -187,12 +187,18 @@ module TSOS {
                 
             }
             else if (chr === String.fromCharCode(40)){//down arrow
-                this.clearLine();
-                _OsShell.putPrompt();
+                debugger;
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length){ //current index useable                  
-                    this.enteredCommandsIndex++;
-                    this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                    this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                    this.enteredCommandsIndex++;    //moves down item in list
+                    this.clearLine();
+                    _OsShell.putPrompt();
+                    if (this.enteredCommandsIndex !== this.enteredCommandsList.length){
+                        //displays previous command, unless last command has been display
+                        //then it clears the row
+                        this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                        this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                    }
+
                 }
                 
             }

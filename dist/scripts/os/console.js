@@ -182,20 +182,24 @@ var TSOS;
         };
 
         Console.prototype.enteredCommands = function (chr) {
-            //debugger;
             if ((chr === String.fromCharCode(38)) && (this.enteredCommandsIndex > 1)) {
-                this.enteredCommandsIndex--;
+                this.enteredCommandsIndex--; //moves up item in list
                 this.clearLine();
                 _OsShell.putPrompt();
                 this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
                 this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
             } else if (chr === String.fromCharCode(40)) {
-                this.clearLine();
-                _OsShell.putPrompt();
+                debugger;
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length) {
-                    this.enteredCommandsIndex++;
-                    this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
-                    this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                    this.enteredCommandsIndex++; //moves down item in list
+                    this.clearLine();
+                    _OsShell.putPrompt();
+                    if (this.enteredCommandsIndex !== this.enteredCommandsList.length) {
+                        //displays previous command, unless last command has been display
+                        //then it clears the row
+                        this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                        this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                    }
                 }
             }
         };
