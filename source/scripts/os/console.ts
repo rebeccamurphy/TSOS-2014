@@ -187,7 +187,6 @@ module TSOS {
                 
             }
             else if (chr === String.fromCharCode(40)){//down arrow
-                debugger;
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length){ //current index useable                  
                     this.enteredCommandsIndex++;    //moves down item in list
                     this.clearLine();

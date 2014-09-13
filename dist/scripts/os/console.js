@@ -189,7 +189,6 @@ var TSOS;
                 this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
                 this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
             } else if (chr === String.fromCharCode(40)) {
-                debugger;
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length) {
                     this.enteredCommandsIndex++; //moves down item in list
                     this.clearLine();
