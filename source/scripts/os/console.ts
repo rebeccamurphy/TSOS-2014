@@ -131,9 +131,10 @@ module TSOS {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
             this.currentLine++;
-            
+            debugger;
             if (this.currentYPosition >= CONSOLE_HEIGHT){
-            // TODO: Handle scrolling. (Project 1)
+                document.getElementById("display").setAttribute("height", String(this.currentYPosition)); //increase canvas height
+                CONSOLE_HEIGHT = parseInt(document.getElementById("display").getAttribute("height")); //increase global var
             }
         }
         public backLine(offset): void{

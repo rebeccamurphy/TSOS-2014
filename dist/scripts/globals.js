@@ -23,6 +23,11 @@ var CONSOLE_TEXT_COLOR = "black";
 var CONSOLE_WIDTH = 500;
 var CONSOLE_HEIGHT = 500;
 
+window.onload = function () {
+    CONSOLE_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
+    CONSOLE_HEIGHT = parseInt(document.getElementById("display").getAttribute("height"));
+};
+
 //
 // Global Variables
 //
