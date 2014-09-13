@@ -120,7 +120,7 @@ module TSOS {
         public eraseText(text) :void{
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-            if (this.currentXPosition < .5 ) //instead of zero because rounding nonsense
+            if (Math.floor(this.currentXPosition) <0 ) //rounds .9 pixels down to 0 to check position
                 this.backLine(offset);
             _DrawingContext.fillStyle = CONSOLE_BGC;
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
