@@ -54,7 +54,7 @@ var TSOS;
                     chr = String.fromCharCode(keyCode);
                 }
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || (keyCode == 32) || (keyCode == 13) || (keyCode == 8) || (keyCode == 9)) {
+            } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || (keyCode == 32) || (keyCode == 13) || (keyCode == 8) || (keyCode == 9) || (keyCode == 38) || (keyCode == 40)) {
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             } else if ((keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222) || ((keyCode >= 48) && (keyCode <= 57) && isShifted)) {

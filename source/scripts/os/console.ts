@@ -19,7 +19,9 @@ module TSOS {
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
                     public currentLine = 0,
-                    public prevXLine = 0) {
+                    public prevXLine = 0,
+                    public enteredCommandsList =[""],
+                    public enteredCommandsIndex =0) {
 
         }
 
@@ -47,6 +49,10 @@ module TSOS {
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    //add into the previous command list
+                    this.enteredCommandsList.unshift(this.buffer);
+                    //reset the enteredcommandlist index
+                    this.enteredCommandsIndex =0;
                     // ... and reset our buffer.
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(8)) { //Backspace
@@ -55,6 +61,9 @@ module TSOS {
 
                 } else if (chr === String.fromCharCode(9)) { //tab
                     this.matchCommand();
+                } else if ((chr === String.fromCharCode(38)) || //up arrow
+                           (chr === String.fromCharCode(40))) {//down arrow
+                    this.enteredCommands(chr);        
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -73,7 +82,7 @@ module TSOS {
             // do the same thing, thereby encouraging confusion and decreasing readability, I
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
-
+            console.log("x is off" + this.currentXPosition);
             if (text !== "" && text.length ===1) { //only for characters
                 if (color !==undefined)
                     this.putChar(text, color); //might be  problem    
@@ -85,7 +94,9 @@ module TSOS {
                 for (var i =0; i<words.length; i++){
                     var word = words[i];
                     var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, word);
-                    word += " ";
+                    if (words.length > 1 && i !== words.length-1)
+                        word += " ";
+
                     if (this.currentXPosition + offset > CONSOLE_WIDTH){
                         this.prevXLine = this.currentXPosition;
                         this.advanceLine();
@@ -112,7 +123,6 @@ module TSOS {
             if (this.currentXPosition <-.5 ) //instead of zero because rounding nonsense
                 this.backLine(offset);
             _DrawingContext.fillStyle = CONSOLE_BGC;
-
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
@@ -132,7 +142,12 @@ module TSOS {
             console.log("Y advance " + this.currentYPosition);
             this.currentLine--;
         }
-
+        public clearLine() :void {
+            _DrawingContext.fillStyle = CONSOLE_BGC;
+            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, CONSOLE_WIDTH, _DefaultFontSize + _FontHeightMargin+1);
+            this.currentXPosition=0;
+            this.buffer="";
+        }
         public matchCommand():void{
             var matchingCommands=[];
             var matchingCommand ="";
@@ -150,16 +165,37 @@ module TSOS {
                 this.putText(matchingCommand);
             }
             else if (matchingCommands.length>0){ //display matching commands
-                debugger;
                 this.advanceLine();
                 for (var i=0;i< matchingCommands.length; i++)
                     this.putText(matchingCommands[i] + " ");
                 this.advanceLine();
-                _OsShell.putPrompt();
+                //_OsShell.putPrompt();
                 this.putText(this.buffer);
             }
             //else do nothing basically
         }
+
+        public enteredCommands(chr) :void{
+            //debugger;
+            if ((chr === String.fromCharCode(38)) && //up arrow
+                (this.enteredCommandsIndex+1 < this.enteredCommandsList.length)){ //current index useable                  
+                this.clearLine();
+                _OsShell.putPrompt();
+                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex]; 
+                this.enteredCommandsIndex++;
+                
+            }
+            else if ((chr === String.fromCharCode(40)) &&//down arrow
+                (this.enteredCommandsIndex-1 >= 0)){ //current index useable                  
+                this.clearLine();
+                _OsShell.putPrompt();
+                this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
+                this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
+                this.enteredCommandsIndex--;
+            }
+        }
             
     }
  }
+        
