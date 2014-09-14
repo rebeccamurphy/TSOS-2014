@@ -127,7 +127,8 @@ var TSOS;
         Console.prototype.eraseText = function (text) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             this.currentXPosition = this.currentXPosition - offset;
-            if (Math.floor(this.currentXPosition) < 0)
+            var roundedXPos = Math.round(this.currentXPosition);
+            if (roundedXPos < 0)
                 this.backLine(offset);
             _DrawingContext.fillStyle = CONSOLE_BGC;
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin + 1);
