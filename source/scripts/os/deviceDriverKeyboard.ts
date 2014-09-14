@@ -67,58 +67,58 @@ module TSOS {
             } else if ((keyCode >= 186 && keyCode<= 192) || //punctuation
                         (keyCode >=219 && keyCode <=222) ||
                         ((keyCode >= 48) && (keyCode <= 57) &&isShifted)) { //number punctuation/symbols
-                    
+                    debugger;
                     switch (keyCode)
                     {
                         //number punctation/symbols keys
                         case 48: {
                             //0
-                            chr = ")"
+                            chr = ")";
                             break;
                         }
                         case 49: {
                             //1
-                            chr = "!"
+                            chr = "!";
                             break;
                         }
                         case 50: {
                             //2
-                            chr = "@"
+                            chr = "@";
                             break;
                         }
                         case 51: {
                             //3
-                            chr = "#"
+                            chr = "#";
                             break;
                         }
                         case 52: {
                             //4
-                            chr = "$"
+                            chr = "$";
                             break;
                         }
                         case 53: {
                             //5
-                            chr = "%"
+                            chr = "%";
                             break;
                         }
                         case 54: {
                             //6
-                            chr = "^"
+                            chr = "^";
                             break;
                         }
                         case 55: {
                             //7
-                            chr = "&"
+                            chr = "&";
                             break;
                         }
                         case 56: {
                             //8
-                            chr = "*"
+                            chr = "*";
                             break;
                         }
                         case 57: {
                             //9
-                            chr = "("
+                            chr = "(";
                             break;
                         }
 

@@ -62,8 +62,8 @@ module TSOS {
 
                 } else if (chr === String.fromCharCode(9)) { //tab
                     this.matchCommand();
-                } else if ((chr === String.fromCharCode(38)) || //up arrow
-                           (chr === String.fromCharCode(40))) {//down arrow
+                } else if ((chr === String.fromCharCode(38) && chr !=="&") || //up arrow, has the same charcode as &
+                           (chr === String.fromCharCode(40) && chr !=="(") ) {//down arrow, has same charcode as (
                     this.enteredCommands(chr);        
                 } else {
                     // This is a "normal" character, so ...
@@ -83,7 +83,6 @@ module TSOS {
             // do the same thing, thereby encouraging confusion and decreasing readability, I
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
-            console.log("x is off" + this.currentXPosition);
             if (text !== "" &&text.length ===1) { //only for characters
                 if (color !==undefined)
                     this.putChar(text, color); //might be  problem    

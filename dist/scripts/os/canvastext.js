@@ -11,6 +11,7 @@
 *  - added semi-colon.
 *
 * Port to TypeScript by Bob Nisco.
+[]character too large for normal line size.odd.
 * ----------------- */
 var TSOS;
 (function (TSOS) {
