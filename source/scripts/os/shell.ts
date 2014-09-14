@@ -311,6 +311,9 @@ module TSOS {
 
         public shellDate(args) {
             if (_SarcasticMode){
+                _StdOut.putText("Time is meaningless.");
+            }
+            else {
                 _StdOut.putText(Date());
             }
         }

@@ -290,6 +290,8 @@ var TSOS;
 
         Shell.prototype.shellDate = function (args) {
             if (_SarcasticMode) {
+                _StdOut.putText("Time is meaningless.");
+            } else {
                 _StdOut.putText(Date());
             }
         };

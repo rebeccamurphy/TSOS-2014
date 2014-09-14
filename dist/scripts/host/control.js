@@ -54,7 +54,8 @@ var TSOS;
             var clock = _OSclock;
 
             // Note the REAL clock in milliseconds since January 1, 1970.
-            var now = new Date().getTime();
+            var date = new Date();
+            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
 
             // Build the log string.
             var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
