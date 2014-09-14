@@ -317,9 +317,12 @@ var TSOS;
         Shell.prototype.shellLoad = function (args) {
             //gets the text box content
             var boxContent = document.getElementById("taProgramInput").value;
-            if (boxContent.length === 0)
-                _StdOut.putText("Enter something in the textarea first.");
-            else {
+            if (boxContent.length === 0) {
+                if (_SarcasticMode)
+                    _StdOut.putText("Enter something in the textarea first. Poopbutt.");
+                else
+                    _StdOut.putText("Enter something in the textarea first.");
+            } else {
                 var name = args;
                 if (name.length === 0)
                     name = "User Program " + (_OsShell.userPrograms.length + 1);
@@ -330,8 +333,12 @@ var TSOS;
                 if (tempProgram.checkValid()) {
                     _OsShell.userPrograms[_OsShell.userPrograms.length] = "butt";
                     _StdOut.putText("Successfully loaded " + tempProgram.name);
-                } else
-                    _StdOut.putText("Invalid Format");
+                } else {
+                    if (_SarcasticMode)
+                        _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
+                    else
+                        _StdOut.putText("Invalid Format.");
+                }
             }
         };
         return Shell;

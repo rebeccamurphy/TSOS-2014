@@ -344,8 +344,12 @@ module TSOS {
         public shellLoad(args){
             //gets the text box content
             var boxContent  = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            if (boxContent.length===0)
-                _StdOut.putText("Enter something in the textarea first.");
+            if (boxContent.length===0){
+                if (_SarcasticMode)
+                    _StdOut.putText("Enter something in the textarea first. Poopbutt.");
+                else
+                    _StdOut.putText("Enter something in the textarea first.");
+            }
             else{
                 var name = args;
                 if (name.length ===0)
@@ -357,8 +361,12 @@ module TSOS {
                     _OsShell.userPrograms[_OsShell.userPrograms.length] = "butt";
                     _StdOut.putText("Successfully loaded " + tempProgram.name);
                 }
-                else
-                    _StdOut.putText("Invalid Format");
+                else{
+                    if (_SarcasticMode)
+                        _StdOut.putText("Invalid Format. "+Utils.rot13("Shpxvat")+" poopbutt.");
+                    else
+                        _StdOut.putText("Invalid Format.");
+                }
             }
         }
             
