@@ -174,6 +174,7 @@ var TSOS;
                 _StdOut.putText("Duh. Go back to your Speak & Spell.");
             } else {
                 _StdOut.putText("Type 'help' for, well... help.");
+                _Console.approxMatchCommand();
             }
         };
 

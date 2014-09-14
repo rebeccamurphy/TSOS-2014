@@ -27,7 +27,6 @@ module TSOS {
 
         public krnKbdDispatchKeyPress(params) {
             // Parse the params.    TODO: Check that they are valid and osTrapError if not.
-            
             var keyCode = params[0];
             var isShifted = params[1];
             if (keyCode ==20 && !this.capslockOn) //capslock turned on
@@ -58,11 +57,16 @@ module TSOS {
                         (keyCode == 13)                     ||   // enter
                         (keyCode == 8 )                     ||   // backspace
                         (keyCode == 9)                      ||   // tab
-                        (keyCode == 38)                     ||   //arrow up
-                        (keyCode == 40))                         //arrow down         
-                {                      
-                    chr = String.fromCharCode(keyCode);
+                        (keyCode == 38 &&!isShifted)        ||   //arrow up
+                        (keyCode == 40 &&!isShifted))            //arrow down         
+                {   if (keyCode == 38 )
+                        chr = "UP";
+                    else if (keyCode ==40)
+                        chr=  "DOWN";
+                    else
+                        chr = String.fromCharCode(keyCode);
                     _KernelInputQueue.enqueue(chr);
+
                     
             } else if ((keyCode >= 186 && keyCode<= 192) || //punctuation
                         (keyCode >=219 && keyCode <=222) ||

@@ -21,7 +21,11 @@ module TSOS {
                     public currentLine = 0,
                     public prevXLineEnd = [],
                     public enteredCommandsList =[""],
-                    public enteredCommandsIndex =0) {
+                    public enteredCommandsIndex =0,
+                    public cursorWidth = 13,
+                    public cursorHeight = _DefaultFontSize + _FontHeightMargin+1,
+                    public cursorXPosition = currentXPosition,
+                    public cursorYPosition = currentYPosition) {
 
         }
 
@@ -47,28 +51,32 @@ module TSOS {
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
                 if (chr === String.fromCharCode(13)) { //     Enter key
-                    // The enter key marks the end of a console command, so ...
-                    // ... tell the shell ...
-                    _OsShell.handleInput(this.buffer);
-                    //add into the previous command list
-                    this.enteredCommandsList.push(this.buffer);
-                    //reset the enteredcommandlist index
-                    this.enteredCommandsIndex =this.enteredCommandsList.length;
-                    // ... and reset our buffer.
-                    this.buffer = "";
+                    if (this.buffer!== ""){
+                        // The enter key marks the end of a console command, so ...
+                        // ... tell the shell ...
+                        _OsShell.handleInput(this.buffer);
+                        //add into the previous command list
+                        this.enteredCommandsList.push(this.buffer);
+                        //reset the enteredcommandlist index
+                        this.enteredCommandsIndex =this.enteredCommandsList.length;
+                        // ... and reset our buffer.
+                        this.buffer = "";
+                    }
                 } else if (chr === String.fromCharCode(8)) { //Backspace
                     this.eraseText(this.buffer.slice(-1));  //remove last character from canvas
+                    //this.eraseText(" ");removes cursor
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
 
                 } else if (chr === String.fromCharCode(9)) { //tab
                     this.matchCommand();
-                } else if ((chr === String.fromCharCode(38) && chr !=="&") || //up arrow, has the same charcode as &
-                           (chr === String.fromCharCode(40) && chr !=="(") ) {//down arrow, has same charcode as (
+                } else if ((chr === "UP") || //up arrow, has the same charcode as &
+                           (chr === "DOWN") ) {//down arrow, has same charcode as (
                     this.enteredCommands(chr);        
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
+                    //this.putText(" ", "white", true); adds cursor
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
@@ -76,7 +84,7 @@ module TSOS {
             }
         }
 
-        public putText(text: string, color?: string ): void {
+        public putText(text: string, color?: string,cursor? ): void {
             // My first inclination here was to write two functions: putChar() and putString().
             // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
             // between the two.  So rather than be like PHP and write two (or more) functions that
@@ -84,10 +92,8 @@ module TSOS {
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             if (text !== "" &&text.length ===1) { //only for characters
-                if (color !==undefined)
-                    this.putChar(text, color); //might be  problem    
-                else
-                    this.putChar(text); //might be  problem    
+                this.putChar(text, color, cursor); //might be  problem      
+                
             }
             else if (text !=="" && text.length>1){ //strings. there's probably a way to make this better. 
                 var words = text.split(" ");
@@ -106,14 +112,20 @@ module TSOS {
                 }
             }
         }
-        public putChar(text, color?:string) :void{
+        public putChar(text, color?:string, cursor?) :void{
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 if (this.currentXPosition + offset > _Canvas.width){
                     this.prevXLineEnd.push(this.currentXPosition);
                     this.advanceLine();
                 }
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
+                if (!cursor)
+                    // Draw the text at the current X and Y coordinates.
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
+                else{
+                    _DrawingContext.fillStyle = color;
+                    _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
+                }
+                        
                 // Move the current X position.
                 this.currentXPosition = this.currentXPosition + offset;
         }
@@ -128,12 +140,27 @@ module TSOS {
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         }
-        public advanceLine(): void {
-            this.currentXPosition = 0;
-            this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
-            this.currentLine++;
-            if (this.currentYPosition >= _Canvas.height)
-                this.changeCanvasLength();
+        public drawCursor(color?){
+            //if not on prompt line, erase previous cursor
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, ">");
+            if(offset!== this.currentXPosition){
+                _DrawingContext.fillStyle = CONSOLE_BGC;
+                _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, this.cursorWidth, this.cursorHeight);
+            }            
+            this.cursorXPosition+=this.cursorWidth;
+            _DrawingContext.fillStyle = "white";
+            _DrawingContext.fillRect(this.cursorXPosition, this.cursorYPosition - _DefaultFontSize, this.cursorWidth, this.cursorHeight);
+            
+        }
+        
+        public advanceLine(cursor?): void {
+            if (cursor===undefined){
+                this.currentXPosition = 0;
+                this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
+                this.currentLine++;
+                if (this.currentYPosition >= _Canvas.height)
+                    this.changeCanvasLength();
+            }
         }
         public backLine(offset): void{
             this.currentXPosition = this.prevXLineEnd.pop()- offset;
@@ -162,7 +189,6 @@ module TSOS {
         public matchCommand():void{
             var matchingCommands=[];
             var matchingCommand ="";
-            var currentBuffer=this.buffer;
             for ( var i=0; i<_OsShell.commandList.length; i++){
                 var msgLength = this.buffer.length;
                 var command = _OsShell.commandList[i].command;
@@ -175,20 +201,46 @@ module TSOS {
                 this.buffer+=matchingCommand;
                 this.putText(matchingCommand);
             }
-            else if (matchingCommands.length>0){ //display matching commands
+            else if (matchingCommands.length>1){ //display matching commands
                 this.advanceLine();
                 for (var i=0;i< matchingCommands.length; i++)
                     this.putText(matchingCommands[i] + " ");
                 this.advanceLine();
-                //_OsShell.putPrompt();
+                _OsShell.putPrompt();
                 this.putText(this.buffer);
             }
             //else do nothing basically
         }
 
+        public approxMatchCommand() :void {
+            var approxMatchingCommands =[];
+            var approxMatchingCommand ="";
+            for ( var i=0; i<_OsShell.commandList.length; i++){
+                var msgLength = this.buffer.length;
+                var command = _OsShell.commandList[i].command;
+                if(command.indexOf(this.buffer)!==-1)
+                    approxMatchingCommands.push(command);
+                else{
+                    for (var j=0; j< this.buffer.length; j++){
+                        if (command.indexOf(this.buffer.charAt(j)) ===-1) // if buffer char isnt in command
+                            break;
+                        else if (j === this.buffer.length-1) // if all chars were in command and its at the end of the buff
+                            approxMatchingCommands.push(command);
+                    }
+                }
+            }
+            if (approxMatchingCommands.length>0){ //display approximate matching commands
+                this.advanceLine();
+                this.putText("Did you mean any of the following?");
+                this.advanceLine();
+                for (var i=0;i< approxMatchingCommands.length; i++)
+                    this.putText(approxMatchingCommands[i] + " ");
+            }
+        }
+
         public enteredCommands(chr) :void{
             
-            if ((chr === String.fromCharCode(38)) && //up arrow
+            if ((chr === "UP")&& //up arrow
                 (this.enteredCommandsIndex >1)){ //current index useable                  
                 this.enteredCommandsIndex--; //moves up item in list
                 this.clearLine();
@@ -197,7 +249,7 @@ module TSOS {
                 this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];                
                 
             }
-            else if (chr === String.fromCharCode(40)){//down arrow
+            else if (chr ==="DOWN"){//down arrow
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length){ //current index useable                  
                     this.enteredCommandsIndex++;    //moves down item in list
                     this.clearLine();
