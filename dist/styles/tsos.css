@@ -35,6 +35,29 @@ h3 {
   background-color:#DFDBC3;
   cursor: default;
 }
+/*
+ *  Console Scrollbar
+ */
+/*
+#divConsole::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  background-color: #DFDBC3;
+}
+
+#divConsole::-webkit-scrollbar
+{
+  width: 10px;
+  background-color: #DFDBC3;
+}
+
+#divConsole::-webkit-scrollbar-thumb
+{
+  background-color: #000000;
+  border: 2px solid #555555;
+}
+*/
+
 
 .normal_button {
   width: 100px;
