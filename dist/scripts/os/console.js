@@ -101,7 +101,7 @@ var TSOS;
                     if (words.length > 1 && i !== words.length - 1)
                         word += " ";
 
-                    if (this.currentXPosition + offset > CONSOLE_WIDTH) {
+                    if (this.currentXPosition + offset > _Canvas.width) {
                         this.prevXLine = this.currentXPosition;
                         this.advanceLine();
                     }
@@ -112,7 +112,7 @@ var TSOS;
         };
         Console.prototype.putChar = function (text, color) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-            if (this.currentXPosition + offset > CONSOLE_WIDTH) {
+            if (this.currentXPosition + offset > _Canvas.width) {
                 this.prevXLine = this.currentXPosition;
                 this.advanceLine();
             }
@@ -137,10 +137,20 @@ var TSOS;
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
             this.currentLine++;
-            debugger;
-            if (this.currentYPosition >= CONSOLE_HEIGHT) {
-                document.getElementById("display").setAttribute("height", String(this.currentYPosition)); //increase canvas height
-                CONSOLE_HEIGHT = parseInt(document.getElementById("display").getAttribute("height")); //increase global var
+            if (this.currentYPosition >= _Canvas.height) {
+                //document.getElementById("display").setAttribute("height", String(this.currentYPosition)); //increase canvas height
+                //_Canvas.height = parseInt(document.getElementById("display").getAttribute("height")); //increase global var
+                //var bufferCanvas= _Canvas.toDataURL("image/png")
+                //debugger;
+                //_BufferCanvas.height = this.currentYPosition;
+                //_BufferCanvas.getContext('2d').drawImage(_Canvas, 0, 0);
+                //_Canvas.height = this.currentYPosition;
+                //_Canvas.width  = this.currentXPosition;
+                //_Canvas.getContext('2d').drawImage(_BufferCanvas, 0,0);
+                var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                _Canvas.height = this.currentYPosition + 5; //for bottom buffer
+                _DrawingContext.putImageData(img, 0, 0);
+                document.getElementById("divConsole").scrollTop = document.getElementById("divConsole").scrollHeight;
             }
         };
         Console.prototype.backLine = function (offset) {
@@ -151,7 +161,7 @@ var TSOS;
         };
         Console.prototype.clearLine = function () {
             _DrawingContext.fillStyle = CONSOLE_BGC;
-            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, CONSOLE_WIDTH, _DefaultFontSize + _FontHeightMargin + 1);
+            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin + 1);
             this.currentXPosition = 0;
             this.buffer = "";
         };

@@ -25,10 +25,6 @@ var CONSOLE_TEXT_COLOR: string = "black";
 var CONSOLE_WIDTH :number = 500;
 var CONSOLE_HEIGHT :number= 500;
 
-window.onload = function() {
-    CONSOLE_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
-    CONSOLE_HEIGHT= parseInt(document.getElementById("display").getAttribute("height"));
-};
 //
 // Global Variables
 //

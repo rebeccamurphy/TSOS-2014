@@ -30,7 +30,6 @@ module TSOS {
         public static hostInit(): void {
             // Get a global reference to the canvas.  TODO: Move this stuff into a Display Device Driver, maybe?
             _Canvas = <HTMLCanvasElement>document.getElementById('display');
-
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext('2d');
 
