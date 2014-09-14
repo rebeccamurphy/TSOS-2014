@@ -31,6 +31,7 @@ module TSOS {
         }
 
         private clearScreen(): void {
+            _Canvas.height = CONSOLE_VIEWPORT_HEIGHT; //resets console height
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         }
 
@@ -131,33 +132,27 @@ module TSOS {
             this.currentXPosition = 0;
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
             this.currentLine++;
-            if (this.currentYPosition >= _Canvas.height){
-                //document.getElementById("display").setAttribute("height", String(this.currentYPosition)); //increase canvas height
-                //_Canvas.height = parseInt(document.getElementById("display").getAttribute("height")); //increase global var
-                //var bufferCanvas= _Canvas.toDataURL("image/png")
-                //debugger;
-                //_BufferCanvas.height = this.currentYPosition;
-                //_BufferCanvas.getContext('2d').drawImage(_Canvas, 0, 0);
-                //_Canvas.height = this.currentYPosition;
-                //_Canvas.width  = this.currentXPosition;
-                //_Canvas.getContext('2d').drawImage(_BufferCanvas, 0,0);
-                var img = _DrawingContext.getImageData(0,0, _Canvas.width, _Canvas.height);
-                _Canvas.height = this.currentYPosition +5; //for bottom buffer
-                _DrawingContext.putImageData(img, 0,0);
-                document.getElementById("divConsole").scrollTop =  document.getElementById("divConsole").scrollHeight;
-            }
+            if (this.currentYPosition >= _Canvas.height)
+                this.changeCanvasLength();
         }
         public backLine(offset): void{
             this.currentXPosition = this.prevXLine- offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
-            console.log("Y advance " + this.currentYPosition);
             this.currentLine--;
+            if (this.currentYPosition >= CONSOLE_VIEWPORT_HEIGHT)
+                this.changeCanvasLength();
         }
         public clearLine() :void {
             _DrawingContext.fillStyle = CONSOLE_BGC;
             _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin+1);
             this.currentXPosition=0;
             this.buffer="";
+        }
+        public changeCanvasLength() :void {
+            var img = _DrawingContext.getImageData(0,0, _Canvas.width, _Canvas.height); //creates image of old canvas
+            _Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
+            _DrawingContext.putImageData(img, 0,0);    //redraws old canvas on longer canvas
+            document.getElementById("divConsole").scrollTop =  document.getElementById("divConsole").scrollHeight;
         }
         public matchCommand():void{
             var matchingCommands=[];

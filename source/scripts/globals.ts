@@ -22,9 +22,13 @@ var TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interr
 var KEYBOARD_IRQ: number = 1;
 var CONSOLE_BGC: string = "#DFDBC3";
 var CONSOLE_TEXT_COLOR: string = "black";
-var CONSOLE_WIDTH :number = 500;
-var CONSOLE_HEIGHT :number= 500;
+var CONSOLE_VIEWPORT_WIDTH :number = 500;
+var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 
+window.onload = function() {
+    CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
+    CONSOLE_VIEWPORT_HEIGHT= parseInt(document.getElementById("display").getAttribute("height"));
+};
 //
 // Global Variables
 //

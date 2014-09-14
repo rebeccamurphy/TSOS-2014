@@ -20,8 +20,13 @@ var TIMER_IRQ = 0;
 var KEYBOARD_IRQ = 1;
 var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
-var CONSOLE_WIDTH = 500;
-var CONSOLE_HEIGHT = 500;
+var CONSOLE_VIEWPORT_WIDTH = 500;
+var CONSOLE_VIEWPORT_HEIGHT = 500;
+
+window.onload = function () {
+    CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
+    CONSOLE_VIEWPORT_HEIGHT = parseInt(document.getElementById("display").getAttribute("height"));
+};
 
 //
 // Global Variables
