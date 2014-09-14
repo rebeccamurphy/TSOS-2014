@@ -265,6 +265,16 @@ var TSOS;
                 }
             }
         };
+        Console.prototype.computerOver = function () {
+            this.clearScreen();
+            _DrawingContext.fillStyle = "#3a50b6";
+            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+            var img = new Image();
+            img.onload = function () {
+                _DrawingContext.drawImage(img, 0, 100);
+            };
+            img.src = "http://i.imgur.com/sOoqj6a.jpg";
+        };
         return Console;
     })();
     TSOS.Console = Console;

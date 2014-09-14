@@ -67,6 +67,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "<string> (optional) - Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
 
+            // BSOD
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Tests kernel trapping an OS error.");
+            this.commandList[this.commandList.length] = sc;
+
             // processes - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -99,6 +103,7 @@ var TSOS;
             var index = 0;
             var found = false;
             var fn = undefined;
+            debugger;
             while (!found && index < this.commandList.length) {
                 if (this.commandList[index].command === cmd) {
                     found = true;
@@ -137,7 +142,8 @@ var TSOS;
             }
 
             // ... and finally write the prompt again.
-            this.putPrompt();
+            if (fn !== this.shellBSOD)
+                this.putPrompt();
         };
 
         Shell.prototype.parseInput = function (buffer) {
@@ -340,6 +346,9 @@ var TSOS;
                         _StdOut.putText("Invalid Format.");
                 }
             }
+        };
+        Shell.prototype.shellBSOD = function (args) {
+            _Kernel.krnTrapError("TEST");
         };
         return Shell;
     })();

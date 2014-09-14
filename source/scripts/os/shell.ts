@@ -94,6 +94,11 @@ module TSOS {
                                   "load",
                                   "<string> (optional) - Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
+            // BSOD
+            sc = new ShellCommand(this.shellBSOD,
+                                  "bsod",
+                                  "- Tests kernel trapping an OS error.");
+            this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -125,6 +130,7 @@ module TSOS {
             var index = 0;
             var found = false;
             var fn = undefined;
+            debugger;
             while (!found && index < this.commandList.length) {
                 if (this.commandList[index].command === cmd) {
                     found = true;
@@ -162,7 +168,8 @@ module TSOS {
                 _StdOut.advanceLine();
             }
             // ... and finally write the prompt again.
-            this.putPrompt();
+            if (fn !== this.shellBSOD)
+                this.putPrompt();
         }
 
         public parseInput(buffer) {
@@ -368,6 +375,9 @@ module TSOS {
                         _StdOut.putText("Invalid Format.");
                 }
             }
+        }
+        public shellBSOD(args){
+            _Kernel.krnTrapError("TEST");
         }
             
     }
