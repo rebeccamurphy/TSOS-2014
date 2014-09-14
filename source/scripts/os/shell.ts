@@ -15,9 +15,11 @@ module TSOS {
         // Properties
         public promptStr = ">";
         public commandList = [];
+        public userPrograms = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf], [ovgpu],[qhpx],[onol], [Wrfhf]";
         public apologies = "[sorry]";
         public backdoors = "[jeff]";
+        
         constructor() {
 
         }
@@ -85,6 +87,12 @@ module TSOS {
             sc = new ShellCommand(this.shellWhereAmI,
                                   "whereami",
                                   "- Displays your location.");
+            this.commandList[this.commandList.length] = sc;
+
+            // load
+            sc = new ShellCommand(this.shellLoad,
+                                  "load",
+                                  "<string> (optional) - Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
@@ -333,5 +341,26 @@ module TSOS {
             }
         }
 
+        public shellLoad(args){
+            //gets the text box content
+            var boxContent  = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            if (boxContent.length===0)
+                _StdOut.putText("Enter something in the textarea first.");
+            else{
+                var name = args;
+                if (name.length ===0)
+                    name = "User Program " + (_OsShell.userPrograms.length +1);
+                var tempProgram = null;
+                tempProgram = new userProgram(name, boxContent.replace( /\n/g, " " ).split( " " ));
+                //checks format of program
+                if (tempProgram.checkValid()){
+                    _OsShell.userPrograms[_OsShell.userPrograms.length] = "butt";
+                    _StdOut.putText("Successfully loaded " + tempProgram.name);
+                }
+                else
+                    _StdOut.putText("Invalid Format");
+            }
+        }
+            
     }
 }
