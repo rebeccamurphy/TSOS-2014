@@ -28,6 +28,7 @@ var TSOS;
 
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext('2d');
+            _ConsoleScrollbar = document.getElementById("divConsole");
 
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             TSOS.CanvasTextFunctions.enable(_DrawingContext); // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun.

@@ -158,7 +158,12 @@ var TSOS;
             var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
             _Canvas.height = this.currentYPosition + 5; //increases length of console, +5 for bottom buffer
             _DrawingContext.putImageData(img, 0, 0); //redraws old canvas on longer canvas
-            document.getElementById("divConsole").scrollTop = document.getElementById("divConsole").scrollHeight;
+            this.moveScrollbar("bottom");
+        };
+        Console.prototype.moveScrollbar = function (area) {
+            //gave option, incase moving scrollbar diff areas needed later
+            if (area == "bottom")
+                _ConsoleScrollbar.scrollTop = _ConsoleScrollbar.scrollHeight; //moves scrollbar to bottom
         };
         Console.prototype.matchCommand = function () {
             var matchingCommands = [];

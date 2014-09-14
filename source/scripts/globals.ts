@@ -43,7 +43,7 @@ var _DrawingContext = null;             // Initialized in hostInit().
 var _DefaultFontFamily = "sans";        // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize = 13;
 var _FontHeightMargin = 4;              // Additional space added to font size when advancing a line.
-
+var _ConsoleScrollbar = null;
 
 var _Trace: boolean = true;  // Default the OS trace to be on.
 
