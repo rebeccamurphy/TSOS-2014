@@ -58,7 +58,6 @@ var TSOS;
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             } else if ((keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222) || ((keyCode >= 48) && (keyCode <= 57) && isShifted)) {
-                debugger;
                 switch (keyCode) {
                     case 48: {
                         //0

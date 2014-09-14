@@ -19,7 +19,7 @@ module TSOS {
                     public currentYPosition = _DefaultFontSize,
                     public buffer = "",
                     public currentLine = 0,
-                    public prevXLine = 0,
+                    public prevXLineEnd = [],
                     public enteredCommandsList =[""],
                     public enteredCommandsIndex =0) {
 
@@ -98,7 +98,7 @@ module TSOS {
                         word += " ";
 
                     if (this.currentXPosition + offset > _Canvas.width){
-                        this.prevXLine = this.currentXPosition;
+                        this.prevXLineEnd.push(this.currentXPosition);
                         this.advanceLine();
                     }
                     for (var j=0; j < word.length; j++)
@@ -109,7 +109,7 @@ module TSOS {
         public putChar(text, color?:string) :void{
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 if (this.currentXPosition + offset > _Canvas.width){
-                    this.prevXLine = this.currentXPosition;
+                    this.prevXLineEnd.push(this.currentXPosition);
                     this.advanceLine();
                 }
                 // Draw the text at the current X and Y coordinates.
@@ -136,7 +136,7 @@ module TSOS {
                 this.changeCanvasLength();
         }
         public backLine(offset): void{
-            this.currentXPosition = this.prevXLine- offset;
+            this.currentXPosition = this.prevXLineEnd.pop()- offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
             this.currentLine--;
             if (this.currentYPosition >= CONSOLE_VIEWPORT_HEIGHT)

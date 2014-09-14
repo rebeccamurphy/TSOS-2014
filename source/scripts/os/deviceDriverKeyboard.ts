@@ -67,7 +67,6 @@ module TSOS {
             } else if ((keyCode >= 186 && keyCode<= 192) || //punctuation
                         (keyCode >=219 && keyCode <=222) ||
                         ((keyCode >= 48) && (keyCode <= 57) &&isShifted)) { //number punctuation/symbols
-                    debugger;
                     switch (keyCode)
                     {
                         //number punctation/symbols keys

@@ -8,14 +8,14 @@ Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine, prevXLine, enteredCommandsList, enteredCommandsIndex) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine, prevXLineEnd, enteredCommandsList, enteredCommandsIndex) {
             if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
             if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
             if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
             if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize; }
             if (typeof buffer === "undefined") { buffer = ""; }
             if (typeof currentLine === "undefined") { currentLine = 0; }
-            if (typeof prevXLine === "undefined") { prevXLine = 0; }
+            if (typeof prevXLineEnd === "undefined") { prevXLineEnd = []; }
             if (typeof enteredCommandsList === "undefined") { enteredCommandsList = [""]; }
             if (typeof enteredCommandsIndex === "undefined") { enteredCommandsIndex = 0; }
             this.currentFont = currentFont;
@@ -24,7 +24,7 @@ var TSOS;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
             this.currentLine = currentLine;
-            this.prevXLine = prevXLine;
+            this.prevXLineEnd = prevXLineEnd;
             this.enteredCommandsList = enteredCommandsList;
             this.enteredCommandsIndex = enteredCommandsIndex;
         }
@@ -102,7 +102,7 @@ var TSOS;
                         word += " ";
 
                     if (this.currentXPosition + offset > _Canvas.width) {
-                        this.prevXLine = this.currentXPosition;
+                        this.prevXLineEnd.push(this.currentXPosition);
                         this.advanceLine();
                     }
                     for (var j = 0; j < word.length; j++)
@@ -113,7 +113,7 @@ var TSOS;
         Console.prototype.putChar = function (text, color) {
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
             if (this.currentXPosition + offset > _Canvas.width) {
-                this.prevXLine = this.currentXPosition;
+                this.prevXLineEnd.push(this.currentXPosition);
                 this.advanceLine();
             }
 
@@ -142,7 +142,7 @@ var TSOS;
                 this.changeCanvasLength();
         };
         Console.prototype.backLine = function (offset) {
-            this.currentXPosition = this.prevXLine - offset;
+            this.currentXPosition = this.prevXLineEnd.pop() - offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin;
             this.currentLine--;
             if (this.currentYPosition >= CONSOLE_VIEWPORT_HEIGHT)
