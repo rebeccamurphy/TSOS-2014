@@ -34,7 +34,6 @@ module TSOS {
         }
 
         public convertToBB():void {
-            debugger;
             for(var i=0; i<this.code.length;  i++){
                 var numHex = this.code[i];
                 //var numDec = this.Hex2Dec(numHex);

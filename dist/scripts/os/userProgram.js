@@ -36,7 +36,6 @@ var TSOS;
         };
 
         userProgram.prototype.convertToBB = function () {
-            debugger;
             for (var i = 0; i < this.code.length; i++) {
                 var numHex = this.code[i];
 
