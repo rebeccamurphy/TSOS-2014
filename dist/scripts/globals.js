@@ -41,7 +41,7 @@ var _Canvas = null;
 var _DrawingContext = null;
 var _DefaultFontFamily = "sans";
 var _DefaultFontSize = 13;
-var _FontHeightMargin = 4;
+var _FontHeightMargin = 6;
 var _ConsoleScrollbar = null;
 
 var _Trace = true;

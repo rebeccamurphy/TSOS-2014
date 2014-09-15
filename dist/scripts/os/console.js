@@ -12,7 +12,7 @@ var TSOS;
             if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
             if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
             if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
-            if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize; }
+            if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize + _FontHeightMargin; }
             if (typeof buffer === "undefined") { buffer = ""; }
             if (typeof currentLine === "undefined") { currentLine = 0; }
             if (typeof prevXLineEnd === "undefined") { prevXLineEnd = []; }
@@ -48,7 +48,7 @@ var TSOS;
 
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
-            this.currentYPosition = this.currentFontSize;
+            this.currentYPosition = this.currentFontSize + _FontHeightMargin;
         };
 
         Console.prototype.handleInput = function () {

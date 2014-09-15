@@ -16,7 +16,7 @@ module TSOS {
         constructor(public currentFont = _DefaultFontFamily,
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
-                    public currentYPosition = _DefaultFontSize,
+                    public currentYPosition = _DefaultFontSize +_FontHeightMargin,
                     public buffer = "",
                     public currentLine = 0,
                     public prevXLineEnd = [],
@@ -41,7 +41,7 @@ module TSOS {
 
         private resetXY(): void {
             this.currentXPosition = 0;
-            this.currentYPosition = this.currentFontSize;
+            this.currentYPosition = this.currentFontSize +_FontHeightMargin;
         }
 
         public handleInput(): void {
