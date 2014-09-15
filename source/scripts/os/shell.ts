@@ -100,6 +100,24 @@ module TSOS {
                                   "- Tests kernel trapping an OS error.");
             this.commandList[this.commandList.length] = sc;
 
+            // status
+            sc = new ShellCommand(this.shellBSOD,
+                                  "status",
+                                  "<string> - Display's users entered status in host display.");
+            this.commandList[this.commandList.length] = sc; // status
+
+            //beepboop
+            sc = new ShellCommand(this.shellBB,
+                                  "beepboop",
+                                  "<string>- converts hex program to beepboop");
+            this.commandList[this.commandList.length] = sc;
+
+            //unbeepboop
+            sc = new ShellCommand(this.shellUnBB,
+                                  "unbeepboop",
+                                  "<string>- converts beepboop program to hex.");
+            this.commandList[this.commandList.length] = sc;
+
             // processes - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -130,7 +148,7 @@ module TSOS {
             var index = 0;
             var found = false;
             var fn = undefined;
-            debugger;
+            //debugger;
             while (!found && index < this.commandList.length) {
                 if (this.commandList[index].command === cmd) {
                     found = true;
@@ -213,7 +231,19 @@ module TSOS {
                 _Console.approxMatchCommand(); 
             }
         }
-
+        public containsUserProgram(name):boolean{
+            for (var i =0; i< _OsShell.userPrograms.length; i++){
+                if (_OsShell.userPrograms[i].name === name)
+                    return true;
+            }
+            return false;
+        }
+        public getUserProgram(name){
+            for (var i =0; i< _OsShell.userPrograms.length; i++){
+                if (_OsShell.userPrograms[i].name === name)
+                    return _OsShell.userPrograms[i];
+            }
+        }
         public shellCurse() {
             _StdOut.putText("Oh, so that's how it's going to be, eh? Fine.");
             _StdOut.advanceLine();
@@ -350,6 +380,7 @@ module TSOS {
 
         public shellLoad(args){
             //gets the text box content
+            var name = args[0];
             var boxContent  = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
             if (boxContent.length===0){
                 if (_SarcasticMode)
@@ -357,15 +388,16 @@ module TSOS {
                 else
                     _StdOut.putText("Enter something in the textarea first.");
             }
+            else if (_OsShell.containsUserProgram(name))
+                _StdOut.putText("Name already in use. Choose a different name.");
             else{
-                var name = args;
-                if (name.length ===0)
+                if (name===undefined)
                     name = "User Program " + (_OsShell.userPrograms.length +1);
                 var tempProgram = null;
                 tempProgram = new userProgram(name, boxContent.replace( /\n/g, " " ).split( " " ));
                 //checks format of program
                 if (tempProgram.checkValid()){
-                    _OsShell.userPrograms[_OsShell.userPrograms.length] = "butt";
+                    _OsShell.userPrograms[_OsShell.userPrograms.length] = tempProgram;
                     _StdOut.putText("Successfully loaded " + tempProgram.name);
                 }
                 else{
@@ -379,6 +411,47 @@ module TSOS {
         public shellBSOD(args){
             _Kernel.krnTrapError("TEST");
         }
+
+        public shellBB(args):void{
+            
+            var name = args[0];
+            console.log(name);
+            if ( !(_OsShell.userPrograms.length >0) ){
+                if (_SarcasticMode)
+                    _StdOut.putText("Load a program first, you pox upon humanity.");
+                else
+                    _StdOut.putText("Load a program first.");
+            }
+            else if (name===undefined)
+                _StdOut.putText("what program?");
+            else {
+                for (var i =0; i< _OsShell.userPrograms.length; i++){
+                    if (name === _OsShell.userPrograms[i].name){
+                        _OsShell.userPrograms[i].convertToBB();
+                        _OsShell.userPrograms[i].printBB();
+                        _StdOut.putText("Conversion complete.");
+                        return;
+                    }
+                }
+                _StdOut.putText("Invalid program name");
+                return;
+            }                
+        }
+        public shellUnBB(args):void{
+            var name = args[0];
+            if (_OsShell.containsUserProgram(name)){
+                if (_OsShell.getUserProgram(name).bbDisplayed){
+                    _OsShell.getUserProgram(name).printHex();
+                    _StdOut.putText("Conversion complete.");
+                }
+                else 
+                    _StdOut.putText("beepboop already displayed.");
+
+            }
+            else 
+                _StdOut.putText("Invalid program name");
+        }
             
     }
+        
 }
