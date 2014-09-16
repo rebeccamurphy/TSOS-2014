@@ -381,7 +381,7 @@ module TSOS {
         public shellLoad(args){
             //gets the text box content
             var name = args[0];
-            var boxContent  = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
             if (boxContent.length===0){
                 if (_SarcasticMode)
                     _StdOut.putText("Enter something in the textarea first. Poopbutt.");
@@ -394,7 +394,7 @@ module TSOS {
                 if (name===undefined)
                     name = "User Program " + (_OsShell.userPrograms.length +1);
                 var tempProgram = null;
-                tempProgram = new userProgram(name, boxContent.replace( /\n/g, " " ).split( " " ));
+                tempProgram = new userProgram(name, boxContent.replace( /\n/g, " " ).split( " " ));//replaces newline with space
                 //checks format of program
                 if (tempProgram.checkValid()){
                     _OsShell.userPrograms[_OsShell.userPrograms.length] = tempProgram;

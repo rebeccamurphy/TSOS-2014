@@ -46,9 +46,7 @@ var TSOS;
                 var numBB = "";
                 for (var j = 0; j < numBin.length; j++) {
                     var num = numBin.charAt(j);
-                    console.log(num);
                     var temp = (num === "0") ? "BOOP" : "BEEP";
-                    console.log(temp);
                     numBB += temp;
                 }
                 this.beepboop.push(numBB);
