@@ -233,6 +233,7 @@ module TSOS {
         public checkValidProgram(code) :string {
             //assumes code has already been parsedto array
             //check if empty
+            debugger;
             var validProgramBB = "BB";
             var validProgramHex = "HEX";
             for (var k=0; k<code.length;k++){ //check for beepboop
@@ -240,10 +241,10 @@ module TSOS {
                     validProgramBB = "";
                     break;
                 }
-                else if (validProgramBB===""){
+                else if (!(validProgramBB==="")){
                     for (var h =0; h< 32; h+4){
                         var bb = code[k].substring(h, h+4); //should be a beep or boop
-                        if ( !(bb === "BEEP") || !(bb==="BOOP")){
+                        if ( !(bb === "BEEP") && !(bb==="BOOP")){
                             //break out of loop
                             validProgramBB="";
                             break;
@@ -261,7 +262,7 @@ module TSOS {
                     validProgramHex ="";
                     break;
                 }
-                if (validProgramHex===""){
+                if (!(validProgramHex==="")){
                     for (var j =0; j< numStr.length; j++){
                         if (hexChars.indexOf(numStr[j]) === -1){
                             validProgramHex ="";
@@ -460,7 +461,7 @@ module TSOS {
             //gets the text box content
             var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
             var tempProgramString = null;
-            debugger;
+            
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
             if (boxContent.length===0){
                 if (_SarcasticMode)

@@ -200,18 +200,17 @@ var TSOS;
             }
         };
         Shell.prototype.checkValidProgram = function (code) {
-            //assumes code has already been parsedto array
-            //check if empty
+            debugger;
             var validProgramBB = "BB";
             var validProgramHex = "HEX";
             for (var k = 0; k < code.length; k++) {
                 if (code[k].length < 32) {
                     validProgramBB = "";
                     break;
-                } else if (validProgramBB === "") {
+                } else if (!(validProgramBB === "")) {
                     for (var h = 0; h < 32; h + 4) {
                         var bb = code[k].substring(h, h + 4);
-                        if (!(bb === "BEEP") || !(bb === "BOOP")) {
+                        if (!(bb === "BEEP") && !(bb === "BOOP")) {
                             //break out of loop
                             validProgramBB = "";
                             break;
@@ -228,7 +227,7 @@ var TSOS;
                     validProgramHex = "";
                     break;
                 }
-                if (validProgramHex === "") {
+                if (!(validProgramHex === "")) {
                     for (var j = 0; j < numStr.length; j++) {
                         if (hexChars.indexOf(numStr[j]) === -1) {
                             validProgramHex = "";
@@ -421,7 +420,7 @@ var TSOS;
             //gets the text box content
             var boxContent = document.getElementById("taProgramInput").value.trim();
             var tempProgramString = null;
-            debugger;
+
             tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
             if (boxContent.length === 0) {
                 if (_SarcasticMode)
