@@ -200,7 +200,9 @@ var TSOS;
             }
         };
         Shell.prototype.checkValidProgram = function (code) {
-            debugger;
+            //assumes code has already been parsedto array
+            //check if empty
+            //debugger;
             var validProgramBB = "BB";
             var validProgramHex = "HEX";
             for (var k = 0; k < code.length; k++) {
@@ -208,7 +210,7 @@ var TSOS;
                     validProgramBB = "";
                     break;
                 } else if (!(validProgramBB === "")) {
-                    for (var h = 0; h < 32; h + 4) {
+                    for (var h = 0; h < 32; h += 4) {
                         var bb = code[k].substring(h, h + 4);
                         if (!(bb === "BEEP") && !(bb === "BOOP")) {
                             //break out of loop
@@ -427,7 +429,7 @@ var TSOS;
                     _StdOut.putText("Enter something in the textarea first. Poopbutt.");
                 else
                     _StdOut.putText("Enter something in the textarea first.");
-            } else if (_OsShell.checkValidProgram(tempProgramString) === "HEX" || _OsShell.checkValidProgram(tempProgramString) === "BB") {
+            } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX" || TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 _StdOut.putText("Successfully loaded program.");
             } else {
                 if (_SarcasticMode)
@@ -446,29 +448,33 @@ var TSOS;
             //debugger;
             var tempProgramString = null;
             tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
-            var programType = _OsShell.checkValidProgram(tempProgramString);
-            if (programType !== "HEX" || programType !== "BB") {
+            var programType = TSOS.Utils.checkValidProgram(tempProgramString);
+            if (programType !== "HEX" && programType !== undefined) {
                 if (_SarcasticMode)
-                    _StdOut.putText("Invalid program you pox upon humanity.");
+                    _StdOut.putText("Invalid hex program you pox upon humanity. If you want convert hex to" + "beepboop put valid hex program in ta.");
                 else
-                    _StdOut.putText("Invalid program.");
+                    _StdOut.putText("Invalid hex program.If you want convert hex to" + "beepboop put valid hex program in ta.");
             } else {
-                this.convertProgram(programType, tempProgramString);
+                TSOS.Utils.convertProgram(programType, tempProgramString);
+                _StdOut.putText("Successfully converted hex to beepboop.");
             }
         };
         Shell.prototype.shellUnBB = function (args) {
-            /*    var name = args[0];
-            if (_OsShell.containsUserProgram(name)){
-            if (_OsShell.getUserProgram(name).bbDisplayed){
-            _OsShell.getUserProgram(name).printHex();
-            _StdOut.putText("Conversion complete.");
+            var boxContent = document.getElementById("taProgramInput").value.trim();
+
+            //debugger;
+            var tempProgramString = null;
+            tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
+            var programType = TSOS.Utils.checkValidProgram(tempProgramString);
+            if (programType !== "BB" && programType !== undefined) {
+                if (_SarcasticMode)
+                    _StdOut.putText("Invalid beepboop program you pox upon humanity. If you want convert beepboop to" + "hex put valid beepboop program in ta.");
+                else
+                    _StdOut.putText("Invalid beepboop program.If you want convert beepboop to" + "hex put valid beepboop program in ta.");
+            } else {
+                TSOS.Utils.convertProgram(programType, tempProgramString);
+                _StdOut.putText("Successfully converted beepboop to hex.");
             }
-            else
-            _StdOut.putText("beepboop already displayed.");
-            
-            }
-            else
-            _StdOut.putText("Invalid program name");*/
         };
         return Shell;
     })();
