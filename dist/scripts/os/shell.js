@@ -115,7 +115,6 @@ var TSOS;
             var index = 0;
             var found = false;
             var fn = undefined;
-
             while (!found && index < this.commandList.length) {
                 if (this.commandList[index].command === cmd) {
                     found = true;
@@ -200,18 +199,92 @@ var TSOS;
                 _Console.approxMatchCommand();
             }
         };
-        Shell.prototype.containsUserProgram = function (name) {
-            for (var i = 0; i < _OsShell.userPrograms.length; i++) {
-                if (_OsShell.userPrograms[i].name === name)
-                    return true;
+        Shell.prototype.checkValidProgram = function (code) {
+            //assumes code has already been parsedto array
+            //check if empty
+            var validProgramBB = "BB";
+            var validProgramHex = "HEX";
+            for (var k = 0; k < code.length; k++) {
+                if (code[k].length < 32) {
+                    validProgramBB = "";
+                    break;
+                } else if (validProgramBB === "") {
+                    for (var h = 0; h < 32; h + 4) {
+                        var bb = code[k].substring(h, h + 4);
+                        if (!(bb === "BEEP") || !(bb === "BOOP")) {
+                            //break out of loop
+                            validProgramBB = "";
+                            break;
+                        }
+                    }
+                } else
+                    break;
             }
-            return false;
+
+            var hexChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+            for (var i = 0; i < code.length; i++) {
+                var numStr = code[i];
+                if (numStr.length < 2) {
+                    validProgramHex = "";
+                    break;
+                }
+                if (validProgramHex === "") {
+                    for (var j = 0; j < numStr.length; j++) {
+                        if (hexChars.indexOf(numStr[j]) === -1) {
+                            validProgramHex = "";
+                            break;
+                        }
+                    }
+                } else
+                    break;
+            }
+            return validProgramHex + validProgramBB;
         };
-        Shell.prototype.getUserProgram = function (name) {
-            for (var i = 0; i < _OsShell.userPrograms.length; i++) {
-                if (_OsShell.userPrograms[i].name === name)
-                    return _OsShell.userPrograms[i];
-            }
+        Shell.prototype.convertProgram = function (lang, code) {
+            /*private Bin2Hex(n) :string {
+            return parseInt(n,2).toString(16);
+            };
+            private Hex2Bin(n) :string {
+            return parseInt(n,16).toString(2);
+            };*/
+            var beepboop = [];
+            var hex = [];
+            var numHex, numBin, numBB, num, temp = "";
+            if (lang === "BB") {
+                for (var i = 0; i < code.length; i++) {
+                    numHex = code[i];
+                    numBin = parseInt(numHex, 16).toString(2); //Hex to binary
+                    numBin = Array(8 - numBin.length).join("0") + numBin; //adds leading boops/0s
+                    numBB = "";
+                    for (var j = 0; j < numBin.length; j++) {
+                        num = numBin.charAt(j);
+                        temp = (num === "0") ? "BOOP" : "BEEP";
+                        numBB += temp;
+                    }
+                    beepboop.push(numBB);
+                }
+                var tempBBStr = beepboop.join(" ");
+                document.getElementById("taProgramInput").value = tempBBStr;
+                return true;
+            } else if (lang === "HEX") {
+                for (var i = 0; i < code.length; i++) {
+                    numBB = code[i];
+                    numBin = "";
+                    for (var j = 0; j < 32; j + 4) {
+                        var numStr = numBin.substring(j, j + 4);
+                        var temp = (numStr === "BOOP") ? "0" : "1";
+                        numBin += temp;
+                    }
+                    numHex = parseInt(numBin, 2).toString(16); //coverts bin to hex
+                    numHex = Array(2 - numBin.length).join("0"); //adds leading 0s
+                    hex.push(numHex);
+                }
+                var tempHexStr = hex.join(" ");
+                document.getElementById("taProgramInput").value = tempHexStr;
+                return true;
+            } else
+                return false;
+            return false;
         };
         Shell.prototype.shellCurse = function () {
             _StdOut.putText("Oh, so that's how it's going to be, eh? Fine.");
@@ -346,31 +419,22 @@ var TSOS;
 
         Shell.prototype.shellLoad = function (args) {
             //gets the text box content
-            var name = args[0];
             var boxContent = document.getElementById("taProgramInput").value.trim();
+            var tempProgramString = null;
+            debugger;
+            tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
             if (boxContent.length === 0) {
                 if (_SarcasticMode)
                     _StdOut.putText("Enter something in the textarea first. Poopbutt.");
                 else
                     _StdOut.putText("Enter something in the textarea first.");
-            } else if (_OsShell.containsUserProgram(name))
-                _StdOut.putText("Name already in use. Choose a different name.");
-            else {
-                if (name === undefined)
-                    name = "User Program " + (_OsShell.userPrograms.length + 1);
-                var tempProgram = null;
-                tempProgram = new TSOS.userProgram(name, boxContent.replace(/\n/g, " ").split(" ")); //replaces newline with space
-
-                //checks format of program
-                if (tempProgram.checkValid()) {
-                    _OsShell.userPrograms[_OsShell.userPrograms.length] = tempProgram;
-                    _StdOut.putText("Successfully loaded " + tempProgram.name);
-                } else {
-                    if (_SarcasticMode)
-                        _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
-                    else
-                        _StdOut.putText("Invalid Format.");
-                }
+            } else if (_OsShell.checkValidProgram(tempProgramString) === "HEX" || _OsShell.checkValidProgram(tempProgramString) === "BB") {
+                _StdOut.putText("Successfully loaded program.");
+            } else {
+                if (_SarcasticMode)
+                    _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
+                else
+                    _StdOut.putText("Invalid Format.");
             }
         };
         Shell.prototype.shellBSOD = function (args) {
@@ -378,38 +442,34 @@ var TSOS;
         };
 
         Shell.prototype.shellBB = function (args) {
-            var name = args[0];
-            console.log(name);
-            if (!(_OsShell.userPrograms.length > 0)) {
+            var boxContent = document.getElementById("taProgramInput").value.trim();
+
+            //debugger;
+            var tempProgramString = null;
+            tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
+            var programType = _OsShell.checkValidProgram(tempProgramString);
+            if (programType !== "HEX" || programType !== "BB") {
                 if (_SarcasticMode)
-                    _StdOut.putText("Load a program first, you pox upon humanity.");
+                    _StdOut.putText("Invalid program you pox upon humanity.");
                 else
-                    _StdOut.putText("Load a program first.");
-            } else if (name === undefined)
-                _StdOut.putText("what program?");
-            else {
-                for (var i = 0; i < _OsShell.userPrograms.length; i++) {
-                    if (name === _OsShell.userPrograms[i].name) {
-                        _OsShell.userPrograms[i].convertToBB();
-                        _OsShell.userPrograms[i].printBB();
-                        _StdOut.putText("Conversion complete.");
-                        return;
-                    }
-                }
-                _StdOut.putText("Invalid program name");
-                return;
+                    _StdOut.putText("Invalid program.");
+            } else {
+                this.convertProgram(programType, tempProgramString);
             }
         };
         Shell.prototype.shellUnBB = function (args) {
-            var name = args[0];
-            if (_OsShell.containsUserProgram(name)) {
-                if (_OsShell.getUserProgram(name).bbDisplayed) {
-                    _OsShell.getUserProgram(name).printHex();
-                    _StdOut.putText("Conversion complete.");
-                } else
-                    _StdOut.putText("beepboop already displayed.");
-            } else
-                _StdOut.putText("Invalid program name");
+            /*    var name = args[0];
+            if (_OsShell.containsUserProgram(name)){
+            if (_OsShell.getUserProgram(name).bbDisplayed){
+            _OsShell.getUserProgram(name).printHex();
+            _StdOut.putText("Conversion complete.");
+            }
+            else
+            _StdOut.putText("beepboop already displayed.");
+            
+            }
+            else
+            _StdOut.putText("Invalid program name");*/
         };
         return Shell;
     })();
