@@ -72,7 +72,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // status
-            sc = new TSOS.ShellCommand(this.shellBSOD, "status", "<string> - Display's users entered status in host display.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Display's users entered status in host display.");
             this.commandList[this.commandList.length] = sc; // status
 
             //beepboop
@@ -475,6 +475,13 @@ var TSOS;
                 TSOS.Utils.convertProgram(programType, tempProgramString);
                 _StdOut.putText("Successfully converted beepboop to hex.");
             }
+        };
+        Shell.prototype.shellStatus = function (args) {
+            var msg = args[0];
+            if (msg.length !== 0) {
+                document.getElementById("statusDisplay").innerHTML = msg;
+            } else
+                _StdOut.putText("Invalid status.");
         };
         return Shell;
     })();

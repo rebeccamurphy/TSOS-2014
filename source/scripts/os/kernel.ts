@@ -49,11 +49,14 @@ module TSOS {
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new Shell();
             _OsShell.init();
-
+            //start clock display
+            Utils.updateClockDisplay();
+            window.setInterval(function() {Utils.updateClockDisplay()}, "1000");
             // Finally, initiate testing.
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
             }
+
         }
 
         public krnShutdown() {

@@ -102,7 +102,7 @@ module TSOS {
             if (lang === "HEX") {//convert hex to beepboop
                 for(var i=0; i<code.length;  i++){
                     numHex = code[i];
-                    debugger;
+                    //debugger;
                     numBin = parseInt(numHex,16).toString(2);//Hex to binary
                     numBin = Array(8-numBin.length).join("0") + numBin; //adds leading boops/0s
                     numBB = "";
@@ -139,6 +139,12 @@ module TSOS {
         return false;
         }
 
+        public static updateClockDisplay(){
+            var date = new Date();
+            var now = String(date.getMonth()+1) +"/" + String(date.getDate()) + "/" +String(date.getFullYear()).slice(-2) + " "
+                + String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + String(date.getSeconds());
+            document.getElementById("clockDisplay").innerHTML = now;
 
+        }
     }
 }

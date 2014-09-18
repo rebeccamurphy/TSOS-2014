@@ -101,7 +101,7 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // status
-            sc = new ShellCommand(this.shellBSOD,
+            sc = new ShellCommand(this.shellStatus,
                                   "status",
                                   "<string> - Display's users entered status in host display.");
             this.commandList[this.commandList.length] = sc; // status
@@ -522,6 +522,14 @@ module TSOS {
                 _StdOut.putText("Successfully converted beepboop to hex.");
             }
             
-         }   
+         }
+        public shellStatus(args):void{
+            var msg = args[0];
+            if (msg.length !==0){
+                document.getElementById("statusDisplay").innerHTML = msg;
+            }
+            else
+                _StdOut.putText("Invalid status.");
+        }   
     }        
 }

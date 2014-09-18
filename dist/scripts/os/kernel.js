@@ -47,6 +47,12 @@ var TSOS;
             _OsShell = new TSOS.Shell();
             _OsShell.init();
 
+            //start clock display
+            TSOS.Utils.updateClockDisplay();
+            window.setInterval(function () {
+                TSOS.Utils.updateClockDisplay();
+            }, "1000");
+
             // Finally, initiate testing.
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
