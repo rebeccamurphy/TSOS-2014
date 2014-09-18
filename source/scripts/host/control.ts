@@ -67,6 +67,9 @@ module TSOS {
             var taLog = <HTMLInputElement> document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
             // Optionally update a log database or some streaming service.
+
+            //start clock display
+            Utils.updateClockDisplay();
         }
 
 

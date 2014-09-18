@@ -63,7 +63,10 @@ var TSOS;
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
+
             // Optionally update a log database or some streaming service.
+            //start clock display
+            TSOS.Utils.updateClockDisplay();
         };
 
         //
