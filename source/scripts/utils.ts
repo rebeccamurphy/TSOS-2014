@@ -138,7 +138,13 @@ module TSOS {
                 return false;
         return false;
         }
+        /*
+        public static updateClockDisplay(){
+            var date = new Date();
+            var now = String(date.getMonth()+1) +"/" + String(date.getDate()) + "/" +String(date.getFullYear()).slice(-2) + " "
+                + String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + String(date.getSeconds());
+            (<HTMLInputElement>document.getElementById("clockDisplay")).value = now;
 
-
+        }*/
     }
 }

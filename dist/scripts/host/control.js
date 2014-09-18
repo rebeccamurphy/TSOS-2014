@@ -90,6 +90,8 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();
+            //start the display clock
+            //Utils.updateClockDisplay();
         };
 
         Control.hostBtnHaltOS_click = function (btn) {

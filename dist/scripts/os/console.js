@@ -184,7 +184,7 @@ var TSOS;
         };
         Console.prototype.changeCanvasLength = function () {
             var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
-            _Canvas.height = this.currentYPosition + 5; //increases length of console, +5 for bottom buffer
+            _Canvas.height = this.currentYPosition + 10; //increases length of console, +5 for bottom buffer
             _DrawingContext.putImageData(img, 0, 0); //redraws old canvas on longer canvas
             this.moveScrollbar("bottom");
         };

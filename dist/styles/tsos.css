@@ -69,3 +69,10 @@ h3 {
   font-size: 8pt;
   text-align: center;
 }
+/*
+#clockDisplay{
+  float:left;
+}*/
+#statusDisplay{
+  float:right;
+}

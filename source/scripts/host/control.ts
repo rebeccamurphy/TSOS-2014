@@ -93,6 +93,9 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();
+            //start the display clock
+            //Utils.updateClockDisplay();
+            
         }
 
         public static hostBtnHaltOS_click(btn): void {
