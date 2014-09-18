@@ -92,7 +92,7 @@ module TSOS {
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "<string> (optional) - Loads user program from User Program Input, labels with name if specifed.");
+                                  "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
             // BSOD
             sc = new ShellCommand(this.shellBSOD,
@@ -109,13 +109,13 @@ module TSOS {
             //beepboop
             sc = new ShellCommand(this.shellBB,
                                   "beepboop",
-                                  "<string>- converts hex program to beepboop");
+                                  "Converts hex program in ta to beepboop");
             this.commandList[this.commandList.length] = sc;
 
             //unbeepboop
             sc = new ShellCommand(this.shellUnBB,
                                   "unbeepboop",
-                                  "<string>- converts beepboop program to hex.");
+                                  "Converts beepboop program in ta to hex.");
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
@@ -230,99 +230,7 @@ module TSOS {
                 _Console.approxMatchCommand(); 
             }
         }
-        public checkValidProgram(code) :string {
-            //assumes code has already been parsedto array
-            //check if empty
-            //debugger;
-            var validProgramBB = "BB";
-            var validProgramHex = "HEX";
-            for (var k=0; k<code.length;k++){ //check for beepboop
-                if (code[k].length < 32){    //each beepboop should have 8 beeps/boops
-                    validProgramBB = "";
-                    break;
-                }
-                else if (!(validProgramBB==="")){
-                    for (var h =0; h< 32; h+=4){
-                        var bb = code[k].substring(h, h+4); //should be a beep or boop
-                        if ( !(bb === "BEEP") && !(bb==="BOOP")){
-                            //break out of loop
-                            validProgramBB="";
-                            break;
-                        }
-                    }
-                }
-                else 
-                    break; //breaks encasing forloop if validProgramBB is false
-            }
-
-            var hexChars = ["0", "1", "2", "3", "4", "5", "6", "7","8", "9", "A", "B", "C", "D", "E","F"];
-            for (var i =0; i< code.length; i++){ //check for hex
-                var numStr = code[i];
-                if (numStr.length <2){
-                    validProgramHex ="";
-                    break;
-                }
-                if (!(validProgramHex==="")){
-                    for (var j =0; j< numStr.length; j++){
-                        if (hexChars.indexOf(numStr[j]) === -1){
-                            validProgramHex ="";
-                            break;
-                        }
-                    }
-                }
-                else 
-                    break; //breaks out of encasing for loop if validProgramHex is false
-            }
-            return validProgramHex + validProgramBB; 
-        }
-        public convertProgram(lang:string, code):boolean{
-            /*private Bin2Hex(n) :string {
-                return parseInt(n,2).toString(16);
-            };
-            private Hex2Bin(n) :string {
-                return parseInt(n,16).toString(2);
-            };*/
-            var beepboop= [];
-            var hex = [];
-            var numHex, numBin, numBB, num, temp = "";
-            if (lang === "BB") {//convert to beepboop
-                for(var i=0; i<code.length;  i++){
-                    numHex = code[i];
-                    numBin = parseInt(numHex,16).toString(2);//Hex to binary
-                    numBin = Array(8-numBin.length).join("0") + numBin; //adds leading boops/0s
-                    numBB = "";
-                        for (var j=0; j<numBin.length; j++){
-                            num = numBin.charAt(j);
-                            temp = (num==="0") ? "BOOP": "BEEP";
-                            numBB += temp;
-                        }
-                    beepboop.push(numBB);
-                }
-                var tempBBStr = beepboop.join(" "); //puts beepboop in textarea
-                (<HTMLInputElement>document.getElementById("taProgramInput")).value = tempBBStr;
-                return true;
-            }
-            else if (lang ==="HEX"){//convert to hex
-                for (var i=0; i < code.length; i++){
-                    numBB = code[i];
-                    numBin ="";
-                    for (var j=0; j<32; j+4){ //coverts Beepboops to binary
-                            var numStr = numBin.substring(j, j+4);
-                            var temp = (numStr==="BOOP") ? "0": "1";
-                            numBin += temp;
-                    }
-                    numHex = parseInt(numBin, 2).toString(16);//coverts bin to hex
-                    numHex = Array(2-numBin.length).join("0"); //adds leading 0s
-                    hex.push(numHex);
-                }
-                var tempHexStr = hex.join(" "); //puts hex in text area
-                (<HTMLInputElement>document.getElementById("taProgramInput")).value = tempHexStr;
-                return true;    
-            }
-            else 
-                return false;
-        return false;
-        }
+        
         public shellCurse() {
             _StdOut.putText("Oh, so that's how it's going to be, eh? Fine.");
             _StdOut.advanceLine();

@@ -21,11 +21,7 @@ module TSOS {
                     public currentLine = 0,
                     public prevXLineEnd = [],
                     public enteredCommandsList =[""],
-                    public enteredCommandsIndex =0,
-                    public cursorWidth = 13,
-                    public cursorHeight = _DefaultFontSize + _FontHeightMargin+1,
-                    public cursorXPosition = currentXPosition,
-                    public cursorYPosition = currentYPosition) {
+                    public enteredCommandsIndex =0 ){
 
         }
 
@@ -64,7 +60,7 @@ module TSOS {
                     }
                 } else if (chr === String.fromCharCode(8)) { //Backspace
                     this.eraseText(this.buffer.slice(-1));  //remove last character from canvas
-                    //this.eraseText(" ");removes cursor
+                    
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
 
                 } else if (chr === String.fromCharCode(9)) { //tab
@@ -76,7 +72,7 @@ module TSOS {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
-                    //this.putText(" ", "white", true); adds cursor
+                    
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
@@ -84,7 +80,7 @@ module TSOS {
             }
         }
 
-        public putText(text: string, color?: string,cursor? ): void {
+        public putText(text: string, color?: string ): void {
             // My first inclination here was to write two functions: putChar() and putString().
             // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
             // between the two.  So rather than be like PHP and write two (or more) functions that
@@ -92,7 +88,7 @@ module TSOS {
             // decided to write one function and use the term "text" to connote string or char.
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             if (text !== "" &&text.length ===1) { //only for characters
-                this.putChar(text, color, cursor); //might be  problem      
+                this.putChar(text, color); //might be  problem      
                 
             }
             else if (text !=="" && text.length>1){ //strings. there's probably a way to make this better. 
@@ -112,18 +108,17 @@ module TSOS {
                 }
             }
         }
-        public putChar(text, color?:string, cursor?) :void{
+        public putChar(text, color?:string) :void{
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 if (this.currentXPosition + offset > _Canvas.width){
                     this.prevXLineEnd.push(this.currentXPosition);
                     this.advanceLine();
                 }
-                if (!cursor)
+                if (color===undefined)
                     // Draw the text at the current X and Y coordinates.
                     _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_TEXT_COLOR);
                 else{
-                    _DrawingContext.fillStyle = color;
-                    _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, offset, _DefaultFontSize + _FontHeightMargin+1);
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, color);
                 }
                         
                 // Move the current X position.
@@ -140,27 +135,14 @@ module TSOS {
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         }
-        public drawCursor(color?){
-            //if not on prompt line, erase previous cursor
-            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, ">");
-            if(offset!== this.currentXPosition){
-                _DrawingContext.fillStyle = CONSOLE_BGC;
-                _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition - _DefaultFontSize, this.cursorWidth, this.cursorHeight);
-            }            
-            this.cursorXPosition+=this.cursorWidth;
-            _DrawingContext.fillStyle = "white";
-            _DrawingContext.fillRect(this.cursorXPosition, this.cursorYPosition - _DefaultFontSize, this.cursorWidth, this.cursorHeight);
-            
-        }
         
-        public advanceLine(cursor?): void {
-            if (cursor===undefined){
-                this.currentXPosition = 0;
-                this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
-                this.currentLine++;
-                if (this.currentYPosition >= _Canvas.height)
-                    this.changeCanvasLength();
-            }
+        public advanceLine(): void {
+            this.currentXPosition = 0;
+            this.currentYPosition += _DefaultFontSize + _FontHeightMargin;
+            this.currentLine++;
+            if (this.currentYPosition >= _Canvas.height)
+                this.changeCanvasLength();
+            
         }
         public backLine(offset): void{
             this.currentXPosition = this.prevXLineEnd.pop()- offset;

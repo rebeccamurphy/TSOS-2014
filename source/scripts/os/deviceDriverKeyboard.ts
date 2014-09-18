@@ -13,10 +13,12 @@ module TSOS {
     // Extends DeviceDriver
     export class DeviceDriverKeyboard extends DeviceDriver {
         capslockOn:boolean;
+        ctrlHeld:boolean;
         constructor() {
             // Override the base method pointers.
             super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             this.capslockOn=false;
+            this.ctrlHeld= false;
         }
 
         public krnKbdDriverEntry() {
@@ -29,6 +31,8 @@ module TSOS {
             // Parse the params.    TODO: Check that they are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
+            
+            //debugger;
             if (keyCode ==20 && !this.capslockOn) //capslock turned on
                 this.capslockOn = true;
             else if (keyCode==20 && this.capslockOn)//capslock turned off
@@ -38,11 +42,21 @@ module TSOS {
                 isShifted = false;
             else if (this.capslockOn && !isShifted) //capslock on and shift not held
                 isShifted = this.capslockOn;
-                
+            
+            if (keyCode==17 && !this.ctrlHeld){ //control is being held
+                this.ctrlHeld = true;
+            }    
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
+
+            if (this.ctrlHeld && keyCode==86){
+                chr= window.clipboardData.getData('Text');
+                this.ctrlHeld = false;
+                _KernelInputQueue.enqueue(chr);
+            }
+
             // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
+            else if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
                 ((keyCode >= 97) && (keyCode <= 123))) {  // a..z {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
