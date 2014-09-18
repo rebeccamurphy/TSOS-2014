@@ -19,7 +19,6 @@ var TSOS;
             // Override the base method pointers.
             _super.call(this, this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             this.capslockOn = false;
-            this.ctrlHeld = false;
         }
         DeviceDriverKeyboard.prototype.krnKbdDriverEntry = function () {
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
@@ -49,11 +48,8 @@ var TSOS;
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
 
-            if (this.ctrlHeld && keyCode == 86) {
-                chr = window.clipboardData.getData('Text');
-                this.ctrlHeld = false;
-                _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 65) && (keyCode <= 90)) || ((keyCode >= 97) && (keyCode <= 123))) {
+            // Check to see if we even want to deal with the key that was pressed.
+            if (((keyCode >= 65) && (keyCode <= 90)) || ((keyCode >= 97) && (keyCode <= 123))) {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
                 chr = String.fromCharCode(keyCode + 32);
