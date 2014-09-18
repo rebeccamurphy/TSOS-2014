@@ -87,23 +87,17 @@ var TSOS;
             return validProgramHex + validProgramBB;
         };
         Utils.convertProgram = function (lang, code) {
-            /*private Bin2Hex(n) :string {
-            return parseInt(n,2).toString(16);
-            };
-            private Hex2Bin(n) :string {
-            return parseInt(n,16).toString(2);
-            };*/
+            debugger;
             var beepboop = [];
             var hex = [];
             var numHex, numBin, numBB, num, temp = "";
             if (lang === "HEX") {
                 for (var i = 0; i < code.length; i++) {
                     numHex = code[i];
-
-                    //debugger;
                     numBin = parseInt(numHex, 16).toString(2); //Hex to binary
-                    numBin = Array(8 - numBin.length).join("0") + numBin; //adds leading boops/0s
+                    numBin = Array(8 - (numBin.length - 1)).join("0") + numBin; //adds leading boops/0s
                     numBB = "";
+                    console.log(numBin);
                     for (var j = 0; j < numBin.length; j++) {
                         num = numBin.charAt(j);
                         temp = (num === "0") ? "BOOP" : "BEEP";
@@ -118,13 +112,13 @@ var TSOS;
                 for (var i = 0; i < code.length; i++) {
                     numBB = code[i];
                     numBin = "";
-                    for (var j = 0; j < 32; j + 4) {
-                        var numStr = numBin.substring(j, j += 4);
+                    for (var j = 0; j < 32; j += 4) {
+                        var numStr = numBB.substring(j, j + 4);
                         var temp = (numStr === "BOOP") ? "0" : "1";
                         numBin += temp;
                     }
                     numHex = parseInt(numBin, 2).toString(16); //coverts bin to hex
-                    numHex = Array(2 - numHex.length).join("0") + numHex; //adds leading 0s
+                    numHex = Array(2 - (numHex.length - 1)).join("0") + numHex; //adds leading 0s
                     hex.push(numHex.toUpperCase());
                 }
                 var tempHexStr = hex.join(" ");

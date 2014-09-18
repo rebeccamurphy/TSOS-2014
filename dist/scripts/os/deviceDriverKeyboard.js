@@ -42,9 +42,6 @@ var TSOS;
             else if (this.capslockOn && !isShifted)
                 isShifted = this.capslockOn;
 
-            if (keyCode == 17 && !this.ctrlHeld) {
-                this.ctrlHeld = true;
-            }
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
 

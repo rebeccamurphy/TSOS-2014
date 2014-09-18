@@ -42,10 +42,7 @@ module TSOS {
                 isShifted = false;
             else if (this.capslockOn && !isShifted) //capslock on and shift not held
                 isShifted = this.capslockOn;
-            
-            if (keyCode==17 && !this.ctrlHeld){ //control is being held
-                this.ctrlHeld = true;
-            }    
+                
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
 
