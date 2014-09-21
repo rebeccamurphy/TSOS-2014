@@ -35,7 +35,7 @@
 </head>
 
 <body onload="onDocumentLoad();">
-
+<div> MysteriOS Bloop </div>
 <div id="divMain" style="width:100%;">
 
    <div id="divButtonBar" style="margin:4px;">
@@ -64,6 +64,10 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
+
+      <div style="display: inline-block;float: right;width: 300px;">
+        <div id="clockDisplay"></div> <div id="statusDisplay"></div>
+      </div>
    </div>
    <div id="divConsole" style="margin:4px; width:515px; height:504px; float:left; overflow-y:auto;">
       <canvas id="display"
@@ -74,9 +78,6 @@
 
    </div>
    <div>
-   <div style="width:930px">
-   <div id="clockDisplay">&nbsp</div> <div id="statusDisplay"></div>
-   </div>
    <div id="divLog" style="margin-left:520px;">
       <label>
          Host Log
