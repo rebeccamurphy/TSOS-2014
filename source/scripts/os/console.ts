@@ -248,14 +248,32 @@ module TSOS {
             }
         }
         public computerOver():void{
-            this.clearScreen();
+            /*this.clearScreen();
             _DrawingContext.fillStyle="#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
             var img = new Image();
             img.onload = function() {
                 _DrawingContext.drawImage(img, 0, 100);
             };
-            img.src ="http://i.imgur.com/sOoqj6a.jpg";
+            img.src ="http://i.imgur.com/sOoqj6a.jpg";*/
+            this.clearScreen();
+            _DrawingContext.fillStyle="#3a50b6";
+            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+            var i =1;
+            var x=0, y=0;
+            window.setInterval(function(){
+            var img = new Image();
+            img.onload = function() {
+                _DrawingContext.drawImage(img, x, y, _Canvas.width, _Canvas.height);
+                i+=.25;
+                x-=50;
+                y-=50;
+            };
+            img.src ="http://i.imgur.com/eD894xb.jpg";
+            _DrawingContext.scale(i,i);
+
+            }, 5000);
+            (<HTMLAudioElement>document.getElementById('c')).play();
         }
             
     }
