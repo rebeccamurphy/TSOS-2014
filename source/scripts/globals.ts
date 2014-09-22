@@ -12,20 +12,21 @@
 // Global "CONSTANTS" (There is currently no const or final or readonly type annotation in TypeScript.)
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
-var APP_NAME: string    = "Noble PorpOS";   // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION: string = "Ugly Baby";   // What did you expect?
+var APP_NAME: string    = "MysteriOS Bloop";   
+var APP_VERSION: string = "Ugly Baby";   
 
 var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 
 var TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                             // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ: number = 1;
-var CONSOLE_BGC: string = "#DFDBC3";
-var CONSOLE_TEXT_COLOR: string = "black";
+var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
+var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
 var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 
 window.onload = function() {
+	//defines console original dimensions 
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
     CONSOLE_VIEWPORT_HEIGHT= parseInt(document.getElementById("display").getAttribute("height"));
 };

@@ -32,7 +32,6 @@ module TSOS {
             var keyCode = params[0];
             var isShifted = params[1];
             
-            //debugger;
             if (keyCode ==20 && !this.capslockOn) //capslock turned on
                 this.capslockOn = true;
             else if (keyCode==20 && this.capslockOn)//capslock turned off
@@ -65,9 +64,9 @@ module TSOS {
                         (keyCode == 38 &&!isShifted)        ||   //arrow up
                         (keyCode == 40 &&!isShifted))            //arrow down         
                 {   if (keyCode == 38 )
-                        chr = "UP";
+                        chr = "UP"; //special case for up
                     else if (keyCode ==40)
-                        chr=  "DOWN";
+                        chr=  "DOWN"; //special case for down
                     else
                         chr = String.fromCharCode(keyCode);
                     _KernelInputQueue.enqueue(chr);
@@ -77,7 +76,7 @@ module TSOS {
                         (keyCode >=219 && keyCode <=222) ||
                         ((keyCode >= 48) && (keyCode <= 57) &&isShifted)) { //number punctuation/symbols
                     switch (keyCode)
-                    {
+                    {   //giant ugly case statement
                         //number punctation/symbols keys
                         case 48: {
                             //0

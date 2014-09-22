@@ -44,13 +44,12 @@ var TSOS;
         };
 
         Utils.checkValidProgram = function (code) {
-            //assumes code has already been parsedto array
+            //assumes code has already been parsed to array
             //check if empty
-            //debugger;
             var validProgramBB = "BB";
             var validProgramHex = "HEX";
             for (var k = 0; k < code.length; k++) {
-                if (code[k].length < 32) {
+                if (code[k].length !== 32) {
                     validProgramBB = "";
                     break;
                 } else if (!(validProgramBB === "")) {
@@ -67,16 +66,18 @@ var TSOS;
                     break;
             }
 
+            //now it checks if the code could be valid hex
             var hexChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
             for (var i = 0; i < code.length; i++) {
                 var numStr = code[i];
-                if (numStr.length < 2) {
+                if (numStr.length !== 2) {
                     validProgramHex = "";
                     break;
                 }
                 if (!(validProgramHex === "")) {
                     for (var j = 0; j < numStr.length; j++) {
                         if (hexChars.indexOf(numStr[j].toUpperCase()) === -1) {
+                            //checks if numStr is made of valid hex chars
                             validProgramHex = "";
                             break;
                         }
@@ -87,7 +88,6 @@ var TSOS;
             return validProgramHex + validProgramBB;
         };
         Utils.convertProgram = function (lang, code) {
-            debugger;
             var beepboop = [];
             var hex = [];
             var numHex, numBin, numBB, num, temp = "";
@@ -106,6 +106,8 @@ var TSOS;
                     beepboop.push(numBB);
                 }
                 var tempBBStr = beepboop.join(" ");
+
+                //puts beepboop in textarea
                 document.getElementById("taProgramInput").value = tempBBStr;
                 return true;
             } else if (lang === "BB") {
@@ -122,16 +124,19 @@ var TSOS;
                     hex.push(numHex.toUpperCase());
                 }
                 var tempHexStr = hex.join(" ");
+
+                //puts hex in text area
                 document.getElementById("taProgramInput").value = tempHexStr;
                 return true;
             } else
                 return false;
-            return false;
         };
 
         Utils.updateClockDisplay = function () {
             var date = new Date();
             var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+
+            //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
         };
         return Utils;

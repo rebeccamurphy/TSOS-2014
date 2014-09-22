@@ -45,17 +45,16 @@ module TSOS {
         }
 
         public static checkValidProgram(code) :string {
-            //assumes code has already been parsedto array
+            //assumes code has already been parsed to array
             //check if empty
-            //debugger;
             var validProgramBB = "BB";
             var validProgramHex = "HEX";
             for (var k=0; k<code.length;k++){ //check for beepboop
-                if (code[k].length < 32){    //each beepboop should have 8 beeps/boops
+                if (code[k].length !== 32){    //each beepboop should have 8 beeps/boops
                     validProgramBB = "";
                     break;
                 }
-                else if (!(validProgramBB==="")){
+                else if (!(validProgramBB==="")){ //if length is 32, check for beeps and boops
                     for (var h =0; h< 32; h+=4){
                         var bb = code[k].substring(h, h+4).toUpperCase();; //should be a beep or boop
                         if ( !(bb === "BEEP") && !(bb==="BOOP")){
@@ -68,17 +67,18 @@ module TSOS {
                 else 
                     break; //breaks encasing forloop if validProgramBB is false
             }
-
+            //now it checks if the code could be valid hex
             var hexChars = ["0", "1", "2", "3", "4", "5", "6", "7","8", "9", "A", "B", "C", "D", "E","F"];
             for (var i =0; i< code.length; i++){ //check for hex
                 var numStr = code[i];
-                if (numStr.length <2){
+                if (numStr.length !==2){ //hex can only have a length of 2 
                     validProgramHex ="";
                     break;
                 }
                 if (!(validProgramHex==="")){
                     for (var j =0; j< numStr.length; j++){
-                        if (hexChars.indexOf(numStr[j].toUpperCase()) === -1){
+                        if (hexChars.indexOf(numStr[j].toUpperCase()) === -1){ 
+                            //checks if numStr is made of valid hex chars
                             validProgramHex ="";
                             break;
                         }
@@ -87,16 +87,9 @@ module TSOS {
                 else 
                     break; //breaks out of encasing for loop if validProgramHex is false
             }
-            return validProgramHex + validProgramBB; 
+            return validProgramHex + validProgramBB; //should only return HEX, BB, or ""
         }
         public static convertProgram(lang:string, code):boolean{
-            /*private Bin2Hex(n) :string {
-                return parseInt(n,2).toString(16);
-            };
-            private Hex2Bin(n) :string {
-                return parseInt(n,16).toString(2);
-            };*/
-            debugger;
             var beepboop= [];
             var hex = [];
             var numHex, numBin, numBB, num, temp = "";
@@ -114,7 +107,8 @@ module TSOS {
                         }
                     beepboop.push(numBB);
                 }
-                var tempBBStr = beepboop.join(" "); //puts beepboop in textarea
+                var tempBBStr = beepboop.join(" "); 
+                //puts beepboop in textarea
                 (<HTMLInputElement>document.getElementById("taProgramInput")).value = tempBBStr;
                 return true;
             }
@@ -131,19 +125,20 @@ module TSOS {
                     numHex = Array(2-(numHex.length-1)).join("0") +numHex; //adds leading 0s
                     hex.push(numHex.toUpperCase());
                 }
-                var tempHexStr = hex.join(" "); //puts hex in text area
+                var tempHexStr = hex.join(" "); 
+                //puts hex in text area
                 (<HTMLInputElement>document.getElementById("taProgramInput")).value = tempHexStr;
                 return true;    
             }
             else 
                 return false;
-        return false;
         }
 
         public static updateClockDisplay(){
             var date = new Date();
             var now = String(date.getMonth()+1) +"/" + String(date.getDate()) + "/" +String(date.getFullYear()).slice(-2) + " "
                 + String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + String(date.getSeconds());
+            //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
 
         }

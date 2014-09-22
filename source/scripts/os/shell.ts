@@ -15,7 +15,6 @@ module TSOS {
         // Properties
         public promptStr = ">";
         public commandList = [];
-        public userPrograms = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf], [ovgpu],[qhpx],[onol], [Wrfhf]";
         public apologies = "[sorry]";
         public backdoors = "[jeff]";
@@ -94,13 +93,14 @@ module TSOS {
                                   "load",
                                   "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
+            
             // BSOD
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
                                   "- Tests kernel trapping an OS error.");
             this.commandList[this.commandList.length] = sc;
 
-            // status
+            // status <string>
             sc = new ShellCommand(this.shellStatus,
                                   "status",
                                   "<string> - Display's users entered status in host display.");
@@ -185,7 +185,7 @@ module TSOS {
                 _StdOut.advanceLine();
             }
             // ... and finally write the prompt again.
-            if (fn !== this.shellBSOD)
+            if (fn !== this.shellBSOD &&  fn!==this.shellShutdown) //unless we're BS-ing or shutting down
                 this.putPrompt();
         }
 
@@ -277,7 +277,6 @@ module TSOS {
              _StdOut.putText("Shutting down...");
              // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
-            // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         }
 
         public shellCls(args) {
@@ -400,10 +399,10 @@ module TSOS {
             var programType = Utils.checkValidProgram(tempProgramString);
             if (programType !== "HEX" && programType!== undefined){
                 if (_SarcasticMode)
-                    _StdOut.putText("Invalid hex program you pox upon humanity. If you want convert hex to"+
+                    _StdOut.putText("Invalid hex program you pox upon humanity. If you want convert hex to "+
                         "beepboop put valid hex program in ta.");
                 else
-                    _StdOut.putText("Invalid hex program.If you want convert hex to"+ 
+                    _StdOut.putText("Invalid hex program.If you want convert hex to "+ 
                         "beepboop put valid hex program in ta.");
             }
             else {
@@ -413,16 +412,15 @@ module TSOS {
         }
         public shellUnBB(args):void{
             var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
-            //debugger;
             var tempProgramString = null;
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
             var programType = Utils.checkValidProgram(tempProgramString);
             if (programType !== "BB" &&programType!== undefined){
                 if (_SarcasticMode)
-                    _StdOut.putText("Invalid beepboop program you pox upon humanity. If you want convert beepboop to"+ 
+                    _StdOut.putText("Invalid beepboop program you pox upon humanity. If you want convert beepboop to "+ 
                         "hex put valid beepboop program in ta.");
                 else
-                    _StdOut.putText("Invalid beepboop program.If you want convert beepboop to" +
+                    _StdOut.putText("Invalid beepboop program.If you want convert beepboop to " +
                         "hex put valid beepboop program in ta.");
             }
             else {

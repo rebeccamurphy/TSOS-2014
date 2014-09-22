@@ -31,7 +31,6 @@ var TSOS;
             var keyCode = params[0];
             var isShifted = params[1];
 
-            //debugger;
             if (keyCode == 20 && !this.capslockOn)
                 this.capslockOn = true;
             else if (keyCode == 20 && this.capslockOn)
@@ -58,9 +57,9 @@ var TSOS;
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || (keyCode == 32) || (keyCode == 13) || (keyCode == 8) || (keyCode == 9) || (keyCode == 38 && !isShifted) || (keyCode == 40 && !isShifted)) {
                 if (keyCode == 38)
-                    chr = "UP";
+                    chr = "UP"; //special case for up
                 else if (keyCode == 40)
-                    chr = "DOWN";
+                    chr = "DOWN"; //special case for down
                 else
                     chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);

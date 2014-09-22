@@ -44,6 +44,7 @@ var TSOS;
         };
 
         CanvasTextFunctions.draw = function (ctx, font, size, x, y, str, color) {
+            //I added the optional parameter for color, the default color is black
             var total = 0;
             var len = str.length;
             var mag = size / 25.0;
