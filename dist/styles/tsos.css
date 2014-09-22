@@ -1,13 +1,13 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(../images/linen.png) repeat;
+  /*background: #909193 url(../images/linen.png) repeat;*/
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
   font-style: normal;
 }
-
+/*
 h1 {
   color: black;
   font-size: 24pt;
@@ -22,7 +22,7 @@ h2 {
   font-weight: normal;
   font-style: normal;
 }
-
+*/
 h3 {
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 16pt;

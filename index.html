@@ -4,6 +4,7 @@
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="dist/styles/tsos.css" type="text/css" media="screen" />
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
    <title>
       My Bitchen OS Project
    </title>
@@ -30,17 +31,14 @@
 
    <!-- Other Routines -->
    <script type="text/javascript" src="dist/scripts/utils.js"></script>
-
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
    <!-- Uncomment this line below to enable Glados testing -->
    <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
 </head>
 
 <body onload="onDocumentLoad();">
-<div> MysteriOS Bloop </div>
-<audio id ="c" src="http://clyp.it/44lqmgqn.ogg"></audio>
-<div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
+<div id="divButtonBar" class="col-md-4">
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
@@ -66,11 +64,15 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
-
-      <div style="display: inline-block;float: right;width: 300px;">
-        <div id="clockDisplay"></div> <div id="statusDisplay"></div>
-      </div>
    </div>
+<h2 class="col-md-4"> MysteriOS Bloop </h2>
+
+<div class="col-md-4">
+  <div id="clockDisplay"></div> <div id="statusDisplay"></div>
+</div>
+
+<audio id ="c" src="http://clyp.it/44lqmgqn.ogg"></audio>
+<div id="divMain" class="col-md-12">
    <div id="divConsole" style="margin:4px; width:515px; height:504px; float:left; overflow-y:auto;">
       <canvas id="display"
               width="500"
