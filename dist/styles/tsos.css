@@ -76,3 +76,9 @@ h3 {
   display:inline-block;
   float:right;
 }
+h2{
+  margin-top:0px;
+}
+#titleBar{
+  margin: 5px;
+}
