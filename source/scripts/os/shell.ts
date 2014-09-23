@@ -368,8 +368,12 @@ module TSOS {
             //gets the text box content
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
-            
-            tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
+            if (boxContent.indexOf(" ")==-1 && (boxContent.indexOf("BEEP")==-1||boxContent.indexOf("BOOP")==-1)){
+                //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
+                tempProgramString= boxContent.match(/.{1,2}/g);            
+            }
+            else
+                tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
             if (boxContent.length===0){
                 if (_SarcasticMode)
                     _StdOut.putText("Enter something in the textarea first. Poopbutt.");
