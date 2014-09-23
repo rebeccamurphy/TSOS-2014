@@ -108,7 +108,7 @@ var TSOS;
                 var tempBBStr = beepboop.join(" ");
 
                 //puts beepboop in textarea
-                document.getElementById("taProgramInput").value = tempBBStr;
+                TSOS.Control.displayUserProgram(tempBBStr);
                 return true;
             } else if (lang === "BB") {
                 for (var i = 0; i < code.length; i++) {
@@ -126,18 +126,10 @@ var TSOS;
                 var tempHexStr = hex.join(" ");
 
                 //puts hex in text area
-                document.getElementById("taProgramInput").value = tempHexStr;
+                TSOS.Control.displayUserProgram(tempHexStr);
                 return true;
             } else
                 return false;
-        };
-
-        Utils.updateClockDisplay = function () {
-            var date = new Date();
-            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
-
-            //changes clock tag to current time
-            document.getElementById("clockDisplay").innerHTML = now;
         };
         return Utils;
     })();

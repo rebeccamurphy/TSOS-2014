@@ -331,7 +331,7 @@ var TSOS;
 
         Shell.prototype.shellLoad = function (args) {
             //gets the text box content
-            var boxContent = document.getElementById("taProgramInput").value.trim();
+            var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
 
             tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
@@ -354,7 +354,7 @@ var TSOS;
         };
 
         Shell.prototype.shellBB = function (args) {
-            var boxContent = document.getElementById("taProgramInput").value.trim();
+            var boxContent = TSOS.Control.getUserProgram();
 
             //debugger;
             var tempProgramString = null;
@@ -371,7 +371,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellUnBB = function (args) {
-            var boxContent = document.getElementById("taProgramInput").value.trim();
+            var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
             tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
             var programType = TSOS.Utils.checkValidProgram(tempProgramString);
@@ -388,7 +388,7 @@ var TSOS;
         Shell.prototype.shellStatus = function (args) {
             var msg = args[0];
             if (msg.length !== 0) {
-                document.getElementById("statusDisplay").innerHTML = msg;
+                TSOS.Control.displayUserStatus(msg);
             } else
                 _StdOut.putText("Invalid status.");
         };

@@ -366,7 +366,7 @@ module TSOS {
 
         public shellLoad(args){
             //gets the text box content
-            var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
+            var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
             
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
@@ -392,7 +392,7 @@ module TSOS {
         }
 
         public shellBB(args):void{
-            var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
+            var boxContent  =TSOS.Control.getUserProgram();
             //debugger;
             var tempProgramString = null;
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
@@ -411,7 +411,7 @@ module TSOS {
             }                
         }
         public shellUnBB(args):void{
-            var boxContent  =(<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
+            var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
             var programType = Utils.checkValidProgram(tempProgramString);
@@ -432,7 +432,7 @@ module TSOS {
         public shellStatus(args):void{
             var msg = args[0];
             if (msg.length !==0){
-                document.getElementById("statusDisplay").innerHTML = msg;
+                TSOS.Control.displayUserStatus(msg);
             }
             else
                 _StdOut.putText("Invalid status.");

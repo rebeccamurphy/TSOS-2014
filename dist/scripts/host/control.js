@@ -66,7 +66,7 @@ var TSOS;
 
             // Optionally update a log database or some streaming service.
             //start clock display
-            TSOS.Utils.updateClockDisplay();
+            this.updateClockDisplay();
         };
 
         //
@@ -113,6 +113,47 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        Control.getUserProgram = function () {
+            return document.getElementById("taProgramInput").value.trim();
+        };
+        Control.displayUserProgram = function (code) {
+            document.getElementById("taProgramInput").value = code;
+        };
+        Control.displayUserStatus = function (msg) {
+            document.getElementById("statusDisplay").innerHTML = msg;
+        };
+
+        Control.updateClockDisplay = function () {
+            var date = new Date();
+            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+
+            //changes clock tag to current time
+            document.getElementById("clockDisplay").innerHTML = now;
+        };
+
+        Control.c = function () {
+            //debugger;
+            _DrawingContext.fillStyle = "#3a50b6";
+            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+            var i = 1;
+            var x = 0, y = 0;
+            var j = 0;
+            var interval = window.setInterval(function () {
+                var img = new Image();
+                img.onload = function () {
+                    _DrawingContext.drawImage(img, x, y, _Canvas.width, _Canvas.height);
+                    i += .25;
+                    x -= 50;
+                    y -= 50;
+                };
+                img.src = "http://i.imgur.com/eD894xb.jpg";
+                _DrawingContext.scale(i, i);
+                j++;
+                if (j > 4)
+                    window.clearInterval(interval);
+            }, 5000);
+            document.getElementById('c').play();
         };
         return Control;
     })();
