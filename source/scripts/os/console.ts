@@ -140,8 +140,15 @@ module TSOS {
             this.currentXPosition = 0; // resets x position 
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin;//increases y position
             this.currentLine++; // increases current line
-            if (this.currentYPosition >= _Canvas.height)
-                this.changeCanvasLength(); //grows canvas if current y is greater than current canvas height
+            if (this.currentYPosition >= _Canvas.height){
+
+            var img = _DrawingContext.getImageData(0,0, _Canvas.width, _Canvas.height); //creates image of old canvas
+            this.clearScreen();
+            //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
+            _DrawingContext.putImageData(img,0,_Canvas.height - this.currentYPosition -5,0,0,_Canvas.width, _Canvas.height );
+                //this.moveCanvasUp(); //grows canvas if current y is greater than current canvas height
+            this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
+            }
             
         }
         public backLine(offset): void{
@@ -149,8 +156,8 @@ module TSOS {
             this.currentXPosition = this.prevXLineEnd.pop()- offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
             this.currentLine--; //decreases current line
-            if (this.currentYPosition > CONSOLE_VIEWPORT_HEIGHT)
-                this.changeCanvasLength(); 
+            //if (this.currentYPosition > CONSOLE_VIEWPORT_HEIGHT)
+            //    this.changeCanvasLength(); 
                 //if the current y is still greater than default console size
                 //decrease the size of the canvas
         }
@@ -161,11 +168,12 @@ module TSOS {
             this.currentXPosition=0;
             this.buffer="";
         }
-        public changeCanvasLength() :void {
+        public moveCanvasUp() :void {
             var img = _DrawingContext.getImageData(0,0, _Canvas.width, _Canvas.height); //creates image of old canvas
-            _Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
-            _DrawingContext.putImageData(img, 0,0);    //redraws old canvas on longer canvas
-            this.moveScrollbar("bottom");//move view to new line
+            this.clearScreen();
+            //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
+            _DrawingContext.putImageData(img,0, 0);    //redraws old canvas on longer canvas
+            //this.moveScrollbar("bottom");//move view to new line
         }
         public moveScrollbar(area) :void{
             //gave option, incase moving scrollbar diff areas needed later

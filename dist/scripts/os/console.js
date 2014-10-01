@@ -143,16 +143,24 @@ var TSOS;
             this.currentXPosition = 0; // resets x position
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin; //increases y position
             this.currentLine++; // increases current line
-            if (this.currentYPosition >= _Canvas.height)
-                this.changeCanvasLength(); //grows canvas if current y is greater than current canvas height
+            if (this.currentYPosition >= _Canvas.height) {
+                var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                this.clearScreen();
+
+                //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
+                _DrawingContext.putImageData(img, 0, _Canvas.height - this.currentYPosition - 5, 0, 0, _Canvas.width, _Canvas.height);
+
+                //this.moveCanvasUp(); //grows canvas if current y is greater than current canvas height
+                this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
+            }
         };
         Console.prototype.backLine = function (offset) {
             //sets x position to where it left off at the last line
             this.currentXPosition = this.prevXLineEnd.pop() - offset;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
             this.currentLine--; //decreases current line
-            if (this.currentYPosition > CONSOLE_VIEWPORT_HEIGHT)
-                this.changeCanvasLength();
+            //if (this.currentYPosition > CONSOLE_VIEWPORT_HEIGHT)
+            //    this.changeCanvasLength();
             //if the current y is still greater than default console size
             //decrease the size of the canvas
         };
@@ -163,11 +171,13 @@ var TSOS;
             this.currentXPosition = 0;
             this.buffer = "";
         };
-        Console.prototype.changeCanvasLength = function () {
+        Console.prototype.moveCanvasUp = function () {
             var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
-            _Canvas.height = this.currentYPosition + 5; //increases length of console, +5 for bottom buffer
+            this.clearScreen();
+
+            //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
             _DrawingContext.putImageData(img, 0, 0); //redraws old canvas on longer canvas
-            this.moveScrollbar("bottom"); //move view to new line
+            //this.moveScrollbar("bottom");//move view to new line
         };
         Console.prototype.moveScrollbar = function (area) {
             //gave option, incase moving scrollbar diff areas needed later
