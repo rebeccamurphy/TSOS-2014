@@ -133,5 +133,15 @@ module TSOS {
             else 
                 return false;
         }
+    public static dec2hex (numDec){
+        return numDec.toString(16);
+        
     }
+    public static hex2dex(numHex){
+      return parseInt(numHex, 16);
+    }
+
+    }
+
+
 }

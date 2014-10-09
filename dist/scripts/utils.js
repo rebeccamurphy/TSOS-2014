@@ -131,6 +131,12 @@ var TSOS;
             } else
                 return false;
         };
+        Utils.dec2hex = function (numDec) {
+            return numDec.toString(16);
+        };
+        Utils.hex2dex = function (numHex) {
+            return parseInt(numHex, 16);
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;
