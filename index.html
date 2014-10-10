@@ -103,6 +103,17 @@
          ></textarea>
          </small>
       </label>
+    <div id="divUserProgramInput">
+      <label>
+         User Program Input
+         <br>
+         <textarea name="taProgramInput"
+                   id  ="taProgramInput"
+                   rows="8"
+                   cols="38"
+         ></textarea>
+      </label>
+   </div>  
    </div>
 
    <div id="divMemory" class="col-md-3" >
@@ -121,19 +132,37 @@
          </div>
          </small>
       </label>
-   </div>
-   
-   <div id="divUserProgramInput" style="margin-left:520px;">
       <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
+        <div style="width:345px;margin-bottom:1px">CPU<div id="instructID">No instruction</div></div>
+         <small>
+         <div id="cpuWrapper">
+            <table id = "cpuDisplayBox" class="table table-bordered">
+              <thead style="font-weight:bold">
+                <tr>
+                  <td>PC</td>
+                  <td>IR</td>
+                  <td>ACC</td>
+                  <td>X</td>
+                  <td>Y</td>
+                  <td>Z</td>
+                </tr>
+              </thead>
+              <tbody id ="">
+              <tr>
+                  <td id="pcDisplay">0</td>
+                  <td id="irDisplay">0</td>
+                  <td id="accDisplay">0</td>
+                  <td id="xDisplay">0</td>
+                  <td id="yDisplay">0</td>
+                  <td id="zDisplay">0</td>
+              <tr>
+              </tbody>
+            </table>
+         </div>
+         </small>
       </label>
    </div>
+   
    
 </div>
 
