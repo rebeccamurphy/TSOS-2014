@@ -112,7 +112,7 @@ module TSOS {
                 TSOS.Control.displayUserProgram(tempBBStr);
                 return true;
             }
-            else if (lang ==="BB"){//convert beepboop to hex
+            else if (lang ==="BB" || lang ==="runnableBB"){//convert beepboop to hex
                 for (var i=0; i < code.length; i++){
                     numBB = code[i];
                     numBin ="";
@@ -126,8 +126,11 @@ module TSOS {
                     hex.push(numHex.toUpperCase());
                 }
                 var tempHexStr = hex.join(" "); 
-                //puts hex in text area
-                TSOS.Control.displayUserProgram(tempHexStr);
+                if (lang==="runnableBB")
+                    _MemoryManager.loadProgram(hex);
+                else
+                    //puts hex in text area
+                    TSOS.Control.displayUserProgram(tempHexStr);
                 return true;    
             }
             else 
