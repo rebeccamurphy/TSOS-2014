@@ -31,14 +31,17 @@ module TSOS {
         Control.updateMemoryDisplay(output);
         }
 
-        public loadProgram(program){
-            console.log(program);
-            debugger;
+        public loadProgram(program):String{
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i] = program[i];
             }
             this.updateMemoryDisplay();
+            var currPCB = new TSOS.PCB();
+            return String (currPCB.pid);
 
-        }
+        }/*
+        public getMemory(address){
+
+            }*/
     }
 }

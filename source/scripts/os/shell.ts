@@ -94,6 +94,12 @@ module TSOS {
                                   "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
             
+            //run
+            sc = new ShellCommand(this.shellRun,
+                                  "run",
+                                  "<number> - Runs program with id of <number> if the program is in memory.");
+            this.commandList[this.commandList.length] = sc;
+
             // BSOD
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
@@ -380,9 +386,14 @@ module TSOS {
                 else
                     _StdOut.putText("Enter something in the textarea first.");
             }
-            else if (Utils.checkValidProgram(tempProgramString)==="HEX" ||
-                     Utils.checkValidProgram(tempProgramString)==="BB"){
+            else if (Utils.checkValidProgram(tempProgramString)==="HEX"){
                 _StdOut.putText("Successfully loaded program.");
+                _StdOut.advanceLine();
+                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
+            }
+            else if (Utils.checkValidProgram(tempProgramString)==="BB"){
+                Utils.convertProgram("runnableBB", tempProgramString);
+                _StdOut.putText("ProcessID: " + String(_CurrPID-1));   
             }
             else{
                 if (_SarcasticMode)
@@ -390,6 +401,9 @@ module TSOS {
                 else
                     _StdOut.putText("Invalid Format.");
             }
+        }
+        public shellRun(args){
+
         }
         public shellBSOD(args){
             _Kernel.krnTrapError("TEST");

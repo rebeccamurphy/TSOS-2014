@@ -42,8 +42,8 @@ var _MemoryByteSize = 8;
 var _ProgramSize = 256;
 var _NumPrograms =1; 
 var _MemorySize = _NumPrograms * _ProgramSize;
-
-
+var _ProgramList;
+var _CurrPID=0;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

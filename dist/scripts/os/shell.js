@@ -66,6 +66,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
 
+            //run
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<number> - Runs program with id of <number> if the program is in memory.");
+            this.commandList[this.commandList.length] = sc;
+
             // BSOD
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Tests kernel trapping an OS error.");
             this.commandList[this.commandList.length] = sc;
@@ -343,14 +347,21 @@ var TSOS;
                     _StdOut.putText("Enter something in the textarea first. Poopbutt.");
                 else
                     _StdOut.putText("Enter something in the textarea first.");
-            } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX" || TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
+            } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX") {
                 _StdOut.putText("Successfully loaded program.");
+                _StdOut.advanceLine();
+                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
+            } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
+                TSOS.Utils.convertProgram("runnableBB", tempProgramString);
+                _StdOut.putText("ProcessID: " + String(_CurrPID - 1));
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
                 else
                     _StdOut.putText("Invalid Format.");
             }
+        };
+        Shell.prototype.shellRun = function (args) {
         };
         Shell.prototype.shellBSOD = function (args) {
             _Kernel.krnTrapError("TEST");

@@ -40,7 +40,8 @@ var _MemoryByteSize = 8;
 var _ProgramSize = 256;
 var _NumPrograms = 1;
 var _MemorySize = _NumPrograms * _ProgramSize;
-
+var _ProgramList;
+var _CurrPID = 0;
 var _OSclock = 0;
 
 var _Mode = 0;
