@@ -78,7 +78,8 @@ module TSOS {
         public static hostBtnStartOS_click(btn): void {
             // Disable the (passed-in) start button...
             btn.disabled = true;
-
+            //window onload added to prevent resource loading error
+            window.onload =function(){
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
@@ -100,6 +101,7 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();
+            };
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -143,6 +145,14 @@ module TSOS {
             document.getElementById("memDisplay").innerHTML = output;
 
 
+        }
+        public static updateCpuDisplay(){
+            document.getElementById("pcDisplay").innerHTML = String(_CPU.PC);
+            //document.getElementById("irDisplay").innerHTML = String(_CPU.IR);
+            document.getElementById("accDisplay").innerHTML = String(_CPU.Acc);
+            document.getElementById("xDisplay").innerHTML = String(_CPU.Xreg);
+            document.getElementById("yDisplay").innerHTML = String(_CPU.Yreg);
+            document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
         }
 
         public static c(){

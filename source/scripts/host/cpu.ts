@@ -46,6 +46,10 @@ module TSOS {
         public fetch(): String{
             return _MemoryManager.
         }*/
+        public updateCpu(){
 
+            //update the CPU display
+            TSOS.Control.updateCpuDisplay();
+        }
     }
 }

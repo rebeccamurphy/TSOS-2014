@@ -71,10 +71,11 @@ h3 {
 }
 #clockDisplay{
   display: inline-block;
+  float:right;
 }
 #statusDisplay{
   display:inline-block;
-  float:right;
+  float:left;
 }
 h2{
   margin-top:0px;

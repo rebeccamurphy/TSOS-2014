@@ -41,6 +41,15 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
         };
+
+        /*
+        public fetch(): String{
+        return _MemoryManager.
+        }*/
+        Cpu.prototype.updateCpu = function () {
+            //update the CPU display
+            TSOS.Control.updateCpuDisplay();
+        };
         return Cpu;
     })();
     TSOS.Cpu = Cpu;
