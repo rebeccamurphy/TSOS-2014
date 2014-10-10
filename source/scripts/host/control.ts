@@ -73,7 +73,6 @@ module TSOS {
         }
 
 
-        //
         // Host Events
         //
         public static hostBtnStartOS_click(btn): void {
@@ -90,6 +89,11 @@ module TSOS {
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new Cpu();
             _CPU.init();
+
+            // Initialize Memory Manager
+            
+            _MemoryManager= new MemoryManager();
+            _MemoryManager.init();
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -135,6 +139,12 @@ module TSOS {
 
         }
 
+        public static updateMemoryDisplay(output){
+            document.getElementById("memDisplay").innerHTML = output;
+
+
+        }
+
         public static c(){
             //debugger;
             _DrawingContext.fillStyle="#3a50b6";
@@ -159,5 +169,6 @@ module TSOS {
             (<HTMLAudioElement>document.getElementById('c')).play();
 
         }
+
     }
 }

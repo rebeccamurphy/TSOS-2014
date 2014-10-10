@@ -10,7 +10,7 @@ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var APP_NAME = "MysteriOS Bloop";
-var APP_VERSION = "Ugly Baby";
+var APP_VERSION = "Uglyier Baby";
 
 var CPU_CLOCK_INTERVAL = 100;
 
@@ -33,6 +33,13 @@ window.onload = function () {
 // Global Variables
 //
 var _CPU;
+
+//Memory Vars
+var _MemoryManager;
+var _MemoryByteSize = 8;
+var _ProgramSize = 256;
+var _NumPrograms = 1;
+var _MemorySize = _NumPrograms * _ProgramSize;
 
 var _OSclock = 0;
 

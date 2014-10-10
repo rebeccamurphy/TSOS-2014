@@ -5,12 +5,12 @@ FUTURE ME PUT REALLY NICE COMMENTS HERE.
 module TSOS {
 
     export class Memory {
-
-        constructor(public Data: Array<String>,
-                    public byteSize: number=0) {
-
-            this.Data = new Array();
+        public Data: Array<String>;
+        constructor(public byteSize:number) {
             this.byteSize = byteSize;
+
+            this.Data = new Array(byteSize);
+            this.init();
 
         }
 

@@ -82,3 +82,29 @@ h2{
 #titleBar{
   margin: 5px;
 }
+textarea{
+font-weight: normal !important;
+}
+#divLog{
+  width:390px;
+}
+#divMemory{
+  font-weight: normal !important;
+  padding: 0px !important;
+}
+#memDisplayBox{
+  font-weight: normal !important;
+  border-color: rgb(169,169,169);
+  
+}
+#memDisplay{
+ 
+}
+#memoryWrapper{
+  border: 1px solid;
+  border-color: rgb(169,169,169);
+  overflow-y:auto;
+  max-height:400px;
+  height: 400px;
+  width:345px;
+}

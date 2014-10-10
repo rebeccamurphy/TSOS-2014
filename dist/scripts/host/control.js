@@ -69,7 +69,6 @@ var TSOS;
             this.updateClockDisplay();
         };
 
-        //
         // Host Events
         //
         Control.hostBtnStartOS_click = function (btn) {
@@ -86,6 +85,10 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu();
             _CPU.init();
+
+            // Initialize Memory Manager
+            _MemoryManager = new TSOS.MemoryManager();
+            _MemoryManager.init();
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -130,6 +133,10 @@ var TSOS;
 
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
+        };
+
+        Control.updateMemoryDisplay = function (output) {
+            document.getElementById("memDisplay").innerHTML = output;
         };
 
         Control.c = function () {

@@ -13,7 +13,7 @@
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var APP_NAME: string    = "MysteriOS Bloop";   
-var APP_VERSION: string = "Ugly Baby";   
+var APP_VERSION: string = "Uglyier Baby";   
 
 var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 
@@ -25,6 +25,8 @@ var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
 var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 
+
+
 window.onload = function() {
 	//defines console original dimensions 
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
@@ -34,6 +36,13 @@ window.onload = function() {
 // Global Variables
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+//Memory Vars
+var _MemoryManager: TSOS.MemoryManager;
+var _MemoryByteSize = 8;
+var _ProgramSize = 256;
+var _NumPrograms =1; 
+var _MemorySize = _NumPrograms * _ProgramSize;
+
 
 var _OSclock: number = 0;  // Page 23.
 
@@ -69,6 +78,7 @@ var _SarcasticMode: boolean = false;
 var _krnKeyboardDriver = null;
 
 var _hardwareClockID: number = null;
+
 
 // For testing...
 var _GLaDOS: any = null;

@@ -5,6 +5,7 @@
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
    <link rel="stylesheet" href="dist/styles/tsos.css" type="text/css" media="screen" />
+
    <title>
       My Bitchen OS Project
    </title>
@@ -16,6 +17,8 @@
    <script type="text/javascript" src="dist/scripts/host/control.js"></script>
    <script type="text/javascript" src="dist/scripts/host/devices.js"></script>
    <script type="text/javascript" src="dist/scripts/host/cpu.js"></script>
+   <script type="text/javascript" src="dist/scripts/host/memory.js"></script>
+
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="dist/scripts/os/interrupt.js"></script>
@@ -28,6 +31,7 @@
    <script type="text/javascript" src="dist/scripts/os/shellCommand.js"></script>
    <script type="text/javascript" src="dist/scripts/os/userCommand.js"></script>
    <script type="text/javascript" src="dist/scripts/os/kernel.js"></script>
+   <script type="text/javascript" src="dist/scripts/os/memoryManager.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="dist/scripts/utils.js"></script>
@@ -37,7 +41,7 @@
    <!-- Uncomment this line below to enable Glados testing -->
    <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
 </head>
-
+<audio id ="c" src="http://clyp.it/44lqmgqn.ogg"></audio>
 <body onload="onDocumentLoad();">
 <div id="titleBar" style="height:46px">
 <div id="divButtonBar" class="col-md-4">
@@ -76,29 +80,48 @@
       <div style="display: inline-block;float: right;width: 300px;">
         <div id="clockDisplay"></div> <div id="statusDisplay"></div>
       </div>
-   </div>
-   <div id="divConsole" style="margin:4px; width:515px; height:504px; float:left;">
+</div>
+<div id="divConsole" style="margin:4px; width:515px; height:504px; float:left;" class="col-md-6">
 
-      <canvas id="display"
-              width="500"
-              height="500" 
-              tabindex="3">
-      </canvas>
+  <canvas id="display"
+          width="500"
+          height="500" 
+          tabindex="3">
+  </canvas>
 
-   </div>
-   <div>
-   <div id="divLog" style="margin-left:520px;">
+</div>
+   <div id="divLog" class="col-md-4">
       <label>
          Host Log
          <br>
+         <small>
          <textarea name="taHostLog"
                    id  ="taHostLog"
-                   rows="26"
-                   cols="48"
+                   rows="20"
+                   cols="45"
          ></textarea>
+         </small>
       </label>
    </div>
 
+   <div id="divMemory" class="col-md-3" >
+      <label>
+         Memory
+         <br>
+         <small>
+         <div id="memoryWrapper">
+            <table id = "memDisplayBox" class="table table-bordered">
+              <tbody id ="memDisplay">
+              <tr>
+                  <td>Memory will be initialized on start up.</td>
+              <tr>
+              </tbody>
+            </table>
+         </div>
+         </small>
+      </label>
+   </div>
+   
    <div id="divUserProgramInput" style="margin-left:520px;">
       <label>
          User Program Input
@@ -110,7 +133,7 @@
          ></textarea>
       </label>
    </div>
-   </div>
+   
 </div>
 
 <p class="footerText" style="clear:both;">
