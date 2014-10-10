@@ -20,15 +20,24 @@ var TSOS;
 
         MemoryManager.prototype.updateMemoryDisplay = function () {
             var output = "<tr>";
-            debugger;
+
             for (var i = 0; i < this.memory.byteSize; i++) {
                 if (i % 8 === 0) {
-                    output += "</tr><tr><td> <b>0x0" + TSOS.Utils.dec2hex(i) + " </td>";
+                    output += "</tr><tr><td> <b>" + TSOS.Utils.createHexIndex(i) + " </td>";
                 }
                 output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
             }
             output += "</tr>";
             TSOS.Control.updateMemoryDisplay(output);
+        };
+
+        MemoryManager.prototype.loadProgram = function (program) {
+            console.log(program);
+            debugger;
+            for (var i = 0; i < program.length; i++) {
+                this.memory.Data[i] = program[i];
+            }
+            this.updateMemoryDisplay();
         };
         return MemoryManager;
     })();

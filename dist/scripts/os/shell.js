@@ -345,6 +345,7 @@ var TSOS;
                     _StdOut.putText("Enter something in the textarea first.");
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX" || TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 _StdOut.putText("Successfully loaded program.");
+                _MemoryManager.loadProgram(tempProgramString);
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");

@@ -134,14 +134,17 @@ module TSOS {
                 return false;
         }
     public static dec2hex (numDec){
-        return numDec.toString(16);
+        return numDec.toString(16).toUpperCase();
         
     }
     public static hex2dex(numHex){
       return parseInt(numHex, 16);
     }
 
+    public static createHexIndex(numDec){
+        var numHex = this.dec2hex(numDec);
+        return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
     }
 
-
+    }
 }

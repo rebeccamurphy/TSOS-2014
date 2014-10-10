@@ -132,10 +132,15 @@ var TSOS;
                 return false;
         };
         Utils.dec2hex = function (numDec) {
-            return numDec.toString(16);
+            return numDec.toString(16).toUpperCase();
         };
         Utils.hex2dex = function (numHex) {
             return parseInt(numHex, 16);
+        };
+
+        Utils.createHexIndex = function (numDec) {
+            var numHex = this.dec2hex(numDec);
+            return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
         };
         return Utils;
     })();
