@@ -136,7 +136,7 @@ var TSOS;
         Utils.dec2hex = function (numDec) {
             return numDec.toString(16).toUpperCase();
         };
-        Utils.hex2dex = function (numHex) {
+        Utils.hex2dec = function (numHex) {
             return parseInt(numHex, 16);
         };
 

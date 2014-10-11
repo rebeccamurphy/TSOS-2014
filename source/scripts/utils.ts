@@ -140,7 +140,7 @@ module TSOS {
         return numDec.toString(16).toUpperCase();
         
     }
-    public static hex2dex(numHex){
+    public static hex2dec(numHex){
       return parseInt(numHex, 16);
     }
 

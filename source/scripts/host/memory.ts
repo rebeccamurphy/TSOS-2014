@@ -5,7 +5,7 @@ FUTURE ME PUT REALLY NICE COMMENTS HERE.
 module TSOS {
 
     export class Memory {
-        public Data: Array<String>;
+        public Data: Array<string>;
         constructor(public byteSize:number) {
             this.byteSize = byteSize;
 

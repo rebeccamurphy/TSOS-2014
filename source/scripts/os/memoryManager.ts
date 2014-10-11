@@ -31,18 +31,30 @@ module TSOS {
         Control.updateMemoryDisplay(output);
         }
 
-        public loadProgram(program):String{
+        public loadProgram(program){
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i] = program[i];
             }
             this.updateMemoryDisplay();
             var currPCB = new TSOS.PCB();
-            return String (currPCB.pid);
+            return (currPCB.pid).toString();
 
         }
         public getMemory(address){
             var decAddress = Utils.dec2hex(address);
             return this.memory.Data[decAddress];
+        }
+        public convertHexData(data):number {
+            return Utils.hex2dec(data);
+        }
+        public getNextTwoDataBytes(startAddress){
+            return this.convertHexData( this.getMemory(startAddress+1) +this.getMemory(startAddress));
+        }
+        public storeInMemory(value, startAddress){
+            var valueHex = Utils.dec2hex(value);
+            var position = this.getNextTwoDataBytes(startAddress);
+            this.memory.Data[position] = valueHex.substring(0, 2);
+            this.memory.Data[position+1] = valueHex.substring(2, 4);
         }
     }
 }

@@ -148,8 +148,7 @@ var TSOS;
         };
         Control.updateCpuDisplay = function () {
             document.getElementById("pcDisplay").innerHTML = String(_CPU.PC);
-
-            //document.getElementById("irDisplay").innerHTML = String(_CPU.IR);
+            document.getElementById("irDisplay").innerHTML = String(_CPU.IR);
             document.getElementById("accDisplay").innerHTML = String(_CPU.Acc);
             document.getElementById("xDisplay").innerHTML = String(_CPU.Xreg);
             document.getElementById("yDisplay").innerHTML = String(_CPU.Yreg);

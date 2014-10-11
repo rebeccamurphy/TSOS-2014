@@ -393,7 +393,7 @@ module TSOS {
             }
             else if (Utils.checkValidProgram(tempProgramString)==="BB"){
                 Utils.convertProgram("runnableBB", tempProgramString);
-                _StdOut.putText("ProcessID: " + String(_CurrPID-1));   
+                _StdOut.putText("ProcessID: " + (_CurrPID-1).toString());   
             }
             else{
                 if (_SarcasticMode)
@@ -403,7 +403,12 @@ module TSOS {
             }
         }
         public shellRun(args){
+            if (args.length <=0)
+                _StdOut.putText("You need a program id to run.");
+            //else if check for valid id later
+            else {
 
+            }
         }
         public shellBSOD(args){
             _Kernel.krnTrapError("TEST");

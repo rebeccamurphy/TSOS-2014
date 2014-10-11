@@ -353,7 +353,7 @@ var TSOS;
                 _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 TSOS.Utils.convertProgram("runnableBB", tempProgramString);
-                _StdOut.putText("ProcessID: " + String(_CurrPID - 1));
+                _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
@@ -362,6 +362,10 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (args) {
+            if (args.length <= 0)
+                _StdOut.putText("You need a program id to run.");
+            else {
+            }
         };
         Shell.prototype.shellBSOD = function (args) {
             _Kernel.krnTrapError("TEST");

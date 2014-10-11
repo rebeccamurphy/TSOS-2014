@@ -37,11 +37,23 @@ var TSOS;
             }
             this.updateMemoryDisplay();
             var currPCB = new TSOS.PCB();
-            return String(currPCB.pid);
+            return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
             var decAddress = TSOS.Utils.dec2hex(address);
             return this.memory.Data[decAddress];
+        };
+        MemoryManager.prototype.convertHexData = function (data) {
+            return TSOS.Utils.hex2dec(data);
+        };
+        MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
+            return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        };
+        MemoryManager.prototype.storeInMemory = function (value, startAddress) {
+            var valueHex = TSOS.Utils.dec2hex(value);
+            var position = this.getNextTwoDataBytes(startAddress);
+            this.memory.Data[position] = valueHex.substring(0, 2);
+            this.memory.Data[position + 1] = valueHex.substring(2, 4);
         };
         return MemoryManager;
     })();
