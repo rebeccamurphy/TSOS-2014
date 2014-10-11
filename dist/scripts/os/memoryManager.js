@@ -49,7 +49,7 @@ var TSOS;
         MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
-        MemoryManager.prototype.storeInMemory = function (value, startAddress) {
+        MemoryManager.prototype.storeInMemory = function (startAddress, value) {
             var valueHex = TSOS.Utils.dec2hex(value);
             var position = this.getNextTwoDataBytes(startAddress);
             this.memory.Data[position] = valueHex.substring(0, 2);

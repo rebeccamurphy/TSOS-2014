@@ -50,7 +50,7 @@ module TSOS {
         public getNextTwoDataBytes(startAddress){
             return this.convertHexData( this.getMemory(startAddress+1) +this.getMemory(startAddress));
         }
-        public storeInMemory(value, startAddress){
+        public storeInMemory(startAddress, value){
             var valueHex = Utils.dec2hex(value);
             var position = this.getNextTwoDataBytes(startAddress);
             this.memory.Data[position] = valueHex.substring(0, 2);
