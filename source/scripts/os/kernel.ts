@@ -126,8 +126,8 @@ module TSOS {
                 case RUN_PROGRAM_IRQ:{
                     //start the program
                     //since where just running the first program in mem, just setting isexecuting tru
+                    //debugger;
                     _CPU.isExecuting = true;
-                    _ExecutingProgram = params;
                     break;
                 }
                 case UNKNOWN_OP_CODE: {
@@ -142,6 +142,10 @@ module TSOS {
                     //printing something from memory to console
                     _StdIn.handleSysOPCode();
                     break;
+                }
+                case CPU_BREAK_IRQ:{
+                    //stop the cpu from executing
+                    _CPU.isExecuting = false;
                 }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

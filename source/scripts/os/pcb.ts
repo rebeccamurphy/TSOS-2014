@@ -12,6 +12,7 @@ module TSOS {
                     public Yreg: number = 0,
                     public Zflag: number = 0,
                     public pid: number =0,
+                    public IR: string="",
                     // memory stuff
                     public base: number =0, //starting location in the mems
                     public limit:number=0  //max location in the mems. to prevent

@@ -42,7 +42,7 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            this.execute(this.fetch);
+            this.execute(this.fetch());
             this.updateCpu();
         }
         
@@ -50,16 +50,23 @@ module TSOS {
             return _MemoryManager.getMemory(this.PC);
         }
         public updateCpu(){
-            //update program pcb
-            _ProgramList[_ExecutingProgram].PC = this.PC;
-            _ProgramList[_ExecutingProgram].Acc = this.Acc;
-            _ProgramList[_ExecutingProgram].Xreg = this.Xreg;
-            _ProgramList[_ExecutingProgram].Yreg = this.Yreg;
-            _ProgramList[_ExecutingProgram].Zflag = this.Zflag;
+            if( this.isExecuting){
+                this.updatePCB();
+            }
 
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.updatePCBDisplay();
+        }
+        public updatePCB(){
+            //update program pcb
+            //debugger;
+            _ProgramList[_ExecutingProgram].PC = _CPU.PC;
+            _ProgramList[_ExecutingProgram].IR = _CPU.IR;
+            _ProgramList[_ExecutingProgram].Acc = _CPU.Acc;
+            _ProgramList[_ExecutingProgram].Xreg = _CPU.Xreg;
+            _ProgramList[_ExecutingProgram].Yreg = _CPU.Yreg;
+            _ProgramList[_ExecutingProgram].Zflag = _CPU.Zflag;
         }
         public execute(instruct){
             this.IR = instruct;
@@ -205,8 +212,9 @@ module TSOS {
         }
         public breakInstruct(){
             //first  update the pcb for the current program
-            //then enquee a break interrupt
-            //TODO
+            this.updatePCB();
+            //then enqueue a break interrupt
+            _KernelInterruptQueue.enqueue(new Interrupt(CPU_BREAK_IRQ));
         }
         public equalToX(){
             //compare a byte in memory to the x reg

@@ -23,6 +23,7 @@ var KEYBOARD_IRQ: number = 1;
 var RUN_PROGRAM_IRQ: number =2;
 var UNKNOWN_OP_CODE: number =3;
 var SYS_OPCODE_IRQ: number =4;
+var CPU_BREAK_IRQ: number = 5;
 
 var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
 var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
