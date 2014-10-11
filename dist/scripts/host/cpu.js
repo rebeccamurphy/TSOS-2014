@@ -42,10 +42,9 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
         };
 
-        /*
-        public fetch(): String{
-        return _MemoryManager.
-        }*/
+        Cpu.prototype.fetch = function () {
+            return _MemoryManager.getMemory(this.PC);
+        };
         Cpu.prototype.updateCpu = function () {
             //update the CPU display
             TSOS.Control.updateCpuDisplay();

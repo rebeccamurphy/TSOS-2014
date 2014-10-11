@@ -39,6 +39,10 @@ var TSOS;
             var currPCB = new TSOS.PCB();
             return String(currPCB.pid);
         };
+        MemoryManager.prototype.getMemory = function (address) {
+            var decAddress = TSOS.Utils.dec2hex(address);
+            return this.memory.Data[decAddress];
+        };
         return MemoryManager;
     })();
     TSOS.MemoryManager = MemoryManager;

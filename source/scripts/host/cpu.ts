@@ -42,10 +42,10 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
         }
-        /*
+        
         public fetch(): String{
-            return _MemoryManager.
-        }*/
+            return _MemoryManager.getMemory(this.PC);
+        }
         public updateCpu(){
 
             //update the CPU display

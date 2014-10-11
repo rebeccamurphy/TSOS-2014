@@ -79,29 +79,35 @@ module TSOS {
             // Disable the (passed-in) start button...
             btn.disabled = true;
             //window onload added to prevent resource loading error
-            window.onload =function(){
-            // .. enable the Halt and Reset buttons ...
-            document.getElementById("btnHaltOS").disabled = false;
-            document.getElementById("btnReset").disabled = false;
+            ///window.onload =function(){
+            var readyStateCheckInterval = setInterval(function() {
+                if (document.readyState === "complete") {
+                     // .. enable the Halt and Reset buttons ...
+                    document.getElementById("btnHaltOS").disabled = false;
+                    document.getElementById("btnReset").disabled = false;
 
-            // .. set focus on the OS console display ...
-            document.getElementById("display").focus();
+                    // .. set focus on the OS console display ...
+                    document.getElementById("display").focus();
 
-            // ... Create and initialize the CPU (because it's part of the hardware)  ...
-            _CPU = new Cpu();
-            _CPU.init();
+                    // ... Create and initialize the CPU (because it's part of the hardware)  ...
+                    _CPU = new Cpu();
+                    _CPU.init();
 
-            // Initialize Memory Manager
-            
-            _MemoryManager= new MemoryManager();
-            _MemoryManager.init();
+                    // Initialize Memory Manager
+                    
+                    _MemoryManager= new MemoryManager();
+                    _MemoryManager.init();
 
-            // ... then set the host clock pulse ...
-            _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
-            // .. and call the OS Kernel Bootstrap routine.
-            _Kernel = new Kernel();
-            _Kernel.krnBootstrap();
-            };
+                    // ... then set the host clock pulse ...
+                    _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+                    // .. and call the OS Kernel Bootstrap routine.
+                    _Kernel = new Kernel();
+                    _Kernel.krnBootstrap();
+
+                    clearInterval(readyStateCheckInterval);
+                }
+            }, 10);
+           
         }
 
         public static hostBtnHaltOS_click(btn): void {

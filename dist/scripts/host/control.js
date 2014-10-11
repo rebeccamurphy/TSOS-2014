@@ -76,29 +76,34 @@ var TSOS;
             btn.disabled = true;
 
             //window onload added to prevent resource loading error
-            window.onload = function () {
-                // .. enable the Halt and Reset buttons ...
-                document.getElementById("btnHaltOS").disabled = false;
-                document.getElementById("btnReset").disabled = false;
+            ///window.onload =function(){
+            var readyStateCheckInterval = setInterval(function () {
+                if (document.readyState === "complete") {
+                    // .. enable the Halt and Reset buttons ...
+                    document.getElementById("btnHaltOS").disabled = false;
+                    document.getElementById("btnReset").disabled = false;
 
-                // .. set focus on the OS console display ...
-                document.getElementById("display").focus();
+                    // .. set focus on the OS console display ...
+                    document.getElementById("display").focus();
 
-                // ... Create and initialize the CPU (because it's part of the hardware)  ...
-                _CPU = new TSOS.Cpu();
-                _CPU.init();
+                    // ... Create and initialize the CPU (because it's part of the hardware)  ...
+                    _CPU = new TSOS.Cpu();
+                    _CPU.init();
 
-                // Initialize Memory Manager
-                _MemoryManager = new TSOS.MemoryManager();
-                _MemoryManager.init();
+                    // Initialize Memory Manager
+                    _MemoryManager = new TSOS.MemoryManager();
+                    _MemoryManager.init();
 
-                // ... then set the host clock pulse ...
-                _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+                    // ... then set the host clock pulse ...
+                    _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
 
-                // .. and call the OS Kernel Bootstrap routine.
-                _Kernel = new TSOS.Kernel();
-                _Kernel.krnBootstrap();
-            };
+                    // .. and call the OS Kernel Bootstrap routine.
+                    _Kernel = new TSOS.Kernel();
+                    _Kernel.krnBootstrap();
+
+                    clearInterval(readyStateCheckInterval);
+                }
+            }, 10);
         };
 
         Control.hostBtnHaltOS_click = function (btn) {

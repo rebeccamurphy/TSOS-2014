@@ -39,9 +39,10 @@ module TSOS {
             var currPCB = new TSOS.PCB();
             return String (currPCB.pid);
 
-        }/*
+        }
         public getMemory(address){
-
-            }*/
+            var decAddress = Utils.dec2hex(address);
+            return this.memory.Data[decAddress];
+        }
     }
 }
