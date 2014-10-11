@@ -169,6 +169,7 @@ module TSOS {
             //Examples
             //STA $0010, 8D 1000
             _MemoryManager.storeInMemory(this.Acc, ++this.PC);
+            this.PC++;
         }
         public addWithCarry(){
             //add with carry adds contents of an address to the contents of the accumulator 
@@ -260,7 +261,7 @@ module TSOS {
             //$02 in X reg = print the 00-termindated Strign stored at the address in the Y register
             //Examples
             //SYS, FF 
-            //_KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
+            _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
         }
 
         

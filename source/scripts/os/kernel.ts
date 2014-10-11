@@ -146,6 +146,7 @@ module TSOS {
                 case CPU_BREAK_IRQ:{
                     //stop the cpu from executing
                     _CPU.isExecuting = false;
+                    break;
                 }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
