@@ -274,6 +274,30 @@ var TSOS;
             this.clearScreen();
             TSOS.Control.c();
         };
+        Console.prototype.handleSysOpCode = function () {
+            if (_CPU.Xreg === 1) {
+                //print the integer stored in Y register
+                this.putText((_CPU.Yreg).toString());
+                this.advanceLine();
+                _OsShell.putPrompt();
+            } else if (_CPU.Xreg === 2) {
+                //print the 00-terminated string stored at the address in the Y register
+                var string00 = "";
+                var curPos = _CPU.Yreg;
+                var curData = _MemoryManager.getMemory(curPos);
+                while (curData !== "00") {
+                    //convert current data from hex to dec to char to string. YAY.
+                    string00 += String.fromCharCode(_MemoryManager.convertHexData(curData));
+
+                    //move to next byte of data
+                    curData = _MemoryManager.getMemory(++curPos);
+                }
+                this.putText(string00);
+                this.advanceLine();
+                _OsShell.putPrompt();
+            }
+            //else do nothing basically
+        };
         return Console;
     })();
     TSOS.Console = Console;

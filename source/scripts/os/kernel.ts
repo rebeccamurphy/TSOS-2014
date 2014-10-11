@@ -123,6 +123,16 @@ module TSOS {
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case RUN_PROGRAM_IRQ:{
+                    break;
+                }
+                case UNKNOWN_OP_CODE: {
+                    break;
+                }
+                case SYS_OPCODE_IRQ:{
+                    _StdIn.handleSysOPCode();
+                    break;
+                }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

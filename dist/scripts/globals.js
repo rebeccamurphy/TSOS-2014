@@ -19,6 +19,8 @@ var TIMER_IRQ = 0;
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
 var RUN_PROGRAM_IRQ = 2;
+var UNKNOWN_OP_CODE = 3;
+var SYS_OPCODE_IRQ = 4;
 
 var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
