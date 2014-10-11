@@ -71,6 +71,7 @@ var TSOS;
         };
         Cpu.prototype.execute = function (instruct) {
             this.IR = instruct;
+
             switch (instruct) {
                 case "A9": {
                     //Load the accumulator with a constant, LDA
@@ -161,6 +162,7 @@ var TSOS;
             //LDA $0010, AD10 00
             this.Acc = _MemoryManager.getNextTwoDataBytes(++this.PC);
             this.PC++;
+            debugger;
         };
         Cpu.prototype.storeAccumulator = function () {
             //store the accumulator in memory

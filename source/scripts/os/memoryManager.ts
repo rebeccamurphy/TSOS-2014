@@ -37,7 +37,7 @@ module TSOS {
             //add to list of PCBs 
             //because we're starting with just loading 1 program in memory the base will be 0 for now
             currPCB.base = 0;
-            
+
             _ProgramList[currPCB.pid] = currPCB;
 
             for (var i=0; i<program.length; i++){
@@ -50,15 +50,28 @@ module TSOS {
             return (currPCB.pid).toString();
 
         }
-        public getMemory(address){
-            var decAddress = Utils.dec2hex(address);
-            return this.memory.Data[decAddress];
+        public getMemory(address:any){
+            //debugger;
+            if (typeof address==="number")
+                return this.memory.Data[address];
+            else{
+                console.log(address);
+                var decAddress = Utils.hex2dec(address);
+                console.log(this.memory.Data[decAddress]);
+                return this.memory.Data[decAddress];
+            }
+            
         }
         public convertHexData(data):number {
             return Utils.hex2dec(data);
         }
         public getNextTwoDataBytes(startAddress){
-            return this.convertHexData( this.getMemory(startAddress+1) +this.getMemory(startAddress));
+            
+            console.log(this.getMemory(startAddress+1));
+            console.log(this.getMemory(startAddress));
+            return this.convertHexData(
+                this.getMemory(this.getMemory(startAddress+1) +this.getMemory(startAddress))
+                    );
         }
         public storeInMemory(startAddress, value){
             var valueHex = Utils.dec2hex(value);

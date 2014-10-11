@@ -69,7 +69,9 @@ module TSOS {
             _ProgramList[_ExecutingProgram].Zflag = _CPU.Zflag;
         }
         public execute(instruct){
+
             this.IR = instruct;
+
             switch(instruct){
                 case "A9": {
                     //Load the accumulator with a constant, LDA
@@ -156,6 +158,7 @@ module TSOS {
             //LDA #$07, A9 07
             this.Acc = _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC));
             
+            
         }
         public loadAccumulatorMem(){
             //load the accumulator from memory
@@ -163,6 +166,7 @@ module TSOS {
             //LDA $0010, AD10 00
             this.Acc = _MemoryManager.getNextTwoDataBytes(++this.PC);
             this.PC++;
+            debugger;
         }
         public storeAccumulator(){
             //store the accumulator in memory

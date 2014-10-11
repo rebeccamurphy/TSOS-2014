@@ -52,14 +52,23 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            var decAddress = TSOS.Utils.dec2hex(address);
-            return this.memory.Data[decAddress];
+            //debugger;
+            if (typeof address === "number")
+                return this.memory.Data[address];
+            else {
+                console.log(address);
+                var decAddress = TSOS.Utils.hex2dec(address);
+                console.log(this.memory.Data[decAddress]);
+                return this.memory.Data[decAddress];
+            }
         };
         MemoryManager.prototype.convertHexData = function (data) {
             return TSOS.Utils.hex2dec(data);
         };
         MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
-            return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+            console.log(this.getMemory(startAddress + 1));
+            console.log(this.getMemory(startAddress));
+            return this.convertHexData(this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress)));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
             var valueHex = TSOS.Utils.dec2hex(value);

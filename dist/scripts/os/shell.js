@@ -369,6 +369,7 @@ var TSOS;
                 _StdOut.putText("Invalid program id");
             } else {
                 //run program
+                _CPU.init();
                 _ExecutingProgram = args[0];
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
             }
