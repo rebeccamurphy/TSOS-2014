@@ -411,7 +411,7 @@ module TSOS {
             }
             else {
                 //run program 
-                _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
+                _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ), args[0]);
 
             }
         }

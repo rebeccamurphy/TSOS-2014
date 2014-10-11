@@ -124,12 +124,22 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case RUN_PROGRAM_IRQ:{
+                    //start the program
+                    //since where just running the first program in mem, just setting isexecuting tru
+                    _CPU.isExecuting = true;
+                    _ExecutingProgram = params;
                     break;
                 }
                 case UNKNOWN_OP_CODE: {
+                    //handles unknown opcode in memory
+                    //first log the error
+                    this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC-1));
+                    //then stop the program from executing
+                    //TODO
                     break;
                 }
                 case SYS_OPCODE_IRQ:{
+                    //printing something from memory to console
                     _StdIn.handleSysOPCode();
                     break;
                 }

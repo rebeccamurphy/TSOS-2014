@@ -369,7 +369,7 @@ var TSOS;
                 _StdOut.putText("Invalid program id");
             } else {
                 //run program
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ), args[0]);
             }
         };
         Shell.prototype.shellBSOD = function (args) {

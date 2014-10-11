@@ -50,9 +50,16 @@ module TSOS {
             return _MemoryManager.getMemory(this.PC);
         }
         public updateCpu(){
+            //update program pcb
+            _ProgramList[_ExecutingProgram].PC = this.PC;
+            _ProgramList[_ExecutingProgram].Acc = this.Acc;
+            _ProgramList[_ExecutingProgram].Xreg = this.Xreg;
+            _ProgramList[_ExecutingProgram].Yreg = this.Yreg;
+            _ProgramList[_ExecutingProgram].Zflag = this.Zflag;
 
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
+            TSOS.Control.updatePCBDisplay();
         }
         public execute(instruct){
             this.IR = instruct;

@@ -154,6 +154,15 @@ var TSOS;
             document.getElementById("yDisplay").innerHTML = String(_CPU.Yreg);
             document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
         };
+        Control.updatePCBDisplay = function () {
+            document.getElementById("PCBPIDDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].pid);
+            document.getElementById("PCBPCDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].PC);
+            document.getElementById("PCBIRDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].IR);
+            document.getElementById("PCBACCDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Acc);
+            document.getElementById("PCBXDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Xreg);
+            document.getElementById("PCBYDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Yreg);
+            document.getElementById("PCBZDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Zflag);
+        };
 
         Control.c = function () {
             //debugger;

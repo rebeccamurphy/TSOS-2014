@@ -36,6 +36,9 @@ var TSOS;
             var currPCB = new TSOS.PCB();
 
             //add to list of PCBs
+            //because we're starting with just loading 1 program in memory the base will be 0 for now
+            currPCB.base = 0;
+
             _ProgramList[currPCB.pid] = currPCB;
 
             for (var i = 0; i < program.length; i++) {
