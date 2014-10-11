@@ -405,8 +405,13 @@ module TSOS {
         public shellRun(args){
             if (args.length <=0)
                 _StdOut.putText("You need a program id to run.");
-            //else if check for valid id later
+            else if (_ProgramList[parseInt(args[0])] === undefined){
+                //check for valid id
+                _StdOut.putText("Invalid program id");
+            }
             else {
+                //run program 
+                _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
 
             }
         }

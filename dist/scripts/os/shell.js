@@ -364,7 +364,12 @@ var TSOS;
         Shell.prototype.shellRun = function (args) {
             if (args.length <= 0)
                 _StdOut.putText("You need a program id to run.");
-            else {
+            else if (_ProgramList[parseInt(args[0])] === undefined) {
+                //check for valid id
+                _StdOut.putText("Invalid program id");
+            } else {
+                //run program
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
             }
         };
         Shell.prototype.shellBSOD = function (args) {

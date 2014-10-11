@@ -18,6 +18,8 @@ var TIMER_IRQ = 0;
 
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+var RUN_PROGRAM_IRQ = 2;
+
 var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
 var CONSOLE_VIEWPORT_WIDTH = 500;
@@ -40,7 +42,7 @@ var _MemoryByteSize = 8;
 var _ProgramSize = 256;
 var _NumPrograms = 1;
 var _MemorySize = _NumPrograms * _ProgramSize;
-var _ProgramList;
+var _ProgramList = [];
 var _CurrPID = 0;
 
 var _OSclock = 0;

@@ -32,11 +32,20 @@ var TSOS;
         };
 
         MemoryManager.prototype.loadProgram = function (program) {
+            //create new PCB
+            var currPCB = new TSOS.PCB();
+
+            //add to list of PCBs
+            _ProgramList[currPCB.pid] = currPCB;
+
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i] = program[i];
             }
+
+            //update display
             this.updateMemoryDisplay();
-            var currPCB = new TSOS.PCB();
+
+            //return program number
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {

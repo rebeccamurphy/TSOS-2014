@@ -20,6 +20,8 @@ var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 10
 var TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                             // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ: number = 1;
+var RUN_PROGRAM_IRQ: number =2; 
+
 var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
 var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
 var CONSOLE_VIEWPORT_WIDTH :number = 500;
@@ -42,7 +44,7 @@ var _MemoryByteSize = 8;
 var _ProgramSize = 256;
 var _NumPrograms =1; 
 var _MemorySize = _NumPrograms * _ProgramSize;
-var _ProgramList;
+var _ProgramList =[];
 var _CurrPID=0;
 
 var _OSclock: number = 0;  // Page 23.

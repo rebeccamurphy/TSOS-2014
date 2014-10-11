@@ -93,7 +93,7 @@ font-weight: normal !important;
   font-weight: normal !important;
   padding: 0px !important;
 }
-#memDisplayBox, #cpuDisplayBox{
+#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox{
   font-weight: normal !important;
   border-color: rgb(169,169,169);
   text-align: center;
@@ -115,7 +115,7 @@ font-weight: normal !important;
   display:inline-block;
   float:right;
 }
-#cpuWrapper{
+#cpuWrapper, #PCBWrapper{
   width:345px;
   height: 78px;
   border: 1px solid;
