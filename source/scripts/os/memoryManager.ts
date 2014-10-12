@@ -37,6 +37,8 @@ module TSOS {
             //add to list of PCBs 
             //because we're starting with just loading 1 program in memory the base will be 0 for now
             currPCB.base = 0;
+            //set the limit?
+            currPCB.limit = _ProgramSize;
 
             _ProgramList[currPCB.pid] = currPCB;
 
