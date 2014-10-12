@@ -48,7 +48,7 @@ module TSOS {
                 this.memory.Data[j] ="00";
             //update display
             this.updateMemoryDisplay();
-            
+
             //return program number
             return (currPCB.pid).toString();
 
@@ -72,9 +72,7 @@ module TSOS {
             
             console.log(this.getMemory(startAddress+1));
             console.log(this.getMemory(startAddress));
-            return this.convertHexData(
-                this.getMemory(this.getMemory(startAddress+1) +this.getMemory(startAddress))
-                    );
+            return this.getMemory(this.getMemory(startAddress+1) +this.getMemory(startAddress));
         }
         public getDecAddressFromHex(startAddress){
             return this.convertHexData(this.getMemory(startAddress+1) +this.getMemory(startAddress));

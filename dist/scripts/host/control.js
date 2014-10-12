@@ -175,6 +175,7 @@ var TSOS;
             document.getElementById("xDisplay").innerHTML = String(_CPU.Xreg);
             document.getElementById("yDisplay").innerHTML = String(_CPU.Yreg);
             document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
+            document.getElementById("instructID").innerHTML = _Assembly;
         };
         Control.updatePCBDisplay = function () {
             document.getElementById("PCBPIDDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].pid);

@@ -184,6 +184,7 @@ module TSOS {
             document.getElementById("xDisplay").innerHTML = String(_CPU.Xreg);
             document.getElementById("yDisplay").innerHTML = String(_CPU.Yreg);
             document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
+            document.getElementById("instructID").innerHTML = _Assembly;
         }
         public static updatePCBDisplay(){
             document.getElementById("PCBPIDDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].pid);
@@ -193,6 +194,7 @@ module TSOS {
             document.getElementById("PCBXDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Xreg);
             document.getElementById("PCBYDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Yreg);
             document.getElementById("PCBZDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Zflag);
+            
         }
         public static startPCBDisplay(){
             document.getElementById("PCBPIDDisplay").innerHTML = "0";

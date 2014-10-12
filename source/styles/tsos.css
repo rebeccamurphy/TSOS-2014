@@ -88,6 +88,7 @@ font-weight: normal !important;
 }
 #divLog{
   width:390px;
+  height:;
 }
 #divMemory{
   font-weight: normal !important;
@@ -106,7 +107,7 @@ font-weight: normal !important;
   border-color: rgb(169,169,169);
   overflow-y:auto;
   max-height:406px;
-  height: 406px;
+  height: 206px;
   width:360px;
   margin-bottom: 4px;
 }

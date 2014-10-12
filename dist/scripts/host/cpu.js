@@ -59,6 +59,7 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            _Assembly = "No Instruction";
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.startPCBDisplay();
         };
@@ -167,12 +168,14 @@ var TSOS;
             //Examples
             //LDA #$07, A9 07
             this.Acc = _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC));
+            _Assembly = "LDA #$" + _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadAccumulatorMem = function () {
             //load the accumulator from memory
             //Examples
             //LDA $0010, AD10 00
-            this.Acc = _MemoryManager.getNextTwoDataBytes(++this.PC);
+            this.Acc = _MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC));
+            _Assembly = "LDA $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
         Cpu.prototype.storeAccumulator = function () {
@@ -181,6 +184,7 @@ var TSOS;
             //STA $0010, 8D 1000
             //debugger;
             _MemoryManager.storeInMemory(++this.PC, this.Acc);
+            _Assembly = "STA $" + _MemoryManager.getMemory(this.PC);
             this.PC++;
         };
         Cpu.prototype.addWithCarry = function () {
@@ -188,7 +192,8 @@ var TSOS;
             //and keeps the result in the accumlator
             //Examples
             //ADC $0010, 6D 10 00
-            this.Acc += _MemoryManager.getNextTwoDataBytes(++this.PC);
+            this.Acc += _MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC));
+            _Assembly = "ADC $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
         Cpu.prototype.loadXConst = function () {
@@ -196,12 +201,14 @@ var TSOS;
             //Examples
             //LDX #$01, A2 01
             this.Xreg = _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC));
+            _Assembly = "LDX #$" + _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadXMem = function () {
             //load the x register from memory
             //Examples
             //LDX $0010, AE 10 00
-            this.Xreg = _MemoryManager.getNextTwoDataBytes(++this.PC);
+            this.Xreg = _MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC));
+            _Assembly = "LDX $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
         Cpu.prototype.loadYConst = function () {
@@ -209,12 +216,14 @@ var TSOS;
             //Examples
             //LDY #$04, A0 04
             this.Yreg = _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC));
+            _Assembly = "LDY #$" + _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadYMem = function () {
             //load the x register from memory
             //Examples
             //LDY $0010, A0 10 00
-            this.Yreg = _MemoryManager.getNextTwoDataBytes(++this.PC);
+            this.Yreg = _MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC));
+            _Assembly = "LDY $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
         Cpu.prototype.noOperation = function () {
@@ -222,12 +231,14 @@ var TSOS;
             //Examples
             //NOP, EA EA
             //this is really just here for consistences sake
+            _Assembly = "NOP";
         };
         Cpu.prototype.breakInstruct = function () {
             //first  update the pcb for the current program
             this.updatePCB();
 
             //then enqueue a break interrupt
+            _Assembly = "BRK";
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_BREAK_IRQ));
         };
         Cpu.prototype.equalToX = function () {
@@ -235,18 +246,18 @@ var TSOS;
             //sets the Z (zero) flag if equal
             //Examples
             //CPX, Ec $0010,EC 1000
-            if (_MemoryManager.getNextTwoDataBytes(++this.PC) === this.Xreg)
+            if (_MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC)) === this.Xreg)
                 this.Zflag = 1;
             else
                 this.Zflag = 0;
+            _Assembly = "CPX $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
         Cpu.prototype.branchNotEqual = function () {
-            //branch X bytes if Z flag = 0
-            //Examples
-            //BNE, D0 $EF D0 EF
+            debugger;
             if (this.Zflag === 0) {
-                debugger;
+                //branching, added plus one is to go past the data address
+                _Assembly = "BNE $" + _MemoryManager.getMemory(this.PC + 1);
                 this.PC += _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC)) + 1;
 
                 //check if we need to shift the pc back to the beginning
@@ -256,6 +267,7 @@ var TSOS;
                 }
             } else {
                 //skip over this data byte pretty much
+                _Assembly = "BNE $" + _MemoryManager.getMemory(this.PC);
                 this.PC++;
             }
         };
@@ -264,7 +276,8 @@ var TSOS;
             //Examples
             //inc, EE $0021.EE 21 00
             var dataPos = this.PC + 1;
-            _MemoryManager.storeInMemory(dataPos, _MemoryManager.getNextTwoDataBytes(++this.PC) + 1);
+            _MemoryManager.storeInMemory(dataPos, _MemoryManager.convertHexData(_MemoryManager.getNextTwoDataBytes(++this.PC)) + 1);
+            _Assembly = "INC $" + _MemoryManager.getNextTwoDataBytes(this.PC);
             this.PC++;
         };
 
@@ -274,6 +287,7 @@ var TSOS;
             //$02 in X reg = print the 00-termindated Strign stored at the address in the Y register
             //Examples
             //SYS, FF
+            _Assembly = "SYS";
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYS_OPCODE_IRQ));
         };
         return Cpu;

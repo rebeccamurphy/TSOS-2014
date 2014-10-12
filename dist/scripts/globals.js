@@ -50,6 +50,7 @@ var _MemorySize = _NumPrograms * _ProgramSize;
 var _ProgramList = [];
 var _CurrPID = 0;
 var _ExecutingProgram;
+var _Assembly = "";
 var _OSclock = 0;
 
 var _Mode = 0;

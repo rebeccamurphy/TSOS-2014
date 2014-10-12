@@ -71,7 +71,7 @@ var TSOS;
         MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
             console.log(this.getMemory(startAddress + 1));
             console.log(this.getMemory(startAddress));
-            return this.convertHexData(this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress)));
+            return this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.getDecAddressFromHex = function (startAddress) {
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
