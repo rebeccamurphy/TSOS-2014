@@ -70,11 +70,15 @@ var TSOS;
             console.log(this.getMemory(startAddress));
             return this.convertHexData(this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress)));
         };
+        MemoryManager.prototype.getDecAddressFromHex = function (startAddress) {
+            return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
+            //debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
-            var position = this.getNextTwoDataBytes(startAddress);
-            this.memory.Data[position] = valueHex.substring(0, 2);
-            this.memory.Data[position + 1] = valueHex.substring(2, 4);
+            valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
+            var position = this.getDecAddressFromHex(startAddress);
+            this.memory.Data[position] = valueHex;
         };
         return MemoryManager;
     })();

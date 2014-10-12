@@ -51,6 +51,7 @@ var TSOS;
             return _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.updateCpu = function () {
+            debugger;
             if (this.isExecuting) {
                 this.updatePCB();
             }
@@ -58,6 +59,7 @@ var TSOS;
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.updatePCBDisplay();
+            _MemoryManager.updateMemoryDisplay();
         };
         Cpu.prototype.updatePCB = function () {
             //update program pcb
@@ -148,7 +150,6 @@ var TSOS;
                 }
             }
             this.PC++;
-            this.updateCpu();
         };
         Cpu.prototype.loadAccumulatorConst = function () {
             //Load the accumulator with a constant, LDA
@@ -162,13 +163,13 @@ var TSOS;
             //LDA $0010, AD10 00
             this.Acc = _MemoryManager.getNextTwoDataBytes(++this.PC);
             this.PC++;
-            debugger;
         };
         Cpu.prototype.storeAccumulator = function () {
             //store the accumulator in memory
             //Examples
             //STA $0010, 8D 1000
-            _MemoryManager.storeInMemory(this.Acc, ++this.PC);
+            //debugger;
+            _MemoryManager.storeInMemory(++this.PC, this.Acc);
             this.PC++;
         };
         Cpu.prototype.addWithCarry = function () {

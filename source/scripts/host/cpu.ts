@@ -50,6 +50,7 @@ module TSOS {
             return _MemoryManager.getMemory(this.PC);
         }
         public updateCpu(){
+            debugger;
             if( this.isExecuting){
                 this.updatePCB();
             }
@@ -57,6 +58,7 @@ module TSOS {
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.updatePCBDisplay();
+            _MemoryManager.updateMemoryDisplay();
         }
         public updatePCB(){
             //update program pcb
@@ -150,7 +152,6 @@ module TSOS {
                 }
             }
             this.PC++;
-            this.updateCpu();
         }
         public loadAccumulatorConst(){    
             //Load the accumulator with a constant, LDA
@@ -166,14 +167,15 @@ module TSOS {
             //LDA $0010, AD10 00
             this.Acc = _MemoryManager.getNextTwoDataBytes(++this.PC);
             this.PC++;
-            debugger;
         }
         public storeAccumulator(){
             //store the accumulator in memory
             //Examples
             //STA $0010, 8D 1000
-            _MemoryManager.storeInMemory(this.Acc, ++this.PC);
+            //debugger;
+            _MemoryManager.storeInMemory(++this.PC, this.Acc);
             this.PC++;
+
         }
         public addWithCarry(){
             //add with carry adds contents of an address to the contents of the accumulator 
