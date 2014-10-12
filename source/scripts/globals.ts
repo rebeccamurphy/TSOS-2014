@@ -41,6 +41,8 @@ window.onload = function() {
 // Global Variables
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var _SingleStep= false;
+var _Stepping = false;
 //Memory Vars
 var _MemoryManager: TSOS.MemoryManager;
 var _MemoryByteSize = 8;

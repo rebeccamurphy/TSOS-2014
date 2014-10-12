@@ -48,7 +48,7 @@ module TSOS {
                 this.memory.Data[j] ="00";
             //update display
             this.updateMemoryDisplay();
-
+            
             //return program number
             return (currPCB.pid).toString();
 

@@ -79,9 +79,12 @@ var TSOS;
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting) {
+            } else if (_CPU.isExecuting && _SingleStep && _Stepping) {
+                //clear the interval of the clock pulse
                 _CPU.cycle();
-            } else {
+            } else if (_CPU.isExecuting && !_SingleStep) {
+                _CPU.cycle();
+            } else if (!_SingleStep) {
                 this.krnTrace("Idle");
             }
         };

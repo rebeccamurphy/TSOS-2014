@@ -85,6 +85,7 @@ module TSOS {
                      // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
+                    document.getElementById("btnSingleStep").disabled = false;
 
                     // .. set focus on the OS console display ...
                     document.getElementById("display").focus();
@@ -127,6 +128,30 @@ module TSOS {
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         }
+        public static hostBtnSingleStep_click(btn):void{
+            //TODO add message or kernal thing to say entering single step mode
+            if (_SingleStep ===false){
+                _SingleStep = true;
+                btn.innerHTML = "Single Step On"
+                 document.getElementById("btnStep").disabled = false;
+            }
+            else {
+                _SingleStep = false;
+                btn.innerHTML = "Single Step Off";
+                 document.getElementById("btnStep").disabled = true;
+
+            }
+        }
+
+        public static hostBtnStep_click(btn):void{
+            //probably need to update the kernal here too
+
+                //clear the interval of the clock pulse
+                //clearInterval(_hardwareClockID);
+            _Stepping=true;
+            _Kernel.krnOnCPUClockPulse();
+            _Stepping=false;
+        }
         public static getUserProgram() :string {
             return (<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
         }
@@ -168,6 +193,15 @@ module TSOS {
             document.getElementById("PCBXDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Xreg);
             document.getElementById("PCBYDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Yreg);
             document.getElementById("PCBZDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Zflag);
+        }
+        public static startPCBDisplay(){
+            document.getElementById("PCBPIDDisplay").innerHTML = "0";
+            document.getElementById("PCBPCDisplay").innerHTML ="0";
+            document.getElementById("PCBIRDisplay").innerHTML = "0";
+            document.getElementById("PCBACCDisplay").innerHTML = "0";
+            document.getElementById("PCBXDisplay").innerHTML = "0";
+            document.getElementById("PCBYDisplay").innerHTML = "0";
+            document.getElementById("PCBZDisplay").innerHTML = "0";
         }
 
         public static c(){

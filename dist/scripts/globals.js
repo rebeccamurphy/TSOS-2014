@@ -38,6 +38,8 @@ window.onload = function () {
 // Global Variables
 //
 var _CPU;
+var _SingleStep = false;
+var _Stepping = false;
 
 //Memory Vars
 var _MemoryManager;

@@ -351,9 +351,11 @@ var TSOS;
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
                 _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
+                _CPU.clearPreviousProgram();
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 TSOS.Utils.convertProgram("runnableBB", tempProgramString);
                 _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
+                _CPU.clearPreviousProgram();
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
@@ -369,9 +371,11 @@ var TSOS;
                 _StdOut.putText("Invalid program id");
             } else {
                 //run program
-                _CPU.init();
-                _ExecutingProgram = args[0];
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
+                _ExecutingProgram = parseInt(args[0]);
+                if (_ProgramList[_ExecutingProgram].PC !== _ProgramList[_ExecutingProgram].base)
+                    _StdOut.putText("Program already executed.");
+                else
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
             }
         };
         Shell.prototype.shellBSOD = function (args) {

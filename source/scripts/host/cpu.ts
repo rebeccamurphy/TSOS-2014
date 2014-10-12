@@ -49,8 +49,19 @@ module TSOS {
         public fetch(): String{
             return _MemoryManager.getMemory(this.PC);
         }
+        public clearPreviousProgram(){
+            //just for project 2, clearing CPU data 
+            this.IR ="0";
+            this.PC = 0;
+            this.Acc = 0;
+            this.Xreg = 0;
+            this.Yreg = 0;
+            this.Zflag = 0;
+            this.isExecuting = false;   
+            TSOS.Control.updateCpuDisplay();
+            TSOS.Control.startPCBDisplay();
+        }
         public updateCpu(){
-            debugger;
             if( this.isExecuting){
                 this.updatePCB();
             }

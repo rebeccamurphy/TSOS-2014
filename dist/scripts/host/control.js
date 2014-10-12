@@ -82,6 +82,7 @@ var TSOS;
                     // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
+                    document.getElementById("btnSingleStep").disabled = false;
 
                     // .. set focus on the OS console display ...
                     document.getElementById("display").focus();
@@ -125,6 +126,27 @@ var TSOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
+        Control.hostBtnSingleStep_click = function (btn) {
+            //TODO add message or kernal thing to say entering single step mode
+            if (_SingleStep === false) {
+                _SingleStep = true;
+                btn.innerHTML = "Single Step On";
+                document.getElementById("btnStep").disabled = false;
+            } else {
+                _SingleStep = false;
+                btn.innerHTML = "Single Step Off";
+                document.getElementById("btnStep").disabled = true;
+            }
+        };
+
+        Control.hostBtnStep_click = function (btn) {
+            //probably need to update the kernal here too
+            //clear the interval of the clock pulse
+            //clearInterval(_hardwareClockID);
+            _Stepping = true;
+            _Kernel.krnOnCPUClockPulse();
+            _Stepping = false;
+        };
         Control.getUserProgram = function () {
             return document.getElementById("taProgramInput").value.trim();
         };
@@ -162,6 +184,15 @@ var TSOS;
             document.getElementById("PCBXDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Xreg);
             document.getElementById("PCBYDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Yreg);
             document.getElementById("PCBZDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Zflag);
+        };
+        Control.startPCBDisplay = function () {
+            document.getElementById("PCBPIDDisplay").innerHTML = "0";
+            document.getElementById("PCBPCDisplay").innerHTML = "0";
+            document.getElementById("PCBIRDisplay").innerHTML = "0";
+            document.getElementById("PCBACCDisplay").innerHTML = "0";
+            document.getElementById("PCBXDisplay").innerHTML = "0";
+            document.getElementById("PCBYDisplay").innerHTML = "0";
+            document.getElementById("PCBZDisplay").innerHTML = "0";
         };
 
         Control.c = function () {
