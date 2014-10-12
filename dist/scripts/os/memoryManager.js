@@ -45,6 +45,9 @@ var TSOS;
                 this.memory.Data[i] = program[i];
             }
 
+            for (var j = program.length; j < _ProgramSize; j++)
+                this.memory.Data[j] = "00";
+
             //update display
             this.updateMemoryDisplay();
 

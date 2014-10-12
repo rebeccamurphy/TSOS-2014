@@ -240,6 +240,7 @@ module TSOS {
             //BNE, D0 $EF D0 EF
             if (this.Zflag===0){
                 //branching, added plus one is to go past the data address 
+                debugger;
                 this.PC +=_MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC))+1;   
                 //check if we need to shift the pc back to the beginning
                 if (this.PC>=_ProgramSize){

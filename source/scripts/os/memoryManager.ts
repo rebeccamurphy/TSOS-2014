@@ -43,6 +43,9 @@ module TSOS {
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i] = program[i];
             }
+            //if program is short override previous programs
+            for (var j= program.length;j<_ProgramSize; j++ )
+                this.memory.Data[j] ="00";
             //update display
             this.updateMemoryDisplay();
 

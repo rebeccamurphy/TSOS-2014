@@ -107,7 +107,7 @@ font-weight: normal !important;
   overflow-y:auto;
   max-height:406px;
   height: 406px;
-  width:345px;
+  width:360px;
   margin-bottom: 4px;
 }
 
@@ -116,7 +116,7 @@ font-weight: normal !important;
   float:right;
 }
 #cpuWrapper, #PCBWrapper{
-  width:345px;
+  width:360px;
   height: 78px;
   border: 1px solid;
   border-color: rgb(169,169,169);
@@ -125,6 +125,9 @@ font-weight: normal !important;
   width: 57.5px;
 } 
 
+td[id*="dataID"]{
+  width:18px;
+}
 td {
   width: 57.5px;
 }

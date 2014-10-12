@@ -130,7 +130,7 @@ var TSOS;
                 }
                 case SYS_OPCODE_IRQ: {
                     //printing something from memory to console
-                    _StdIn.handleSysOPCode();
+                    _StdIn.handleSysOpCode();
                     break;
                 }
                 case CPU_BREAK_IRQ: {
