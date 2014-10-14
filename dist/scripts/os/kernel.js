@@ -141,6 +141,14 @@ var TSOS;
                     _CPU.isExecuting = false;
                     break;
                 }
+                case MEMORY_ACCESS_VIOLATION_IRQ: {
+                    debugger;
+
+                    //log the error
+                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgram + " Attempted to access " + params);
+                    _CPU.isExecuting = false;
+                    break;
+                }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

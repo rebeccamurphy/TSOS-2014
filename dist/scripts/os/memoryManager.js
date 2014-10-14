@@ -58,33 +58,40 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            //debugger;
+            debugger;
+
             if (typeof address === "number")
-                return this.memory.Data[address];
+                if (address >= _ProgramList[_ExecutingProgram].limit || address < _ProgramList[_ExecutingProgram].base)
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, TSOS.Utils.dec2hex(address)));
+                else
+                    return this.memory.Data[address];
             else {
-                console.log(address);
                 var decAddress = TSOS.Utils.hex2dec(address);
-                console.log(this.memory.Data[decAddress]);
-                return this.memory.Data[decAddress];
+
+                if (decAddress >= _ProgramList[_ExecutingProgram].limit || decAddress < _ProgramList[_ExecutingProgram].base)
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
+                else
+                    return this.memory.Data[decAddress];
             }
         };
         MemoryManager.prototype.convertHexData = function (data) {
             return TSOS.Utils.hex2dec(data);
         };
         MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
-            console.log(this.getMemory(startAddress + 1));
-            console.log(this.getMemory(startAddress));
             return this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.getDecAddressFromHex = function (startAddress) {
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
-            //debugger;
+            debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
             var position = this.getDecAddressFromHex(startAddress);
-            this.memory.Data[position] = valueHex;
+            if (position >= _ProgramList[_ExecutingProgram].limit || position < _ProgramList[_ExecutingProgram].base)
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
+            else
+                this.memory.Data[position] = valueHex;
         };
         return MemoryManager;
     })();

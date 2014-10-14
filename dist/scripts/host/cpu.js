@@ -254,7 +254,10 @@ var TSOS;
             this.PC++;
         };
         Cpu.prototype.branchNotEqual = function () {
-            debugger;
+            //branch X bytes if Z flag = 0
+            //Examples
+            //BNE, D0 $EF D0 EF
+            //debugger;
             if (this.Zflag === 0) {
                 //branching, added plus one is to go past the data address
                 _Assembly = "BNE $" + _MemoryManager.getMemory(this.PC + 1);
