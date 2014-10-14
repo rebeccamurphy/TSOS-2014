@@ -40,7 +40,7 @@ var TSOS;
             currPCB.base = 0;
 
             //set the limit?
-            currPCB.limit = _ProgramSize;
+            currPCB.limit = base + _ProgramSize;
 
             _ProgramList[currPCB.pid] = currPCB;
 
