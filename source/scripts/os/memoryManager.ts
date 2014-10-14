@@ -38,7 +38,7 @@ module TSOS {
             //because we're starting with just loading 1 program in memory the base will be 0 for now
             currPCB.base = 0;
             //set the limit?
-            currPCB.limit = base + _ProgramSize;
+            currPCB.limit = currPCB.base + _ProgramSize;
 
             _ProgramList[currPCB.pid] = currPCB;
 
@@ -56,17 +56,19 @@ module TSOS {
 
         }
         public getMemory(address:any){
-            debugger;
+            //debugger;
 
-            if (typeof address==="number")
+            if (typeof address==="number"){
+                //checking memory in bounds
                 if (address>= _ProgramList[_ExecutingProgram].limit || address <_ProgramList[_ExecutingProgram].base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, Utils.dec2hex(address)));
                 else
                     return this.memory.Data[address];
+            }
             else{
                 
                 var decAddress = Utils.hex2dec(address);
-                
+                //checking memory in bounds
                 if (decAddress>= _ProgramList[_ExecutingProgram].limit || decAddress <_ProgramList[_ExecutingProgram].base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
                 else
@@ -84,10 +86,11 @@ module TSOS {
             return this.convertHexData(this.getMemory(startAddress+1) +this.getMemory(startAddress));
         }
         public storeInMemory(startAddress, value){
-            debugger;
+            //debugger;
             var valueHex = Utils.dec2hex(value);
             valueHex =  Array(2-(valueHex.length-1)).join("0") + valueHex;
             var position = this.getDecAddressFromHex(startAddress);
+            //check if memory is in bounds
             if (position>= _ProgramList[_ExecutingProgram].limit || position <_ProgramList[_ExecutingProgram].base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
             else

@@ -154,10 +154,11 @@ module TSOS {
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ:{
-                    debugger;
+                    //debugger;
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgram + 
                         " Attempted to access " + params);
+                    //stop the cpu
                     _CPU.isExecuting = false;
                     break;
                 }

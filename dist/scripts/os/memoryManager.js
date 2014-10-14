@@ -40,7 +40,7 @@ var TSOS;
             currPCB.base = 0;
 
             //set the limit?
-            currPCB.limit = base + _ProgramSize;
+            currPCB.limit = currPCB.base + _ProgramSize;
 
             _ProgramList[currPCB.pid] = currPCB;
 
@@ -58,16 +58,17 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            debugger;
-
-            if (typeof address === "number")
+            //debugger;
+            if (typeof address === "number") {
+                //checking memory in bounds
                 if (address >= _ProgramList[_ExecutingProgram].limit || address < _ProgramList[_ExecutingProgram].base)
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, TSOS.Utils.dec2hex(address)));
                 else
                     return this.memory.Data[address];
-            else {
+            } else {
                 var decAddress = TSOS.Utils.hex2dec(address);
 
+                //checking memory in bounds
                 if (decAddress >= _ProgramList[_ExecutingProgram].limit || decAddress < _ProgramList[_ExecutingProgram].base)
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
                 else
@@ -84,10 +85,12 @@ var TSOS;
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
-            debugger;
+            //debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
             var position = this.getDecAddressFromHex(startAddress);
+
+            //check if memory is in bounds
             if (position >= _ProgramList[_ExecutingProgram].limit || position < _ProgramList[_ExecutingProgram].base)
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
             else
