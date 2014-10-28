@@ -84,7 +84,7 @@ var TSOS;
             _ProgramList[_ExecutingProgram].Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instruct) {
-            this.IR = instruct;
+            this.IR = instruct.toUpperCase();
 
             switch (instruct) {
                 case "A9": {

@@ -84,7 +84,7 @@ module TSOS {
         }
         public execute(instruct){
 
-            this.IR = instruct;
+            this.IR = instruct.toUpperCase();
 
             switch(instruct){
                 case "A9": {
