@@ -158,6 +158,8 @@ var TSOS;
                     break;
                 }
                 default: {
+                    //unknown instruct code error
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(UNKNOWN_OP_CODE));
                     break;
                 }
             }

@@ -159,7 +159,7 @@ module TSOS {
                 }
                 default:{
                     //unknown instruct code error
-                    //_KernelInterruptQueue.enqueue(new  Interrupt(Unknown_Opcode_irq));
+                    _KernelInterruptQueue.enqueue(new  Interrupt(UNKNOWN_OP_CODE));
                     break;
                 }
             }
