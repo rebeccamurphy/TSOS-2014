@@ -86,7 +86,7 @@ module TSOS {
 
             this.IR = instruct.toUpperCase();
 
-            switch(instruct){
+            switch(this.IR){
                 case "A9": {
                     //Load the accumulator with a constant, LDA
                     this.loadAccumulatorConst()
