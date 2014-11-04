@@ -70,6 +70,14 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<number> - Runs program with id of <number> if the program is in memory.");
             this.commandList[this.commandList.length] = sc;
 
+            //run all
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all user programs loaded into memory. ");
+            this.commandList[this.commandList.length] = sc;
+
+            //set quantum
+            sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", "<number> - Sets the quantum to the specified number.");
+            this.commandList[this.commandList.length] = sc;
+
             // BSOD
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Tests kernel trapping an OS error.");
             this.commandList[this.commandList.length] = sc;
@@ -378,6 +386,19 @@ var TSOS;
                     _StdOut.putText("Program already executed.");
                 else
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
+            }
+        };
+
+        Shell.prototype.shellRunAll = function () {
+        };
+        Shell.prototype.shellSetQuantum = function (args) {
+            if (args.length <= 0)
+                _StdOut.putText("You need a program id to run.");
+            else if (isNaN(args[0]))
+                _StdOut.putText("Invalid quantum.");
+            else {
+                QUANTUM = parseInt(args[0]);
+                _StdOut.putText("Current Quantum is " + QUANTUM);
             }
         };
         Shell.prototype.shellBSOD = function (args) {

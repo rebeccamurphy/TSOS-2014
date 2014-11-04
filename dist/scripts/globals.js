@@ -28,6 +28,7 @@ var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
 var CONSOLE_VIEWPORT_WIDTH = 500;
 var CONSOLE_VIEWPORT_HEIGHT = 500;
+var QUANTUM = 6;
 
 window.onload = function () {
     //defines console original dimensions

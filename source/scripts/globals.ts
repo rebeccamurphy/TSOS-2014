@@ -30,7 +30,7 @@ var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
 var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
 var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
-
+var QUANTUM: number = 6;
 
 
 window.onload = function() {

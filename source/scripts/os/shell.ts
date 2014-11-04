@@ -100,6 +100,18 @@ module TSOS {
                                   "<number> - Runs program with id of <number> if the program is in memory.");
             this.commandList[this.commandList.length] = sc;
 
+            //run all
+            sc = new ShellCommand(this.shellRunAll,
+                                  "runall",
+                                  "- Runs all user programs loaded into memory. ");
+            this.commandList[this.commandList.length] = sc;
+            
+            //set quantum
+            sc = new ShellCommand(this.shellSetQuantum,
+                                 "quantum",
+                                 "<number> - Sets the quantum to the specified number.");
+            this.commandList[this.commandList.length] = sc;
+
             // BSOD
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
@@ -422,6 +434,21 @@ module TSOS {
                     _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
 
             }
+        }
+
+        public shellRunAll(){
+
+        }
+        public shellSetQuantum(args){
+            if (args.length<=0)
+                _StdOut.putText("You need a program id to run.");
+            else if (isNaN(args[0]))
+                _StdOut.putText("Invalid quantum.");
+            else{
+                QUANTUM = parseInt(args[0])
+                _StdOut.putText("Current Quantum is " + QUANTUM);
+            }
+
         }
         public shellBSOD(args){
             _Kernel.krnTrapError("TEST");
