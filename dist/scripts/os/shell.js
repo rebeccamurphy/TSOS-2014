@@ -66,6 +66,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
 
+            // clearmem
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- clears memory of all loaded programs.");
+            this.commandList[this.commandList.length] = sc;
+
             //run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<number> - Runs program with id of <number> if the program is in memory.");
             this.commandList[this.commandList.length] = sc;
@@ -372,6 +376,12 @@ var TSOS;
                 else
                     _StdOut.putText("Invalid Format.");
             }
+        };
+
+        Shell.prototype.shellClearMem = function () {
+            //clear the running programs and the memory.
+            _MemoryManager = new TSOS.MemoryManager();
+            _MemoryManager.init();
         };
         Shell.prototype.shellRun = function (args) {
             if (args.length <= 0)

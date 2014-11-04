@@ -94,6 +94,12 @@ module TSOS {
                                   "- Loads user program from User Program Input, labels with name if specifed.");
             this.commandList[this.commandList.length] = sc;
             
+            // clearmem
+            sc = new ShellCommand(this.shellClearMem,
+                                  "clearmem",
+                                  "- clears memory of all loaded programs.");
+            this.commandList[this.commandList.length] = sc;
+            
             //run
             sc = new ShellCommand(this.shellRun,
                                   "run",
@@ -105,7 +111,7 @@ module TSOS {
                                   "runall",
                                   "- Runs all user programs loaded into memory. ");
             this.commandList[this.commandList.length] = sc;
-            
+
             //set quantum
             sc = new ShellCommand(this.shellSetQuantum,
                                  "quantum",
@@ -417,6 +423,12 @@ module TSOS {
                 else
                     _StdOut.putText("Invalid Format.");
             }
+        }
+
+        public shellClearMem(){
+            //clear the running programs and the memory. 
+            _MemoryManager= new MemoryManager();
+            _MemoryManager.init();
         }
         public shellRun(args){
             if (args.length <=0)
