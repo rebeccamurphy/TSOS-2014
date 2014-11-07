@@ -4,17 +4,13 @@ FUTURE ME PUT HELLA SWEET COMMENTS HERE.
 var TSOS;
 (function (TSOS) {
     var MemoryManager = (function () {
-        function MemoryManager(memory, locations) {
+        function MemoryManager(memory, nextFreeMem) {
             if (typeof memory === "undefined") { memory = new TSOS.Memory(_MemorySize); }
-            if (typeof locations === "undefined") { locations = new Array(_NumPrograms); }
+            if (typeof nextFreeMem === "undefined") { nextFreeMem = 0; }
             this.memory = memory;
-            this.locations = locations;
+            this.nextFreeMem = nextFreeMem;
         }
         MemoryManager.prototype.init = function () {
-            /*for (var i =0; i<this.locations.length; i++){
-            //later
-            this.locations.push(i);
-            }*/
             this.updateMemoryDisplay();
         };
 
@@ -37,12 +33,16 @@ var TSOS;
 
             //add to list of PCBs
             //because we're starting with just loading 1 program in memory the base will be 0 for now
-            currPCB.base = 0;
+            currPCB.base = this.nextFreeMem;
 
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
+            this.nextFreeMem = currPCB.limit;
 
             _ProgramList[currPCB.pid] = currPCB;
+
+            //Put the program in the ready queue
+            _Scheduler.readyQueue.enqueue(currPCB);
 
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i] = program[i];

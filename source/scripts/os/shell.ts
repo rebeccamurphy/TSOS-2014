@@ -422,12 +422,11 @@ module TSOS {
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
                 _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
-                _CPU.clearPreviousProgram();
+
             }
             else if (Utils.checkValidProgram(tempProgramString)==="BB"){
                 Utils.convertProgram("runnableBB", tempProgramString);
                 _StdOut.putText("ProcessID: " + (_CurrPID-1).toString());   
-                _CPU.clearPreviousProgram();
             }
             else{
                 if (_SarcasticMode)
@@ -454,6 +453,7 @@ module TSOS {
             _MemoryManager.init();            
         }
         public shellRun(args){
+            //TODO change to run programs from residentQueue
             if (args.length <=0)
                 _StdOut.putText("You need a program id to run.");
             else if (_ProgramList[parseInt(args[0])] === undefined){

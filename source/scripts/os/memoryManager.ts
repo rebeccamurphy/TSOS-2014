@@ -6,15 +6,11 @@ module TSOS {
     export class MemoryManager {
         
         constructor(public memory:Memory =new Memory(_MemorySize),
-                    public locations: Array<Number> = new Array(_NumPrograms)) {
+                    public nextFreeMem :number =0
+                    ) {
         }
 
-        public init(): void {
-            /*for (var i =0; i<this.locations.length; i++){
-                //later
-                this.locations.push(i);
-            }*/
-            
+        public init(): void {            
             this.updateMemoryDisplay();
         }
 
@@ -36,11 +32,15 @@ module TSOS {
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
             //because we're starting with just loading 1 program in memory the base will be 0 for now
-            currPCB.base = 0;
+            currPCB.base = this.nextFreeMem;
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
+            this.nextFreeMem = currPCB.limit;
 
             _ProgramList[currPCB.pid] = currPCB;
+
+            //Put the program in the ready queue
+            _Scheduler.readyQueue.enqueue(currPCB);
 
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i] = program[i];

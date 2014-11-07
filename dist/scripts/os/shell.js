@@ -376,11 +376,9 @@ var TSOS;
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
                 _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
-                _CPU.clearPreviousProgram();
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 TSOS.Utils.convertProgram("runnableBB", tempProgramString);
                 _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
-                _CPU.clearPreviousProgram();
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");
@@ -404,6 +402,7 @@ var TSOS;
             _MemoryManager.init();
         };
         Shell.prototype.shellRun = function (args) {
+            //TODO change to run programs from residentQueue
             if (args.length <= 0)
                 _StdOut.putText("You need a program id to run.");
             else if (_ProgramList[parseInt(args[0])] === undefined) {

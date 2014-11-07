@@ -8,7 +8,6 @@ module TSOS {
         public Data: Array<string>;
         constructor(public byteSize:number) {
             this.byteSize = byteSize;
-
             this.Data = new Array(byteSize);
             this.init();
 

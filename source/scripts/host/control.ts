@@ -99,6 +99,8 @@ module TSOS {
                     _MemoryManager= new MemoryManager();
                     _MemoryManager.init();
 
+                    _Scheduler = new cpuScheduler();
+
                     // ... then set the host clock pulse ...
                     _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
                     // .. and call the OS Kernel Bootstrap routine.

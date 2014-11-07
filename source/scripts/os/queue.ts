@@ -34,6 +34,14 @@ module TSOS {
             return retVal;
         }
 
+        public get(pcb){
+            var retVal= null;
+            var index = this.q.indexOf(pcb);
+            retVal = this.q[index];
+            if (index >-1)
+                this.q.splice(index, 1);
+            return retVal;
+        }
         public toString() {
             var retVal = "";
             for (var i in this.q) {

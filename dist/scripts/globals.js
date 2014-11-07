@@ -45,9 +45,10 @@ var _Stepping = false;
 
 //Memory Vars
 var _MemoryManager;
+var _Scheduler;
 var _MemoryByteSize = 8;
 var _ProgramSize = 256;
-var _NumPrograms = 1;
+var _NumPrograms = 3;
 var _MemorySize = _NumPrograms * _ProgramSize;
 var _ProgramList = [];
 var _CurrPID = 0;

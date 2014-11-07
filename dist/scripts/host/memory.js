@@ -7,7 +7,6 @@ var TSOS;
         function Memory(byteSize) {
             this.byteSize = byteSize;
             this.byteSize = byteSize;
-
             this.Data = new Array(byteSize);
             this.init();
         }
