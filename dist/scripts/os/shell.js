@@ -67,7 +67,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
-            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- clears memory of all loaded programs.");
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- clears memory of all loaded programs if none are executing.");
+            this.commandList[this.commandList.length] = sc;
+
+            // clearmem-force
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem-force", "- clears memory of all loaded programs no matter what.");
             this.commandList[this.commandList.length] = sc;
 
             //run
@@ -349,6 +353,13 @@ var TSOS;
             //gets the text box content
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
+
+            //TODO
+            /* if (memory is full){
+            _StdOut.putText("Cannot load program, memory full");
+            }
+            else
+            */
             if ((boxContent.indexOf("BEEP") == -1 || boxContent.indexOf("BOOP") == -1)) {
                 //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
                 tempProgramString = boxContent.replace(/\s+/g, '');
@@ -380,6 +391,15 @@ var TSOS;
 
         Shell.prototype.shellClearMem = function () {
             //clear the running programs and the memory.
+            if (_CPU.isExecuting) {
+                _StdOut.putText("Are you sure you want to clear memory?This will stop programs from executing. Enter clearmem-force instead.");
+            } else {
+                _MemoryManager = new TSOS.MemoryManager();
+                _MemoryManager.init();
+            }
+        };
+        Shell.prototype.shellClearMemForce = function () {
+            //TODO clear queue and junk
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
         };

@@ -397,6 +397,13 @@ module TSOS {
             //gets the text box content
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
+            //TODO
+            /* if (memory is full){
+                _StdOut.putText("Cannot load program, memory full");
+                }
+               else 
+            */
+
             if ((boxContent.indexOf("BEEP")==-1||boxContent.indexOf("BOOP")==-1)){
                 //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
                 tempProgramString= boxContent.replace(/\s+/g, '');
@@ -432,9 +439,8 @@ module TSOS {
 
         public shellClearMem(){
             //clear the running programs and the memory.
-            if (_CPU.isExecuting()){ 
-                _StdOut.putText('Are you sure you want to clear memory?+
-                This will stop programs from executing. Enter clearmem-force instead.');
+            if (_CPU.isExecuting){ 
+                _StdOut.putText("Are you sure you want to clear memory?This will stop programs from executing. Enter clearmem-force instead.");
             }
             else{
                 _MemoryManager= new MemoryManager();
