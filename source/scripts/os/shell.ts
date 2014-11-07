@@ -18,7 +18,6 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf], [ovgpu],[qhpx],[onol], [Wrfhf]";
         public apologies = "[sorry]";
         public backdoors = "[jeff]";
-        
         constructor() {
 
         }
@@ -97,7 +96,13 @@ module TSOS {
             // clearmem
             sc = new ShellCommand(this.shellClearMem,
                                   "clearmem",
-                                  "- clears memory of all loaded programs.");
+                                  "- clears memory of all loaded programs if none are executing.");
+            this.commandList[this.commandList.length] = sc;
+
+            // clearmem-force
+            sc = new ShellCommand(this.shellClearMem,
+                                  "clearmem-force",
+                                  "- clears memory of all loaded programs no matter what.");
             this.commandList[this.commandList.length] = sc;
             
             //run
@@ -426,9 +431,21 @@ module TSOS {
         }
 
         public shellClearMem(){
-            //clear the running programs and the memory. 
+            //clear the running programs and the memory.
+            if (_CPU.isExecuting()){ 
+                _StdOut.putText('Are you sure you want to clear memory?+
+                This will stop programs from executing. Enter clearmem-force instead.');
+            }
+            else{
+                _MemoryManager= new MemoryManager();
+                _MemoryManager.init();
+
+            }
+        }
+        public shellClearMemForce(){
+            //TODO clear queue and junk
             _MemoryManager= new MemoryManager();
-            _MemoryManager.init();
+            _MemoryManager.init();            
         }
         public shellRun(args){
             if (args.length <=0)
