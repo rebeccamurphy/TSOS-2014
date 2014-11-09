@@ -39,6 +39,7 @@ export class Cpu {
     }
 
     public cycle(): void {
+        debugger;
         _Kernel.krnTrace('CPU cycle');
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
@@ -65,6 +66,7 @@ export class Cpu {
         return _MemoryManager.getMemory(this.PC);
     }
     public loadProgram(){
+        debugger;
         this.IR =_ExecutingProgramPCB.IR;
         this.PC = _ExecutingProgramPCB.PC;
         this.Acc = _ExecutingProgramPCB.Acc;
@@ -292,10 +294,12 @@ export class Cpu {
         if (this.Zflag===0){
             //branching, added plus one is to go past the data address 
             _Assembly = "BNE $" +_MemoryManager.getMemory(this.PC+1);
-            this.PC +=_MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC))+1;
+
+            //make sure to add the base of the current program to PC so it goes to the right place
+            this.PC +=_MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC))+1 +_ExecutingProgramPCB.base;
                
             //check if we need to shift the pc back to the beginning
-            if (this.PC>=_ProgramSize){
+            if (this.PC>=_ProgramSize+_ExecutingProgramPCB.base){
                 //its a circleeeeee
                 this.PC-=_ProgramSize
             }

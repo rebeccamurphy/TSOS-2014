@@ -39,6 +39,7 @@ var TSOS;
         };
 
         Cpu.prototype.cycle = function () {
+            debugger;
             _Kernel.krnTrace('CPU cycle');
 
             // TODO: Accumulate CPU usage and profiling statistics here.
@@ -67,6 +68,7 @@ var TSOS;
             return _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadProgram = function () {
+            debugger;
             this.IR = _ExecutingProgramPCB.IR;
             this.PC = _ExecutingProgramPCB.PC;
             this.Acc = _ExecutingProgramPCB.Acc;
@@ -290,10 +292,12 @@ var TSOS;
             if (this.Zflag === 0) {
                 //branching, added plus one is to go past the data address
                 _Assembly = "BNE $" + _MemoryManager.getMemory(this.PC + 1);
-                this.PC += _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC)) + 1;
+
+                //make sure to add the base of the current program to PC so it goes to the right place
+                this.PC += _MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC)) + 1 + _ExecutingProgramPCB.base;
 
                 //check if we need to shift the pc back to the beginning
-                if (this.PC >= _ProgramSize) {
+                if (this.PC >= _ProgramSize + _ExecutingProgramPCB.base) {
                     //its a circleeeeee
                     this.PC -= _ProgramSize;
                 }

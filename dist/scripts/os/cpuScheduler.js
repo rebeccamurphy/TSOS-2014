@@ -13,9 +13,17 @@ var TSOS;
             this.counter = counter;
         }
         cpuScheduler.prototype.runProgram = function () {
-            //dequeue the program we want to execute
-            _ExecutingProgramPCB = this.readyQueue.dequeue();
-            _ExecutingProgramPID = _ExecutingProgramPCB.PID;
+            //dequeue the program we want to execute from the resident queue
+            var tempProgramPCB = this.residentQueue.find(_ExecutingProgramPID);
+
+            //enqueue program to the ready queue
+            this.readyQueue.enqueue(tempProgramPCB);
+
+            //check if the CPU is not executing, thus we need to set the executing program
+            if (!_CPU.isExecuting) {
+                _ExecutingProgramPCB = this.readyQueue.dequeue();
+                _ExecutingProgramPID = _ExecutingProgramPCB.pid;
+            }
 
             //load it into the cpu
             _CPU.loadProgram();
@@ -27,8 +35,11 @@ var TSOS;
             //reset the counter
             this.counter = 0;
 
-            //call run program to get the next program in the queue
-            this.runProgram();
+            //dequeue next program in line
+            _ExecutingProgramPCB = this.readyQueue.dequeue();
+
+            //load it into the cpu
+            _CPU.loadProgram();
         };
         return cpuScheduler;
     })();

@@ -45,7 +45,7 @@ module TSOS {
         }
         public inQueue(pid){
             for (var i =0; i<this.q.length; i++){
-                if (this.q[i].pid = pid){
+                if (this.q[i].pid === pid){
                     return true;
                 }
             }
@@ -55,7 +55,7 @@ module TSOS {
             //returns pcb 
             var retVal = null;
             for (var i =0; i<this.q.length; i++){
-                if (this.q[i].pid == pid){
+                if (this.q[i].pid === pid){
                     retVal = this.q[i];
                     if (i>-1)
                         this.q.splice(i, 1);

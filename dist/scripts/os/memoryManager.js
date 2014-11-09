@@ -28,14 +28,15 @@ var TSOS;
         };
 
         MemoryManager.prototype.loadProgram = function (program) {
-            debugger;
-
             //create new PCB
             var currPCB = new TSOS.PCB();
 
             //add to list of PCBs
             //because we're starting with just loading 1 program in memory the base will be 0 for now
             currPCB.base = this.nextFreeMem;
+
+            //set the pc of the pcb to start at the base
+            currPCB.PC = currPCB.base;
 
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
@@ -44,7 +45,7 @@ var TSOS;
             this.nextFreeMem = currPCB.limit;
 
             //Put the program in the ready queue
-            _Scheduler.readyQueue.enqueue(currPCB);
+            _Scheduler.residentQueue.enqueue(currPCB);
 
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i + currPCB.base] = program[i];
@@ -60,7 +61,8 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            //debugger;
+            debugger;
+
             if (typeof address === "number") {
                 //checking memory in bounds
                 if (address >= _ExecutingProgramPCB.limit || address < _ExecutingProgramPCB.base)

@@ -86,12 +86,11 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) { 
                 //clear the interval of the clock pulse
-                _Scheduler.runProgram();
+                
                 _CPU.cycle();
 
                 
             } else if (_CPU.isExecuting && !_SingleStep) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _Scheduler.runProgram(); 
                 _CPU.cycle();
             } else if (!_SingleStep){// If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
@@ -135,6 +134,7 @@ module TSOS {
                     //start the program
                     //since where just running the first program in mem, just setting isexecuting tru
                     //debugger;
+                    _Scheduler.runProgram(); 
                     _CPU.isExecuting = true;
                     break;
                 }

@@ -454,7 +454,7 @@ module TSOS {
             //TODO change to run programs from residentQueue
             if (args.length <=0)
                 _StdOut.putText("You need a program id to run.");
-            else if (_Scheduler.residentQueue.inQueue(parseInt(args[0]))){
+            else if (!_Scheduler.residentQueue.inQueue(parseInt(args[0]))){
                 //check for valid id
                 _StdOut.putText("Invalid program id");
             }
@@ -471,7 +471,6 @@ module TSOS {
             else {
                 //run program 
                 _ExecutingProgramPID = parseInt(args[0]);
-                _Scheduler.readyQueue.enqueue(_Scheduler.residentQueue.find(_ExecutingProgramPID));
                 _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
 
 

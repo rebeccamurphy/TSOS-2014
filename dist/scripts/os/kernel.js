@@ -81,10 +81,8 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) {
                 //clear the interval of the clock pulse
-                _Scheduler.runProgram();
                 _CPU.cycle();
             } else if (_CPU.isExecuting && !_SingleStep) {
-                _Scheduler.runProgram();
                 _CPU.cycle();
             } else if (!_SingleStep) {
                 this.krnTrace("Idle");
@@ -123,6 +121,7 @@ var TSOS;
                     //start the program
                     //since where just running the first program in mem, just setting isexecuting tru
                     //debugger;
+                    _Scheduler.runProgram();
                     _CPU.isExecuting = true;
                     break;
                 }

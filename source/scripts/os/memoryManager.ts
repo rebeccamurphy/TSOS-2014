@@ -28,12 +28,14 @@ module TSOS {
         }
 
         public loadProgram(program){
-            debugger;
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
             //because we're starting with just loading 1 program in memory the base will be 0 for now
             currPCB.base = this.nextFreeMem;
+
+            //set the pc of the pcb to start at the base
+            currPCB.PC = currPCB.base;
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
 
@@ -42,7 +44,7 @@ module TSOS {
 
        
             //Put the program in the ready queue
-            _Scheduler.readyQueue.enqueue(currPCB);
+            _Scheduler.residentQueue.enqueue(currPCB);
 
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i+currPCB.base] = program[i];
@@ -59,7 +61,7 @@ module TSOS {
 
         }
         public getMemory(address:any){
-            //debugger;
+            debugger;
 
             if (typeof address==="number"){
                 //checking memory in bounds
