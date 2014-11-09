@@ -180,13 +180,13 @@ var TSOS;
             document.getElementById("instructID").innerHTML = _Assembly;
         };
         Control.updatePCBDisplay = function () {
-            document.getElementById("PCBPIDDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].pid);
-            document.getElementById("PCBPCDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].PC);
-            document.getElementById("PCBIRDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].IR);
-            document.getElementById("PCBACCDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Acc);
-            document.getElementById("PCBXDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Xreg);
-            document.getElementById("PCBYDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Yreg);
-            document.getElementById("PCBZDisplay").innerHTML = String(_ProgramList[_ExecutingProgram].Zflag);
+            document.getElementById("PCBPIDDisplay").innerHTML = String(_ExecutingProgramPCB.pid);
+            document.getElementById("PCBPCDisplay").innerHTML = String(_ExecutingProgramPCB.PC);
+            document.getElementById("PCBIRDisplay").innerHTML = String(_ExecutingProgramPCB.IR);
+            document.getElementById("PCBACCDisplay").innerHTML = String(_ExecutingProgramPCB.Acc);
+            document.getElementById("PCBXDisplay").innerHTML = String(_ExecutingProgramPCB.Xreg);
+            document.getElementById("PCBYDisplay").innerHTML = String(_ExecutingProgramPCB.Yreg);
+            document.getElementById("PCBZDisplay").innerHTML = String(_ExecutingProgramPCB.Zflag);
         };
         Control.startPCBDisplay = function () {
             document.getElementById("PCBPIDDisplay").innerHTML = "0";

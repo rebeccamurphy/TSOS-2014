@@ -43,12 +43,39 @@ var TSOS;
 
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            this.execute(this.fetch());
-            this.updateCpu();
+            if (_Scheduler.counter < QUANTUM) {
+                //if program still getting its turn
+                //execute current instruction
+                this.execute(this.fetch());
+
+                //update CPU
+                this.updateCpu();
+
+                //TODO update program list display
+                //Increment quantum counter
+                _Scheduler.counter++;
+            } else {
+                //switching programs, save state of cpu to pcb
+                this.updatePCB();
+
+                //call scheduler to perform a context switch
+                _Scheduler.contextSwitch();
+            }
         };
 
         Cpu.prototype.fetch = function () {
             return _MemoryManager.getMemory(this.PC);
+        };
+        Cpu.prototype.loadProgram = function () {
+            this.IR = _ExecutingProgramPCB.IR;
+            this.PC = _ExecutingProgramPCB.PC;
+            this.Acc = _ExecutingProgramPCB.Acc;
+            this.Xreg = _ExecutingProgramPCB.Xreg;
+            this.Yreg = _ExecutingProgramPCB.Yreg;
+            this.Zflag = _ExecutingProgramPCB.Zflag;
+            _Assembly = "No Instruction";
+            TSOS.Control.updateCpuDisplay();
+            TSOS.Control.startPCBDisplay();
         };
         Cpu.prototype.clearPreviousProgram = function () {
             //just for project 2, clearing CPU data
@@ -76,12 +103,12 @@ var TSOS;
         Cpu.prototype.updatePCB = function () {
             //update program pcb
             //debugger;
-            _ProgramList[_ExecutingProgram].PC = _CPU.PC;
-            _ProgramList[_ExecutingProgram].IR = _CPU.IR;
-            _ProgramList[_ExecutingProgram].Acc = _CPU.Acc;
-            _ProgramList[_ExecutingProgram].Xreg = _CPU.Xreg;
-            _ProgramList[_ExecutingProgram].Yreg = _CPU.Yreg;
-            _ProgramList[_ExecutingProgram].Zflag = _CPU.Zflag;
+            _ExecutingProgramPCB.PC = _CPU.PC;
+            _ExecutingProgramPCB.IR = _CPU.IR;
+            _ExecutingProgramPCB.Acc = _CPU.Acc;
+            _ExecutingProgramPCB.Xreg = _CPU.Xreg;
+            _ExecutingProgramPCB.Yreg = _CPU.Yreg;
+            _ExecutingProgramPCB.Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instruct) {
             this.IR = instruct.toUpperCase();

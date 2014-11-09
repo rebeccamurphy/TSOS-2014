@@ -86,9 +86,12 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) { 
                 //clear the interval of the clock pulse
+                _Scheduler.runProgram();
                 _CPU.cycle();
+
                 
             } else if (_CPU.isExecuting && !_SingleStep) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
+                _Scheduler.runProgram(); 
                 _CPU.cycle();
             } else if (!_SingleStep){// If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
@@ -140,7 +143,7 @@ module TSOS {
                     //first log the error
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC-1));
                     //then stop the program from executing
-                    //TODO
+                    _CPU.isExecuting = false;
                     break;
                 }
                 case SYS_OPCODE_IRQ:{
@@ -151,12 +154,14 @@ module TSOS {
                 case CPU_BREAK_IRQ:{
                     //stop the cpu from executing
                     _CPU.isExecuting = false;
+                    //clear program from memory
+
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ:{
                     //debugger;
                     //log the error
-                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgram + 
+                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + 
                         " Attempted to access " + params);
                     //stop the cpu
                     _CPU.isExecuting = false;

@@ -35,12 +35,33 @@ module TSOS {
         }
 
         public get(pcb){
+            //gets pcb and removes it from the queue
             var retVal= null;
             var index = this.q.indexOf(pcb);
             retVal = this.q[index];
             if (index >-1)
                 this.q.splice(index, 1);
             return retVal;
+        }
+        public inQueue(pid){
+            for (var i =0; i<this.q.length; i++){
+                if (this.q[i].pid = pid){
+                    return true;
+                }
+            }
+            return false;
+        }
+        public find(pid){
+            //returns pcb 
+            var retVal = null;
+            for (var i =0; i<this.q.length; i++){
+                if (this.q[i].pid == pid){
+                    retVal = this.q[i];
+                    if (i>-1)
+                        this.q.splice(i, 1);
+                    return retVal;
+                }
+            }
         }
         public toString() {
             var retVal = "";

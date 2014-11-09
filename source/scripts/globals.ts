@@ -53,7 +53,8 @@ var _NumPrograms = 3;
 var _MemorySize = _NumPrograms * _ProgramSize;
 var _ProgramList =[];
 var _CurrPID=0;
-var _ExecutingProgram;
+var _ExecutingProgramPID; //pid of excuting program
+var _ExecutingProgramPCB; //pcb of excuting program
 var _Assembly ="";
 var _OSclock: number = 0;  // Page 23.
 

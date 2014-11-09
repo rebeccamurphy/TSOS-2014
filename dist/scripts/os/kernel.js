@@ -81,8 +81,10 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) {
                 //clear the interval of the clock pulse
+                _Scheduler.runProgram();
                 _CPU.cycle();
             } else if (_CPU.isExecuting && !_SingleStep) {
+                _Scheduler.runProgram();
                 _CPU.cycle();
             } else if (!_SingleStep) {
                 this.krnTrace("Idle");
@@ -129,6 +131,8 @@ var TSOS;
                     //first log the error
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC - 1));
 
+                    //then stop the program from executing
+                    _CPU.isExecuting = false;
                     break;
                 }
                 case SYS_OPCODE_IRQ: {
@@ -139,12 +143,13 @@ var TSOS;
                 case CPU_BREAK_IRQ: {
                     //stop the cpu from executing
                     _CPU.isExecuting = false;
+
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
                     //debugger;
                     //log the error
-                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgram + " Attempted to access " + params);
+                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + params);
 
                     //stop the cpu
                     _CPU.isExecuting = false;

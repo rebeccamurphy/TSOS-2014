@@ -28,6 +28,8 @@ var TSOS;
         };
 
         MemoryManager.prototype.loadProgram = function (program) {
+            debugger;
+
             //create new PCB
             var currPCB = new TSOS.PCB();
 
@@ -37,18 +39,18 @@ var TSOS;
 
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
-            this.nextFreeMem = currPCB.limit;
 
-            _ProgramList[currPCB.pid] = currPCB;
+            //next free memory should be after the program size
+            this.nextFreeMem = currPCB.limit;
 
             //Put the program in the ready queue
             _Scheduler.readyQueue.enqueue(currPCB);
 
             for (var i = 0; i < program.length; i++) {
-                this.memory.Data[i] = program[i];
+                this.memory.Data[i + currPCB.base] = program[i];
             }
 
-            for (var j = program.length; j < _ProgramSize; j++)
+            for (var j = program.length + currPCB.base; j < currPCB.limit; j++)
                 this.memory.Data[j] = "00";
 
             //update display
@@ -61,7 +63,7 @@ var TSOS;
             //debugger;
             if (typeof address === "number") {
                 //checking memory in bounds
-                if (address >= _ProgramList[_ExecutingProgram].limit || address < _ProgramList[_ExecutingProgram].base)
+                if (address >= _ExecutingProgramPCB.limit || address < _ExecutingProgramPCB.base)
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, TSOS.Utils.dec2hex(address)));
                 else
                     return this.memory.Data[address];
@@ -69,7 +71,7 @@ var TSOS;
                 var decAddress = TSOS.Utils.hex2dec(address);
 
                 //checking memory in bounds
-                if (decAddress >= _ProgramList[_ExecutingProgram].limit || decAddress < _ProgramList[_ExecutingProgram].base)
+                if (decAddress >= _ExecutingProgramPCB.limit || decAddress < _ExecutingProgramPCB.base)
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
                 else
                     return this.memory.Data[decAddress];
@@ -91,10 +93,12 @@ var TSOS;
             var position = this.getDecAddressFromHex(startAddress);
 
             //check if memory is in bounds
-            if (position >= _ProgramList[_ExecutingProgram].limit || position < _ProgramList[_ExecutingProgram].base)
+            if (position >= _ExecutingProgramPCB.limit || position < _ExecutingProgramPCB.base)
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
             else
                 this.memory.Data[position] = valueHex;
+        };
+        MemoryManager.prototype.clearFromMemory = function () {
         };
         return MemoryManager;
     })();

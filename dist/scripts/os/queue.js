@@ -33,12 +33,33 @@ var TSOS;
         };
 
         Queue.prototype.get = function (pcb) {
+            //gets pcb and removes it from the queue
             var retVal = null;
             var index = this.q.indexOf(pcb);
             retVal = this.q[index];
             if (index > -1)
                 this.q.splice(index, 1);
             return retVal;
+        };
+        Queue.prototype.inQueue = function (pid) {
+            for (var i = 0; i < this.q.length; i++) {
+                if (this.q[i].pid = pid) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        Queue.prototype.find = function (pid) {
+            //returns pcb
+            var retVal = null;
+            for (var i = 0; i < this.q.length; i++) {
+                if (this.q[i].pid == pid) {
+                    retVal = this.q[i];
+                    if (i > -1)
+                        this.q.splice(i, 1);
+                    return retVal;
+                }
+            }
         };
         Queue.prototype.toString = function () {
             var retVal = "";

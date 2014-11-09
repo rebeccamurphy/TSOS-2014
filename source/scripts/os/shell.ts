@@ -397,13 +397,11 @@ module TSOS {
             //gets the text box content
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
-            //TODO
-            /* if (memory is full){
-                _StdOut.putText("Cannot load program, memory full");
-                }
-               else 
-            */
 
+            if (_MemoryManager.nextFreeMem >= _NumPrograms * _ProgramSize ){
+                    _StdOut.putText("Cannot load program, memory full.");
+                return;
+                }  
             if ((boxContent.indexOf("BEEP")==-1||boxContent.indexOf("BOOP")==-1)){
                 //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
                 tempProgramString= boxContent.replace(/\s+/g, '');
@@ -456,17 +454,26 @@ module TSOS {
             //TODO change to run programs from residentQueue
             if (args.length <=0)
                 _StdOut.putText("You need a program id to run.");
-            else if (_ProgramList[parseInt(args[0])] === undefined){
+            else if (_Scheduler.residentQueue.inQueue(parseInt(args[0]))){
                 //check for valid id
                 _StdOut.putText("Invalid program id");
             }
+            else if (_Scheduler.readyQueue.inQueue(parseInt(args[0]))){
+                _StdOut.putText("Program is already waiting to execute.")
+            }
+            else if (_ExecutingProgramPID == parseInt(args[0]) ){
+                if (!_SarcasticMode)
+                    _StdOut.putText("Program is already executing");
+                else
+                    _StdOut.putText("Christ, give a second to run, it's already running.");
+            }
+
             else {
                 //run program 
-                _ExecutingProgram = parseInt(args[0]);
-                if (_ProgramList[_ExecutingProgram].PC !== _ProgramList[_ExecutingProgram].base)
-                    _StdOut.putText("Program already executed.");
-                else
-                    _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
+                _ExecutingProgramPID = parseInt(args[0]);
+                _Scheduler.readyQueue.enqueue(_Scheduler.residentQueue.find(_ExecutingProgramPID));
+                _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
+
 
             }
         }
