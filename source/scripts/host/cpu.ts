@@ -321,7 +321,7 @@ export class Cpu {
     public systemCall(){
         //system call 
         //$01 in X reg = print the interger stored in the Y register
-        //$02 in X reg = print the 00-termindated String stored at the address in the Y register
+        //$02 in X reg = print the 00-terminated String stored at the address in the Y register
         //Examples
         //SYS, FF 
         _Assembly = "SYS";

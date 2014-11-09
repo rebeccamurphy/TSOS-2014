@@ -94,6 +94,7 @@ module TSOS {
         }
         public storeInMemory(startAddress, value){
 
+            debugger;
             var valueHex = Utils.dec2hex(value);
             
             valueHex =  Array(2-(valueHex.length-1)).join("0") + valueHex;

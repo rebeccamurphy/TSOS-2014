@@ -91,6 +91,7 @@ var TSOS;
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
+            debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
 
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
