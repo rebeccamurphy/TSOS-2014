@@ -174,11 +174,14 @@ var TSOS;
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + params);
 
                     //stop the cpu
+                    //TODO so something to stop the executing of the program futher
                     _CPU.isExecuting = false;
                     this.krnTrace("CPU had stopped executing.");
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {
+                    params.state = 4 /* Killed */;
+
                     //log event
                     this.krnTrace("PID: " + params.pid + " has been killed.");
                     _MemoryManager.clearProgramFromMemory(params);
@@ -195,6 +198,17 @@ var TSOS;
                         //only perform a context switch if the running process was killed
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
                     }
+                    break;
+                }
+                case CLEAR_MEMORY_IRQ: {
+                    this.krnTrace("Memory is being cleared.");
+
+                    //clear the memory
+                    _MemoryManager = new TSOS.MemoryManager();
+                    _MemoryManager.init();
+
+                    //clear the scheduler
+                    _Scheduler = new TSOS.cpuScheduler();
                     break;
                 }
                 default:

@@ -51,8 +51,11 @@ var TSOS;
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
 
+            //set the pcb state
+            currPCB.state = 0 /* New */;
+
             //Put the program in the ready queue
-            _Scheduler.residentQueue.enqueue(currPCB);
+            _Scheduler.loadProgram(currPCB);
 
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i + currPCB.base] = program[i];

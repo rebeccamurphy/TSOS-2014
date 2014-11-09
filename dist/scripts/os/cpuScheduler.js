@@ -12,6 +12,9 @@ var TSOS;
             this.residentQueue = residentQueue;
             this.counter = counter;
         }
+        cpuScheduler.prototype.loadProgram = function (pcb) {
+            this.residentQueue.enqueue(pcb);
+        };
         cpuScheduler.prototype.runProgram = function () {
             //dequeue the program we want to execute from the resident queue
             var tempProgramPCB = this.residentQueue.find(_ExecutingProgramPID);
@@ -42,6 +45,7 @@ var TSOS;
         cpuScheduler.prototype.contextSwitch = function () {
             if (_ExecutingProgramPCB !== null) {
                 //enqueue the current executing program back into the ready queue
+                _ExecutingProgramPCB.state = 2 /* Ready */;
                 this.readyQueue.enqueue(_ExecutingProgramPCB);
             }
 
@@ -62,6 +66,7 @@ var TSOS;
                 //reset the pcb so if the program is restarted it will start from the beginning
                 tempProgramPCB = _ExecutingProgramPCB;
                 _ExecutingProgramPCB.reset();
+                _ExecutingProgramPCB.state = 3 /* Done */;
 
                 //put the program back in the resident queue because it is still in memory
                 this.residentQueue.enqueue(_ExecutingProgramPCB);

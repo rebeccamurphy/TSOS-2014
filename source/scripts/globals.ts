@@ -27,6 +27,7 @@ var CPU_BREAK_IRQ: number = 5;
 var MEMORY_ACCESS_VIOLATION_IRQ: number = 6;
 var PROCESS_KILLED_IRQ: number = 7;
 var CONTEXT_SWITCH_IRQ: number = 8;
+var CLEAR_MEMORY_IRQ: number = 9;
 
 
 var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
@@ -41,6 +42,9 @@ window.onload = function() {
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
     CONSOLE_VIEWPORT_HEIGHT= parseInt(document.getElementById("display").getAttribute("height"));
 };
+
+enum State {New,Running, Ready, Done, Killed};
+var States =["New","Running","Ready","Done", "Killed"];
 //
 // Global Variables
 //

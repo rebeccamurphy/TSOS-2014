@@ -25,6 +25,7 @@ var CPU_BREAK_IRQ = 5;
 var MEMORY_ACCESS_VIOLATION_IRQ = 6;
 var PROCESS_KILLED_IRQ = 7;
 var CONTEXT_SWITCH_IRQ = 8;
+var CLEAR_MEMORY_IRQ = 9;
 
 var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
@@ -37,6 +38,17 @@ window.onload = function () {
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
     CONSOLE_VIEWPORT_HEIGHT = parseInt(document.getElementById("display").getAttribute("height"));
 };
+
+var State;
+(function (State) {
+    State[State["New"] = 0] = "New";
+    State[State["Running"] = 1] = "Running";
+    State[State["Ready"] = 2] = "Ready";
+    State[State["Done"] = 3] = "Done";
+    State[State["Killed"] = 4] = "Killed";
+})(State || (State = {}));
+;
+var States = ["New", "Running", "Ready", "Done", "Killed"];
 
 //
 // Global Variables

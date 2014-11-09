@@ -180,6 +180,7 @@ var TSOS;
             document.getElementById("instructID").innerHTML = _Assembly;
         };
         Control.updatePCBDisplay = function () {
+            /*
             document.getElementById("PCBPIDDisplay").innerHTML = String(_ExecutingProgramPCB.pid);
             document.getElementById("PCBPCDisplay").innerHTML = String(_ExecutingProgramPCB.PC);
             document.getElementById("PCBIRDisplay").innerHTML = String(_ExecutingProgramPCB.IR);
@@ -187,17 +188,50 @@ var TSOS;
             document.getElementById("PCBXDisplay").innerHTML = String(_ExecutingProgramPCB.Xreg);
             document.getElementById("PCBYDisplay").innerHTML = String(_ExecutingProgramPCB.Yreg);
             document.getElementById("PCBZDisplay").innerHTML = String(_ExecutingProgramPCB.Zflag);
+            */
         };
         Control.startPCBDisplay = function () {
+            /*
             document.getElementById("PCBPIDDisplay").innerHTML = "0";
-            document.getElementById("PCBPCDisplay").innerHTML = "0";
+            document.getElementById("PCBPCDisplay").innerHTML ="0";
             document.getElementById("PCBIRDisplay").innerHTML = "0";
             document.getElementById("PCBACCDisplay").innerHTML = "0";
             document.getElementById("PCBXDisplay").innerHTML = "0";
             document.getElementById("PCBYDisplay").innerHTML = "0";
             document.getElementById("PCBZDisplay").innerHTML = "0";
+            */
         };
 
+        Control.updateRQDisplay = function () {
+            var output = "<tr>";
+            output += "<td> " + _ExecutingProgramPCB.pid + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.PC + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.IR + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.Acc + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.Xreg + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.Yreg + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.Zflag + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.priority + "</td>";
+            output += "<td> " + States[_ExecutingProgramPCB.state] + "</td>";
+            output += "<td> " + _ExecutingProgramPCB.location + "</td>";
+            output += "</tr>";
+
+            for (var i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
+                output += "<tr>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).pid + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).PC + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).IR + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).Acc + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).Xreg + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).Yreg + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).priority + "</td>";
+                output += "<td> " + States[_Scheduler.readyQueue.get(i).state] + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).location + "</td>";
+                output += "</tr>";
+            }
+            document.getElementById("ReadyQueueDisplay").innerHTML = output;
+        };
         Control.c = function () {
             //debugger;
             _DrawingContext.fillStyle = "#3a50b6";

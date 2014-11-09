@@ -124,66 +124,7 @@
          ></textarea>
          </small>
       </label>
-    <div id="divUserProgramInput">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="38"
-         ></textarea>
-      </label>
-   </div>  
-   </div>
-
-   <div id="divMemory" class="col-md-3" >
-      <label>
-         Memory
-         <br>
-         <small>
-         <div id="memoryWrapper">
-            <table id = "memDisplayBox" class="table table-bordered">
-              <tbody id ="memDisplay">
-              <tr>
-                  <td>Memory will be initialized on start up.</td>
-              <tr>
-              </tbody>
-            </table>
-         </div>
-         </small>
-      </label>
-      <label>
-        <div style="width:360px;margin-bottom:1px">PCB<div id=""></div></div>
-         <small>
-         <div id="PCBWrapper">
-            <table id = "PCBDisplayBox" class="table table-bordered">
-              <thead style="font-weight:bold">
-                <tr>
-                  <td>PID</td>
-                  <td>PC</td>
-                  <td>IR</td>
-                  <td>ACC</td>
-                  <td>X</td>
-                  <td>Y</td>
-                  <td>Z</td>
-                </tr>
-              </thead>
-              <tbody id ="">
-              <tr>
-                  <td id="PCBPIDDisplay">0</td>
-                  <td id="PCBPCDisplay">0</td>
-                  <td id="PCBIRDisplay">0</td>
-                  <td id="PCBACCDisplay">0</td>
-                  <td id="PCBXDisplay">0</td>
-                  <td id="PCBYDisplay">0</td>
-                  <td id="PCBZDisplay">0</td>
-              <tr>
-              </tbody>
-            </table>
-         </div>
-         </small>
-      </label>
+      
       <label>
         <div style="width:360px;margin-bottom:1px">CPU<div id="instructID">No Instruction</div></div>
          <small>
@@ -214,10 +155,77 @@
          </small>
       </label>
    </div>
+
+   <div id="divMemory" class="col-md-3" >
+    <label>
+         Memory
+         <br>
+         <small>
+         <div id="memoryWrapper">
+            <table id = "memDisplayBox" class="table table-bordered">
+              <tbody id ="memDisplay">
+              <tr>
+                  <td>Memory will be initialized on start up.</td>
+              </tr>
+              </tbody>
+            </table>
+         </div>
+         </small>
+      </label>
+     
+      <div id="divUserProgramInput">
+      <label>
+         User Program Input
+         <br>
+         <textarea name="taProgramInput"
+                   id  ="taProgramInput"
+                   rows="3"
+                   cols="38"
+         ></textarea>
+      </label>
+   </div> 
+   </div>
    
    
 </div>
-
+<div id= "ReadyQueue"class="col-md-7" >
+        <div style="font-weight:700">Ready Queue<div id="SchedulingType">Round Robin</div></div>
+         <small>
+         <div id="ReadyQueueWrapper">
+            <table id = "ReadyQueueDisplayBox" class="table table-bordered">
+              <thead style="font-weight:bold">
+                <tr>
+                  <td>PID</td>
+                  <td>PC</td>
+                  <td>IR</td>
+                  <td>ACC</td>
+                  <td>X</td>
+                  <td>Y</td>
+                  <td>Z</td>
+                  <td>Priority</td>
+                  <td>State</td>
+                  <td>Location</td>
+                </tr>
+              </thead>
+              <tbody id ="ReadyQueueDisplay">
+              <tr>
+                  <td id="PCBPIDDisplay"></td>
+                  <td id="PCBPCDisplay"></td>
+                  <td id="PCBIRDisplay"></td>
+                  <td id="PCBACCDisplay"></td>
+                  <td id="PCBXDisplay"></td>
+                  <td id="PCBYDisplay"></td>
+                  <td id="PCBZDisplay"></td>
+                  <td id="PCBPriorityDisplay"></td>
+                  <td id="PCBStateDisplay"></td>
+                  <td id="PCBLocDisplay"></td>
+              </tr>
+              </tbody>
+            </table>
+         </div>
+         </small>
+      
+   </div>   
 <p class="footerText" style="clear:both;">
    <br>
    Copyright &copy; 2008 - 2014 No Rights Reserved.

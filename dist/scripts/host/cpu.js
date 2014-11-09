@@ -61,12 +61,14 @@ var TSOS;
                 //call scheduler to perform a context switch
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
             }
+            TSOS.Control.updateRQDisplay();
         };
 
         Cpu.prototype.fetch = function () {
             return _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadProgram = function () {
+            _ExecutingProgramPCB.state = 1 /* Running */;
             this.IR = _ExecutingProgramPCB.IR;
             this.PC = _ExecutingProgramPCB.PC;
             this.Acc = _ExecutingProgramPCB.Acc;

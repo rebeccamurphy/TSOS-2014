@@ -15,7 +15,10 @@ module TSOS {
                     public IR: string="",
                     // memory stuff
                     public base: number =0, //starting location in the mems
-                    public limit:number=0  //max location in the mems. to prevent
+                    public limit:number=0,  //max location in the mems. to prevent
+                    public state: State =State.New, //new, ready, or running state of program
+                    public priority:String ="",
+                    public location:String ="Memory"
                     ) {
 
         this.pid = _CurrPID;

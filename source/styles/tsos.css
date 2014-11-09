@@ -94,7 +94,7 @@ font-weight: normal !important;
   font-weight: normal !important;
   padding: 0px !important;
 }
-#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox{
+#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox, #ReadyQueueDisplayBox{
   font-weight: normal !important;
   border-color: rgb(169,169,169);
   text-align: center;
@@ -109,7 +109,6 @@ font-weight: normal !important;
   max-height:406px;
   height: 206px;
   width:360px;
-  margin-bottom: 4px;
 }
 
 #instructID{
@@ -133,3 +132,18 @@ td {
   width: 57.5px;
 }
 
+#divUserProgramInput{
+  margin-top: 6px;
+}
+
+#SchedulingType{
+  display:inline-block;
+  float:right;
+}
+#ReadyQueue{
+  margin-top: 10px;
+}
+#ReadyQueueWrapper{
+  /*border: 1px solid;
+  border-color: rgb(169,169,169);*/
+}

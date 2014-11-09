@@ -13,6 +13,9 @@ module TSOS {
 
         }
 
+        public loadProgram(pcb){
+        	this.residentQueue.enqueue(pcb);
+        }
         public runProgram(){
         	//dequeue the program we want to execute from the resident queue
         	var tempProgramPCB = this.residentQueue.find(_ExecutingProgramPID);
@@ -43,6 +46,7 @@ module TSOS {
         public contextSwitch(){
         	if (_ExecutingProgramPCB!==null){
         		//enqueue the current executing program back into the ready queue
+        		_ExecutingProgramPCB.state = State.Ready;
         		this.readyQueue.enqueue(_ExecutingProgramPCB);
         	}
         	//reset the counter
@@ -62,6 +66,7 @@ module TSOS {
         		//reset the pcb so if the program is restarted it will start from the beginning
         		tempProgramPCB = _ExecutingProgramPCB;
         		_ExecutingProgramPCB.reset();
+        		_ExecutingProgramPCB.state = State.Done;
         		//put the program back in the resident queue because it is still in memory
         		this.residentQueue.enqueue(_ExecutingProgramPCB);
         		//reset the executing program variables

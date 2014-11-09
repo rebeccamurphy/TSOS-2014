@@ -59,12 +59,14 @@ export class Cpu {
             //call scheduler to perform a context switch
             _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
         }
+        TSOS.Control.updateRQDisplay();
     }
     
     public fetch(): String{
         return _MemoryManager.getMemory(this.PC);
     }
     public loadProgram(){
+        _ExecutingProgramPCB.state = State.Running;
         this.IR =_ExecutingProgramPCB.IR;
         this.PC = _ExecutingProgramPCB.PC;
         this.Acc = _ExecutingProgramPCB.Acc;

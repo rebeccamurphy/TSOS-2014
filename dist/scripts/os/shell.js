@@ -67,11 +67,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
-            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- clears memory of all loaded programs if none are executing.");
-            this.commandList[this.commandList.length] = sc;
-
-            // clearmem-force
-            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem-force", "- clears memory of all loaded programs no matter what.");
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "<string>- clears memory of all loaded programs if none are executing, add -force to force memory to clear running programs.");
             this.commandList[this.commandList.length] = sc;
 
             //run
@@ -391,27 +387,21 @@ var TSOS;
             }
         };
 
-        Shell.prototype.shellClearMem = function () {
+        Shell.prototype.shellClearMem = function (args) {
             //clear the running programs and the memory.
-            if (_CPU.isExecuting) {
+            if (_CPU.isExecuting && args.length === 0) {
                 _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
+                return;
+            } else if (args[0] === "-force") {
+                //TODO clear memory interrupt
+                _StdOut.putText("Forcing memory to be cleared.");
             } else {
-                //clear the memory
-                _MemoryManager = new TSOS.MemoryManager();
-                _MemoryManager.init();
-
-                //clear the scheduler
-                _Scheduler = new TSOS.cpuScheduler();
+                _StdOut.putText("Memory being cleared.");
             }
-        };
-        Shell.prototype.shellClearMemForce = function () {
-            //clear the memory
-            _MemoryManager = new TSOS.MemoryManager();
-            _MemoryManager.init();
 
-            //clear the scheduler
-            _Scheduler = new TSOS.cpuScheduler();
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CLEAR_MEMORY_IRQ));
         };
+
         Shell.prototype.shellRun = function (args) {
             //TODO change to run programs from residentQueue
             if (args.length <= 0)

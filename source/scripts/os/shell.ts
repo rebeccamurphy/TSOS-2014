@@ -96,15 +96,9 @@ module TSOS {
             // clearmem
             sc = new ShellCommand(this.shellClearMem,
                                   "clearmem",
-                                  "- clears memory of all loaded programs if none are executing.");
+                                  "<string>- clears memory of all loaded programs if none are executing, add -force to force memory to clear running programs.");
             this.commandList[this.commandList.length] = sc;
 
-            // clearmem-force
-            sc = new ShellCommand(this.shellClearMem,
-                                  "clearmem-force",
-                                  "- clears memory of all loaded programs no matter what.");
-            this.commandList[this.commandList.length] = sc;
-            
             //run
             sc = new ShellCommand(this.shellRun,
                                   "run",
@@ -442,27 +436,23 @@ module TSOS {
             }
         }
 
-        public shellClearMem(){
+        public shellClearMem(args){
             //clear the running programs and the memory.
-            if (_CPU.isExecuting){ 
+            if (_CPU.isExecuting && args.length===0){ 
                 _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
+                return;    
             }
-            else{
-                //clear the memory
-                _MemoryManager= new MemoryManager();
-                _MemoryManager.init();
-                //clear the scheduler
-                _Scheduler = new cpuScheduler();
+            else if (args[0] ==="-force"){
+                //TODO clear memory interrupt
+                _StdOut.putText("Forcing memory to be cleared.");
             }
-        }
-        public shellClearMemForce(){
-            //clear the memory
-            _MemoryManager= new MemoryManager();
-            _MemoryManager.init();
-            //clear the scheduler
-            _Scheduler = new cpuScheduler();
+            else {
+                _StdOut.putText("Memory being cleared.");
+            }
 
+            _KernelInterruptQueue.enqueue(new Interrupt(CLEAR_MEMORY_IRQ));
         }
+        
         public shellRun(args){
             //TODO change to run programs from residentQueue
             if (args.length <=0)
