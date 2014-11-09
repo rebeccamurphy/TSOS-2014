@@ -115,10 +115,16 @@ module TSOS {
                 this.memory.Data[position] = valueHex;
 
         }
-        public clearProgramFromMemory(){
-
-            for (var i = _ExecutingProgramPCB.base; i<_ExecutingProgramPCB.limit; i++){
-                this.memory.Data[i] = "00";
+        public clearProgramFromMemory(pcb?):void{
+            if (pcb ===undefined){
+                for (var i = _ExecutingProgramPCB.base; i<_ExecutingProgramPCB.limit; i++){
+                    this.memory.Data[i] = "00";
+                }
+            }
+            else{
+                for (var i = pcb.base; i<pcb.limit; i++){
+                    this.memory.Data[i] = "00";
+                }
             }
             this.nextFreeMem= this.findNextFreeBlock();
         }

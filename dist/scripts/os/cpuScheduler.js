@@ -57,8 +57,10 @@ var TSOS;
         };
         cpuScheduler.prototype.stopRunning = function (pid) {
             //stops a program if it is currently running and puts it back on the resident queue with a new pcb
+            var tempProgramPCB = null;
             if (_ExecutingProgramPID === pid) {
                 //reset the pcb so if the program is restarted it will start from the beginning
+                tempProgramPCB = _ExecutingProgramPCB;
                 _ExecutingProgramPCB.reset();
 
                 //put the program back in the resident queue because it is still in memory
@@ -69,14 +71,14 @@ var TSOS;
                 _ExecutingProgramPCB = null;
             } else {
                 //remove the program from the ready queue
-                var tempProgramPCB = this.readyQueue.find(pid);
+                tempProgramPCB = this.readyQueue.find(pid);
 
                 //put the program back in the resident queue because it is still in memory
                 this.residentQueue.enqueue(tempProgramPCB);
             }
 
             //finally enqueue an interrupt
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, pid));
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
         };
         return cpuScheduler;
     })();

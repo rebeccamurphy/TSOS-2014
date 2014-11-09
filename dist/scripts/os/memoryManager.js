@@ -111,9 +111,15 @@ var TSOS;
             else
                 this.memory.Data[position] = valueHex;
         };
-        MemoryManager.prototype.clearProgramFromMemory = function () {
-            for (var i = _ExecutingProgramPCB.base; i < _ExecutingProgramPCB.limit; i++) {
-                this.memory.Data[i] = "00";
+        MemoryManager.prototype.clearProgramFromMemory = function (pcb) {
+            if (pcb === undefined) {
+                for (var i = _ExecutingProgramPCB.base; i < _ExecutingProgramPCB.limit; i++) {
+                    this.memory.Data[i] = "00";
+                }
+            } else {
+                for (var i = pcb.base; i < pcb.limit; i++) {
+                    this.memory.Data[i] = "00";
+                }
             }
             this.nextFreeMem = this.findNextFreeBlock();
         };

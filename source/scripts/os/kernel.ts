@@ -175,7 +175,6 @@ module TSOS {
                     break;
                 }
                 case CONTEXT_SWITCH_IRQ:{
-                    debugger;
                     _Scheduler.contextSwitch();
                     this.krnTrace("Switching from PID: " + params +" to PID: "+_ExecutingProgramPID);
                     break;
@@ -191,18 +190,20 @@ module TSOS {
                 }
                 case PROCESS_KILLED_IRQ:{
                     //log event
-                    this.krnTrace("PID: "+ params +" has been killed.");
-                    _MemoryManager.clearProgramFromMemory();
-                    this.krnTrace("PID: " +params +" has been cleared from memory.");
+                    this.krnTrace("PID: "+ params.pid +" has been killed.");
+                    _MemoryManager.clearProgramFromMemory(params);
+                    this.krnTrace("PID: " +params.pid +" has been cleared from memory.");
                     //update the display
                     _CPU.updateCpu();
                     //check if the ready queue is empty, if not continue executing
-                    if (_Scheduler.readyQueue.isEmpty()){
+                    if (_Scheduler.readyQueue.isEmpty()&&_ExecutingProgramPID===null){
                         _CPU.isExecuting = false; //stop the cpu from executing
                         this.krnTrace("CPU had stopped executing.");
                     }
-                    else
-                        _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, params));
+                    else if (_ExecutingProgramPID===null){
+                        //only perform a context switch if the running process was killed
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
+                    }
                     break;
                 }
                 default:
