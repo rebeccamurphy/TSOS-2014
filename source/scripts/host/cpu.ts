@@ -294,9 +294,7 @@ export class Cpu {
         if (this.Zflag===0){
             //branching, added plus one is to go past the data address 
             _Assembly = "BNE $" +_MemoryManager.getMemory(this.PC+1);
-
-            //make sure to add the base of the current program to PC so it goes to the right place
-            this.PC +=_MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC))+1 +_ExecutingProgramPCB.base;
+            this.PC +=_MemoryManager.convertHexData(_MemoryManager.getMemory(++this.PC))+1 ;
                
             //check if we need to shift the pc back to the beginning
             if (this.PC>=_ProgramSize+_ExecutingProgramPCB.base){
@@ -323,7 +321,7 @@ export class Cpu {
     public systemCall(){
         //system call 
         //$01 in X reg = print the interger stored in the Y register
-        //$02 in X reg = print the 00-termindated Strign stored at the address in the Y register
+        //$02 in X reg = print the 00-termindated String stored at the address in the Y register
         //Examples
         //SYS, FF 
         _Assembly = "SYS";

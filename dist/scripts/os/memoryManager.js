@@ -21,7 +21,10 @@ var TSOS;
                 if (i % 8 === 0) {
                     output += "</tr><tr><td> <b>" + TSOS.Utils.createHexIndex(i) + " </td>";
                 }
-                output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
+                if (_CPU.PC === i && _CPU.isExecuting)
+                    output += "<td id='dataID" + i + "'><b>" + this.memory.Data[i] + '</b></td>';
+                else
+                    output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
             }
             output += "</tr>";
             TSOS.Control.updateMemoryDisplay(output);
@@ -61,8 +64,6 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            debugger;
-
             if (typeof address === "number") {
                 //checking memory in bounds
                 if (address >= _ExecutingProgramPCB.limit || address < _ExecutingProgramPCB.base)
@@ -70,7 +71,8 @@ var TSOS;
                 else
                     return this.memory.Data[address];
             } else {
-                var decAddress = TSOS.Utils.hex2dec(address);
+                //add base of program to position so it remains in the program block
+                var decAddress = TSOS.Utils.hex2dec(address) + _ExecutingProgramPCB.base;
 
                 //checking memory in bounds
                 if (decAddress >= _ExecutingProgramPCB.limit || decAddress < _ExecutingProgramPCB.base)
@@ -89,10 +91,12 @@ var TSOS;
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
-            //debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
+
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
-            var position = this.getDecAddressFromHex(startAddress);
+
+            //add the base of the Executing program so it knows where to go
+            var position = this.getDecAddressFromHex(startAddress) + _ExecutingProgramPCB.base;
 
             //check if memory is in bounds
             if (position >= _ExecutingProgramPCB.limit || position < _ExecutingProgramPCB.base)

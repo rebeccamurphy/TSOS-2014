@@ -21,7 +21,10 @@ module TSOS {
                 if (i % 8 ===0){
                     output += "</tr><tr><td> <b>" + Utils.createHexIndex(i) + " </td>";
                 }
-                output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
+                if (_CPU.PC===i&&_CPU.isExecuting)
+                    output += "<td id='dataID" + i + "'><b>" + this.memory.Data[i] + '</b></td>';
+                else
+                    output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
             }
             output += "</tr>"
         Control.updateMemoryDisplay(output);
@@ -61,8 +64,6 @@ module TSOS {
 
         }
         public getMemory(address:any){
-            debugger;
-
             if (typeof address==="number"){
                 //checking memory in bounds
                 if (address>= _ExecutingProgramPCB.limit || address <_ExecutingProgramPCB.base )
@@ -71,8 +72,9 @@ module TSOS {
                     return this.memory.Data[address];
             }
             else{
-                
-                var decAddress = Utils.hex2dec(address);
+                //add base of program to position so it remains in the program block
+                var decAddress = Utils.hex2dec(address) +_ExecutingProgramPCB.base;
+
                 //checking memory in bounds
                 if (decAddress>= _ExecutingProgramPCB.limit || decAddress <_ExecutingProgramPCB.base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
@@ -91,13 +93,15 @@ module TSOS {
             return this.convertHexData(this.getMemory(startAddress+1) +this.getMemory(startAddress));
         }
         public storeInMemory(startAddress, value){
-            //debugger;
+
             var valueHex = Utils.dec2hex(value);
+            
             valueHex =  Array(2-(valueHex.length-1)).join("0") + valueHex;
-            var position = this.getDecAddressFromHex(startAddress);
+            //add the base of the Executing program so it knows where to go
+            var position = this.getDecAddressFromHex(startAddress) + _ExecutingProgramPCB.base;
             //check if memory is in bounds
             if (position>= _ExecutingProgramPCB.limit || position <_ExecutingProgramPCB.base )
-                    _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
+                _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
             else
                 this.memory.Data[position] = valueHex;
 
