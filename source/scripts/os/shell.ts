@@ -437,18 +437,23 @@ module TSOS {
         public shellClearMem(){
             //clear the running programs and the memory.
             if (_CPU.isExecuting){ 
-                _StdOut.putText("Are you sure you want to clear memory?This will stop programs from executing. Enter clearmem-force instead.");
+                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
             }
             else{
+                //clear the memory
                 _MemoryManager= new MemoryManager();
                 _MemoryManager.init();
-
+                //clear the scheduler
+                _Scheduler = new cpuScheduler();
             }
         }
         public shellClearMemForce(){
-            //TODO clear queue and junk
+            //clear the memory
             _MemoryManager= new MemoryManager();
-            _MemoryManager.init();            
+            _MemoryManager.init();
+            //clear the scheduler
+            _Scheduler = new cpuScheduler();
+
         }
         public shellRun(args){
             //TODO change to run programs from residentQueue
@@ -478,7 +483,7 @@ module TSOS {
         }
 
         public shellRunAll(){
-
+            _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ, "all"));
         }
         public shellSetQuantum(args){
             if (args.length<=0)

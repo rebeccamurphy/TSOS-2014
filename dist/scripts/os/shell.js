@@ -388,16 +388,23 @@ var TSOS;
         Shell.prototype.shellClearMem = function () {
             //clear the running programs and the memory.
             if (_CPU.isExecuting) {
-                _StdOut.putText("Are you sure you want to clear memory?This will stop programs from executing. Enter clearmem-force instead.");
+                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
             } else {
+                //clear the memory
                 _MemoryManager = new TSOS.MemoryManager();
                 _MemoryManager.init();
+
+                //clear the scheduler
+                _Scheduler = new TSOS.cpuScheduler();
             }
         };
         Shell.prototype.shellClearMemForce = function () {
-            //TODO clear queue and junk
+            //clear the memory
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
+
+            //clear the scheduler
+            _Scheduler = new TSOS.cpuScheduler();
         };
         Shell.prototype.shellRun = function (args) {
             //TODO change to run programs from residentQueue
@@ -421,6 +428,7 @@ var TSOS;
         };
 
         Shell.prototype.shellRunAll = function () {
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ, "all"));
         };
         Shell.prototype.shellSetQuantum = function (args) {
             if (args.length <= 0)

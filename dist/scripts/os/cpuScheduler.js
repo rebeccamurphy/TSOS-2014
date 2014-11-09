@@ -28,15 +28,29 @@ var TSOS;
             //load it into the cpu
             _CPU.loadProgram();
         };
+        cpuScheduler.prototype.runAllPrograms = function () {
+            while (!this.residentQueue.isEmpty()) {
+                this.readyQueue.enqueue(this.residentQueue.dequeue());
+            }
+
+            //set the current runnining program
+            _ExecutingProgramPCB = this.readyQueue.dequeue();
+            _ExecutingProgramPID = _ExecutingProgramPCB.pid;
+
+            _CPU.loadProgram();
+        };
         cpuScheduler.prototype.contextSwitch = function () {
-            //enqueue the current executing program back into the ready queue
-            this.readyQueue.enqueue(_ExecutingProgramPCB);
+            if (_ExecutingProgramPCB !== null) {
+                //enqueue the current executing program back into the ready queue
+                this.readyQueue.enqueue(_ExecutingProgramPCB);
+            }
 
             //reset the counter
             this.counter = 0;
 
             //dequeue next program in line
             _ExecutingProgramPCB = this.readyQueue.dequeue();
+            _ExecutingProgramPID = _ExecutingProgramPCB.pid;
 
             //load it into the cpu
             _CPU.loadProgram();

@@ -119,9 +119,11 @@ var TSOS;
                     break;
                 case RUN_PROGRAM_IRQ: {
                     //start the program
-                    //since where just running the first program in mem, just setting isexecuting tru
-                    //debugger;
-                    _Scheduler.runProgram();
+                    //since where just running the first program in mem, just setting isexecuting true
+                    if (params !== "all")
+                        _Scheduler.runProgram();
+                    else
+                        _Scheduler.runAllPrograms();
                     _CPU.isExecuting = true;
                     break;
                 }
@@ -140,8 +142,7 @@ var TSOS;
                     break;
                 }
                 case CPU_BREAK_IRQ: {
-                    //stop the cpu from executing
-                    _CPU.isExecuting = false;
+                    debugger;
 
                     //clear program from memory
                     _MemoryManager.clearProgramFromMemory();
@@ -152,6 +153,12 @@ var TSOS;
                     //clear executing program
                     _ExecutingProgramPCB = null;
                     _ExecutingProgramPID = null;
+
+                    //check if the ready queue is empty, if not continue executing
+                    if (_Scheduler.readyQueue.isEmpty())
+                        _CPU.isExecuting = false; //stop the cpu from executing
+                    else
+                        _Scheduler.contextSwitch(); //switch to the next program
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
