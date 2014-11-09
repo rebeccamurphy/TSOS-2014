@@ -354,7 +354,7 @@ var TSOS;
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
 
-            if (_MemoryManager.nextFreeMem >= _NumPrograms * _ProgramSize) {
+            if (_MemoryManager.nextFreeMem === null) {
                 _StdOut.putText("Cannot load program, memory full.");
                 return;
             }

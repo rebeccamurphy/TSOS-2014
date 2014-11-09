@@ -287,7 +287,6 @@ module TSOS {
             }
             else if (_CPU.Xreg ===2){
                 //print the 00-terminated string stored at the address in the Y register
-                debugger;
                 var string00 ="";
                 var curPos= _CPU.Yreg + _ExecutingProgramPCB.base;
                 var curData = _MemoryManager.getMemory(curPos);

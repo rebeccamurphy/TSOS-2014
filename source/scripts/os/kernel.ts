@@ -155,7 +155,12 @@ module TSOS {
                     //stop the cpu from executing
                     _CPU.isExecuting = false;
                     //clear program from memory
-
+                    _MemoryManager.clearProgramFromMemory();
+                    //update the display
+                    _CPU.updateCpu();
+                    //clear executing program
+                    _ExecutingProgramPCB =null;
+                    _ExecutingProgramPID =null;
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ:{

@@ -34,14 +34,9 @@ module TSOS {
             return retVal;
         }
 
-        public get(pcb){
-            //gets pcb and removes it from the queue
-            var retVal= null;
-            var index = this.q.indexOf(pcb);
-            retVal = this.q[index];
-            if (index >-1)
-                this.q.splice(index, 1);
-            return retVal;
+        public get(i){
+            //gets pcb
+            return this.q[i];
         }
         public inQueue(pid){
             for (var i =0; i<this.q.length; i++){

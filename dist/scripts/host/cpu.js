@@ -39,7 +39,6 @@ var TSOS;
         };
 
         Cpu.prototype.cycle = function () {
-            debugger;
             _Kernel.krnTrace('CPU cycle');
 
             // TODO: Accumulate CPU usage and profiling statistics here.
@@ -68,7 +67,6 @@ var TSOS;
             return _MemoryManager.getMemory(this.PC);
         };
         Cpu.prototype.loadProgram = function () {
-            debugger;
             this.IR = _ExecutingProgramPCB.IR;
             this.PC = _ExecutingProgramPCB.PC;
             this.Acc = _ExecutingProgramPCB.Acc;
@@ -79,19 +77,7 @@ var TSOS;
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.startPCBDisplay();
         };
-        Cpu.prototype.clearPreviousProgram = function () {
-            //just for project 2, clearing CPU data
-            this.IR = "0";
-            this.PC = 0;
-            this.Acc = 0;
-            this.Xreg = 0;
-            this.Yreg = 0;
-            this.Zflag = 0;
-            this.isExecuting = false;
-            _Assembly = "No Instruction";
-            TSOS.Control.updateCpuDisplay();
-            TSOS.Control.startPCBDisplay();
-        };
+
         Cpu.prototype.updateCpu = function () {
             if (this.isExecuting) {
                 this.updatePCB();
@@ -104,7 +90,6 @@ var TSOS;
         };
         Cpu.prototype.updatePCB = function () {
             //update program pcb
-            //debugger;
             _ExecutingProgramPCB.PC = _CPU.PC;
             _ExecutingProgramPCB.IR = _CPU.IR;
             _ExecutingProgramPCB.Acc = _CPU.Acc;
@@ -213,7 +198,6 @@ var TSOS;
             //store the accumulator in memory
             //Examples
             //STA $0010, 8D 1000
-            //debugger;
             _MemoryManager.storeInMemory(++this.PC, this.Acc);
             _Assembly = "STA $" + _MemoryManager.getMemory(this.PC);
             this.PC++;

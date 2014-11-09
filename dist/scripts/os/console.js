@@ -281,7 +281,7 @@ var TSOS;
                 this.advanceLine();
                 _OsShell.putPrompt();
             } else if (_CPU.Xreg === 2) {
-                debugger;
+                //print the 00-terminated string stored at the address in the Y register
                 var string00 = "";
                 var curPos = _CPU.Yreg + _ExecutingProgramPCB.base;
                 var curData = _MemoryManager.getMemory(curPos);

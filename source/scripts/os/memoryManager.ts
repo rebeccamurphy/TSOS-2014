@@ -6,7 +6,7 @@ module TSOS {
     export class MemoryManager {
         
         constructor(public memory:Memory =new Memory(_MemorySize),
-                    public nextFreeMem :number =0
+                    public nextFreeMem:number =0
                     ) {
         }
 
@@ -15,6 +15,7 @@ module TSOS {
         }
 
         public updateMemoryDisplay(){
+            //TODO move this to control.ts
             var output = "<tr>";
             //debugger;
             for (var i=0; i<this.memory.byteSize; i++){
@@ -29,8 +30,16 @@ module TSOS {
             output += "</tr>"
         Control.updateMemoryDisplay(output);
         }
-
+        public findNextFreeBlock(){
+            debugger;
+            for (var i =0; i< _ProgramSize*_NumPrograms; i+=256){
+                if (this.memory.Data[i]==="00")
+                    return i;
+            }
+            return null;
+        }
         public loadProgram(program){
+            debugger;
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -42,10 +51,7 @@ module TSOS {
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
 
-            //next free memory should be after the program size
-            this.nextFreeMem = currPCB.limit;
 
-       
             //Put the program in the ready queue
             _Scheduler.residentQueue.enqueue(currPCB);
 
@@ -56,6 +62,10 @@ module TSOS {
             for (var j= program.length+currPCB.base;j<currPCB.limit; j++ )
                 this.memory.Data[j] ="00";
             
+            
+            //set the next free block of memory
+            this.nextFreeMem = this.findNextFreeBlock();
+       
             //update display
             this.updateMemoryDisplay();
 
@@ -93,8 +103,6 @@ module TSOS {
             return this.convertHexData(this.getMemory(startAddress+1) +this.getMemory(startAddress));
         }
         public storeInMemory(startAddress, value){
-
-            debugger;
             var valueHex = Utils.dec2hex(value);
             
             valueHex =  Array(2-(valueHex.length-1)).join("0") + valueHex;
@@ -107,8 +115,12 @@ module TSOS {
                 this.memory.Data[position] = valueHex;
 
         }
-        public clearFromMemory(){
+        public clearProgramFromMemory(){
 
+            for (var i = _ExecutingProgramPCB.base; i<_ExecutingProgramPCB.limit; i++){
+                this.memory.Data[i] = "00";
+            }
+            this.nextFreeMem= this.findNextFreeBlock();
         }
     }
 }

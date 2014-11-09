@@ -32,14 +32,9 @@ var TSOS;
             return retVal;
         };
 
-        Queue.prototype.get = function (pcb) {
-            //gets pcb and removes it from the queue
-            var retVal = null;
-            var index = this.q.indexOf(pcb);
-            retVal = this.q[index];
-            if (index > -1)
-                this.q.splice(index, 1);
-            return retVal;
+        Queue.prototype.get = function (i) {
+            //gets pcb
+            return this.q[i];
         };
         Queue.prototype.inQueue = function (pid) {
             for (var i = 0; i < this.q.length; i++) {

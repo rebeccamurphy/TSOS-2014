@@ -15,6 +15,7 @@ var TSOS;
         };
 
         MemoryManager.prototype.updateMemoryDisplay = function () {
+            //TODO move this to control.ts
             var output = "<tr>";
 
             for (var i = 0; i < this.memory.byteSize; i++) {
@@ -29,8 +30,17 @@ var TSOS;
             output += "</tr>";
             TSOS.Control.updateMemoryDisplay(output);
         };
-
+        MemoryManager.prototype.findNextFreeBlock = function () {
+            debugger;
+            for (var i = 0; i < _ProgramSize * _NumPrograms; i += 256) {
+                if (this.memory.Data[i] === "00")
+                    return i;
+            }
+            return null;
+        };
         MemoryManager.prototype.loadProgram = function (program) {
+            debugger;
+
             //create new PCB
             var currPCB = new TSOS.PCB();
 
@@ -44,9 +54,6 @@ var TSOS;
             //set the limit?
             currPCB.limit = currPCB.base + _ProgramSize;
 
-            //next free memory should be after the program size
-            this.nextFreeMem = currPCB.limit;
-
             //Put the program in the ready queue
             _Scheduler.residentQueue.enqueue(currPCB);
 
@@ -56,6 +63,9 @@ var TSOS;
 
             for (var j = program.length + currPCB.base; j < currPCB.limit; j++)
                 this.memory.Data[j] = "00";
+
+            //set the next free block of memory
+            this.nextFreeMem = this.findNextFreeBlock();
 
             //update display
             this.updateMemoryDisplay();
@@ -91,7 +101,6 @@ var TSOS;
             return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
-            debugger;
             var valueHex = TSOS.Utils.dec2hex(value);
 
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
@@ -105,7 +114,11 @@ var TSOS;
             else
                 this.memory.Data[position] = valueHex;
         };
-        MemoryManager.prototype.clearFromMemory = function () {
+        MemoryManager.prototype.clearProgramFromMemory = function () {
+            for (var i = _ExecutingProgramPCB.base; i < _ExecutingProgramPCB.limit; i++) {
+                this.memory.Data[i] = "00";
+            }
+            this.nextFreeMem = this.findNextFreeBlock();
         };
         return MemoryManager;
     })();
