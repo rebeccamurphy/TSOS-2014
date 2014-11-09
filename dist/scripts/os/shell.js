@@ -103,7 +103,13 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
+            sc = new TSOS.ShellCommand(this.displayActiveProcesses, "ps", "List the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
+
             // kill <id> - kills the specified process id.
+            sc = new TSOS.ShellCommand(this.killProcess, "kill", "<int> - Kill the specified process if it is running.");
+            this.commandList[this.commandList.length] = sc;
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -482,6 +488,29 @@ var TSOS;
                 TSOS.Control.displayUserStatus(msg);
             } else
                 _StdOut.putText("Invalid status.");
+        };
+        Shell.prototype.displayActiveProcesses = function (args) {
+            var msg = "";
+            if (_Scheduler.readyQueue.isEmpty() && _ExecutingProgramPID == null)
+                _StdOut.putText("There are no running processes.");
+            else {
+                for (var i = 0; i < _Scheduler.readyQueue.getSize(); i++)
+                    msg += ", PID: " + _Scheduler.readyQueue.get(i).pid;
+                _StdOut.putText("Current running processes... ");
+                _StdOut.putText("PID: " + _ExecutingProgramPID + msg);
+            }
+        };
+        Shell.prototype.killProcess = function (args) {
+            debugger;
+            var program = parseInt(args[0]);
+            if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program)) {
+                if (_SarcasticMode)
+                    _StdOut.putText("I cannot kill what which has no life.");
+                else
+                    _StdOut.putText("Process cannot be killed because process is not running.");
+            } else {
+                _Scheduler.stopRunning(program);
+            }
         };
         return Shell;
     })();

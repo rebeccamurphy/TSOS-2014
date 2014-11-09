@@ -57,7 +57,7 @@ export class Cpu {
             //switching programs, save state of cpu to pcb
             this.updatePCB();
             //call scheduler to perform a context switch
-            _Scheduler.contextSwitch();   
+            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
         }
     }
     
@@ -255,7 +255,7 @@ export class Cpu {
         this.updatePCB();
         //then enqueue a break interrupt
         _Assembly= "BRK";
-        _KernelInterruptQueue.enqueue(new Interrupt(CPU_BREAK_IRQ));
+        _KernelInterruptQueue.enqueue(new Interrupt(CPU_BREAK_IRQ, _ExecutingProgramPID));
     }
     public equalToX(){
         //compare a byte in memory to the x reg

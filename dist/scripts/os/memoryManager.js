@@ -31,7 +31,6 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay(output);
         };
         MemoryManager.prototype.findNextFreeBlock = function () {
-            debugger;
             for (var i = 0; i < _ProgramSize * _NumPrograms; i += 256) {
                 if (this.memory.Data[i] === "00")
                     return i;
@@ -39,8 +38,6 @@ var TSOS;
             return null;
         };
         MemoryManager.prototype.loadProgram = function (program) {
-            debugger;
-
             //create new PCB
             var currPCB = new TSOS.PCB();
 

@@ -55,5 +55,25 @@ module TSOS {
         	_CPU.loadProgram();
 
         }
+        public stopRunning(pid){
+        	//stops a program if it is currently running and puts it back on the resident queue with a new pcb
+        	if (_ExecutingProgramPID === pid){
+        		//reset the pcb so if the program is restarted it will start from the beginning
+        		_ExecutingProgramPCB.reset();
+        		//put the program back in the resident queue because it is still in memory
+        		this.residentQueue.enqueue(_ExecutingProgramPCB);
+        		//reset the executing program variables
+        		_ExecutingProgramPID=null;
+        		_ExecutingProgramPCB=null;
+        	}
+        	else{
+        		//remove the program from the ready queue
+        		var tempProgramPCB = this.readyQueue.find(pid);
+        		//put the program back in the resident queue because it is still in memory
+        		this.residentQueue.enqueue(tempProgramPCB);
+        	}
+        	//finally enqueue an interrupt
+        	_KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, pid));
+        }
     }
 }

@@ -22,5 +22,13 @@ module TSOS {
         _CurrPID++;
 
         }
+
+        public reset(){
+            this.PC=0;
+            this.Acc=0
+            this.Xreg=0
+            this.Zflag=0;
+            this.IR="";
+        }
     }
 }

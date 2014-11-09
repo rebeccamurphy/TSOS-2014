@@ -142,32 +142,58 @@ var TSOS;
                     break;
                 }
                 case CPU_BREAK_IRQ: {
-                    debugger;
-
+                    //TODO make a separate context switch interrupt
                     //clear program from memory
+                    this.krnTrace("PID: " + params + " has reached a break.");
                     _MemoryManager.clearProgramFromMemory();
+                    this.krnTrace("PID: " + params + " has been cleared from memory.");
 
                     //update the display
                     _CPU.updateCpu();
 
                     //clear executing program
                     _ExecutingProgramPCB = null;
+                    var tempPID = _ExecutingProgramPID;
                     _ExecutingProgramPID = null;
 
                     //check if the ready queue is empty, if not continue executing
-                    if (_Scheduler.readyQueue.isEmpty())
+                    if (_Scheduler.readyQueue.isEmpty()) {
                         _CPU.isExecuting = false; //stop the cpu from executing
-                    else
-                        _Scheduler.contextSwitch(); //switch to the next program
+                        this.krnTrace("CPU had stopped executing.");
+                    } else
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, tempPID));
+                    break;
+                }
+                case CONTEXT_SWITCH_IRQ: {
+                    debugger;
+                    _Scheduler.contextSwitch();
+                    this.krnTrace("Switching from PID: " + params + " to PID: " + _ExecutingProgramPID);
                     break;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
-                    //debugger;
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + params);
 
                     //stop the cpu
                     _CPU.isExecuting = false;
+                    this.krnTrace("CPU had stopped executing.");
+                    break;
+                }
+                case PROCESS_KILLED_IRQ: {
+                    //log event
+                    this.krnTrace("PID: " + params + " has been killed.");
+                    _MemoryManager.clearProgramFromMemory();
+                    this.krnTrace("PID: " + params + " has been cleared from memory.");
+
+                    //update the display
+                    _CPU.updateCpu();
+
+                    //check if the ready queue is empty, if not continue executing
+                    if (_Scheduler.readyQueue.isEmpty()) {
+                        _CPU.isExecuting = false; //stop the cpu from executing
+                        this.krnTrace("CPU had stopped executing.");
+                    } else
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params));
                     break;
                 }
                 default:

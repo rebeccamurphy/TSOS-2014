@@ -17,7 +17,7 @@ module TSOS {
         public updateMemoryDisplay(){
             //TODO move this to control.ts
             var output = "<tr>";
-            //debugger;
+            
             for (var i=0; i<this.memory.byteSize; i++){
                 if (i % 8 ===0){
                     output += "</tr><tr><td> <b>" + Utils.createHexIndex(i) + " </td>";
@@ -31,7 +31,7 @@ module TSOS {
         Control.updateMemoryDisplay(output);
         }
         public findNextFreeBlock(){
-            debugger;
+          
             for (var i =0; i< _ProgramSize*_NumPrograms; i+=256){
                 if (this.memory.Data[i]==="00")
                     return i;
@@ -39,7 +39,7 @@ module TSOS {
             return null;
         }
         public loadProgram(program){
-            debugger;
+ 
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -62,7 +62,7 @@ module TSOS {
             for (var j= program.length+currPCB.base;j<currPCB.limit; j++ )
                 this.memory.Data[j] ="00";
             
-            
+
             //set the next free block of memory
             this.nextFreeMem = this.findNextFreeBlock();
        

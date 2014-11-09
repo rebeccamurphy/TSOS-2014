@@ -28,6 +28,13 @@ var TSOS;
             this.pid = _CurrPID;
             _CurrPID++;
         }
+        PCB.prototype.reset = function () {
+            this.PC = 0;
+            this.Acc = 0;
+            this.Xreg = 0;
+            this.Zflag = 0;
+            this.IR = "";
+        };
         return PCB;
     })();
     TSOS.PCB = PCB;
