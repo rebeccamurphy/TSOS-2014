@@ -168,3 +168,6 @@ td {
   display: inline-block;
   float: right;
 }
+.list-group-item{
+  cursor:pointer;
+}

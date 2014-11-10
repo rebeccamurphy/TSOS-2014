@@ -171,25 +171,36 @@
      
       <div id="divUserProgramInput">
         <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active" >
+          <li id="upi"role="presentation" class="active" >
             <a href="#programInput" data-toggle="tab"><label>User Program Input</label></a>   
           </li>
-          <li>
+          <li id="upl">
             <a href="#programList" data-toggle="tab"><label>Program List</label></a>
           </li>
         </ul>
         
         <div class="tab-content">
-          <div id="programInput" class="tab-pane active">
+          <div id="programInput" class="tab-pane active" style="height:50px">
                  <textarea name="taProgramInput"
                            id  ="taProgramInput" 
                            cols="38"
                            style="height:50px" 
                  ></textarea>
           </div>
-          <div id="programList" style="height=50px">
-            <ul>
-              <li></li>
+          <div id="programList" style="height:200px;overflow-y:auto" class="tab-pane">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <a onclick="TSOS.Control.setProgram(1);">Counts to 2 and prints DONE</a>
+              </li>
+              <li class="list-group-item">
+                <a onclick="TSOS.Control.setProgram(2);">Prints "2 and 5"</a>
+              </li>
+              <li class="list-group-item">
+                <a onclick="TSOS.Control.setProgram(3);">Prints "counting 0 counting 1 counting hello world counting 2"</a>
+              </li>
+              <li class="list-group-item">
+                <a onclick="TSOS.Control.setProgram(4);"> Fills "A9" into each byte of memory in the block the program runs to test bounds.</a>
+              </li>
             </ul>
           </div>
         </div>
