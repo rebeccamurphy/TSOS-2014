@@ -143,19 +143,21 @@ var TSOS;
                     break;
                 }
                 case CPU_BREAK_IRQ: {
+                    debugger;
+
                     //TODO make a separate context switch interrupt
                     //clear program from memory
                     this.krnTrace("PID: " + params + " has reached a break.");
                     _MemoryManager.clearProgramFromMemory();
                     this.krnTrace("PID: " + params + " has been cleared from memory.");
 
-                    //update the display
-                    _CPU.updateCpu();
-
                     //clear executing program
                     _ExecutingProgramPCB = null;
                     var tempPID = _ExecutingProgramPID;
                     _ExecutingProgramPID = null;
+
+                    //update the display
+                    _CPU.updateCpu();
 
                     //check if the ready queue is empty, if not continue executing
                     if (_Scheduler.readyQueue.isEmpty()) {
@@ -181,16 +183,13 @@ var TSOS;
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {
+                    debugger;
+
                     //set the state of the program to killed
                     params.state = 4 /* Killed */;
 
                     //log event
                     this.krnTrace("PID: " + params.pid + " has been killed.");
-                    _MemoryManager.clearProgramFromMemory(params);
-                    this.krnTrace("PID: " + params.pid + " has been cleared from memory.");
-
-                    //update the display
-                    _CPU.updateCpu();
 
                     //check if the ready queue is empty, if not continue executing
                     if (_Scheduler.readyQueue.isEmpty() && _ExecutingProgramPID === null) {

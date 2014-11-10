@@ -11,25 +11,10 @@ module TSOS {
         }
 
         public init(): void {            
-            this.updateMemoryDisplay();
+            Control.updateMemoryDisplay();
         }
 
-        public updateMemoryDisplay(){
-            //TODO move this to control.ts
-            var output = "<tr>";
-            
-            for (var i=0; i<this.memory.byteSize; i++){
-                if (i % 8 ===0){
-                    output += "</tr><tr><td> <b>" + Utils.createHexIndex(i) + " </td>";
-                }
-                if (_CPU.PC===i&&_CPU.isExecuting)
-                    output += "<td id='dataID" + i + "'><b>" + this.memory.Data[i] + '</b></td>';
-                else
-                    output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
-            }
-            output += "</tr>"
-        Control.updateMemoryDisplay(output);
-        }
+        
         public findNextFreeBlock(){
             for (var i =0; i< _ProgramSize*_NumPrograms; i+=256){
                 if (this.memory.Data[i]==="00")
@@ -71,7 +56,7 @@ module TSOS {
             this.nextFreeMem = this.findNextFreeBlock();
        
             //update display
-            this.updateMemoryDisplay();
+            TSOS.Control.updateMemoryDisplay();
 
             //return program number
             return (currPCB.pid).toString();

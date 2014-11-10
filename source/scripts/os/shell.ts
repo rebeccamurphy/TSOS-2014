@@ -557,7 +557,7 @@ module TSOS {
 
         }
         public killProcess(args):void{
-            debugger;
+            
             var program = parseInt(args[0]);
             if (_ExecutingProgramPID !==program && !_Scheduler.readyQueue.inQueue(program)){
                 if (_SarcasticMode)

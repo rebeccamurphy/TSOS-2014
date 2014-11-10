@@ -173,7 +173,20 @@ module TSOS {
 
         }
 
-        public static updateMemoryDisplay(output){
+        public static updateMemoryDisplay(){
+
+            var output = "<tr>";
+            
+            for (var i=0; i<_MemoryManager.memory.byteSize; i++){
+                if (i % 8 ===0){
+                    output += "</tr><tr><td> <b>" + Utils.createHexIndex(i) + " </td>";
+                }
+                if (_CPU.PC===i&&_CPU.isExecuting)
+                    output += "<td id='dataID" + i + "'><b>" + _MemoryManager.memory.Data[i] + '</b></td>';
+                else
+                    output += "<td id='dataID" + i + "'>" + _MemoryManager.memory.Data[i] + '</td>';
+            }
+            output += "</tr>"
             document.getElementById("memDisplay").innerHTML = output;
 
 
@@ -187,43 +200,23 @@ module TSOS {
             document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
             document.getElementById("instructID").innerHTML = _Assembly;
         }
-        public static updatePCBDisplay(){
-            /*
-            document.getElementById("PCBPIDDisplay").innerHTML = String(_ExecutingProgramPCB.pid);
-            document.getElementById("PCBPCDisplay").innerHTML = String(_ExecutingProgramPCB.PC);
-            document.getElementById("PCBIRDisplay").innerHTML = String(_ExecutingProgramPCB.IR);
-            document.getElementById("PCBACCDisplay").innerHTML = String(_ExecutingProgramPCB.Acc);
-            document.getElementById("PCBXDisplay").innerHTML = String(_ExecutingProgramPCB.Xreg);
-            document.getElementById("PCBYDisplay").innerHTML = String(_ExecutingProgramPCB.Yreg);
-            document.getElementById("PCBZDisplay").innerHTML = String(_ExecutingProgramPCB.Zflag);
-            */
-        }
-        public static startPCBDisplay(){
-            /*
-            document.getElementById("PCBPIDDisplay").innerHTML = "0";
-            document.getElementById("PCBPCDisplay").innerHTML ="0";
-            document.getElementById("PCBIRDisplay").innerHTML = "0";
-            document.getElementById("PCBACCDisplay").innerHTML = "0";
-            document.getElementById("PCBXDisplay").innerHTML = "0";
-            document.getElementById("PCBYDisplay").innerHTML = "0";
-            document.getElementById("PCBZDisplay").innerHTML = "0";
-            */
-        }
 
         public static updateRQDisplay(){
-            var output = "<tr>";
-            output += "<td> "+_ExecutingProgramPCB.pid+"</td>";
-            output += "<td> "+ _ExecutingProgramPCB.PC+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.IR+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.Acc+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.Xreg+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.Yreg+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.Zflag+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.priority+"</td>";
-            output += "<td> "+States[_ExecutingProgramPCB.state]+"</td>";
-            output += "<td> "+_ExecutingProgramPCB.location+"</td>";
-            output += "</tr>";
-
+            var output="";
+            if (_ExecutingProgramPCB!==null){
+                output = "<tr>";
+                output += "<td> "+_ExecutingProgramPCB.pid+"</td>";
+                output += "<td> "+ _ExecutingProgramPCB.PC+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.IR+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.Acc+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.Xreg+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.Yreg+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.Zflag+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.priority+"</td>";
+                output += "<td> "+States[_ExecutingProgramPCB.state]+"</td>";
+                output += "<td> "+_ExecutingProgramPCB.location+"</td>";
+                output += "</tr>";
+            }
             for (var i=0; i<_Scheduler.readyQueue.getSize(); i++){
                 output += "<tr>";
                 output += "<td> "+_Scheduler.readyQueue.get(i).pid+"</td>";

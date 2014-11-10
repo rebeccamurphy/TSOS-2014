@@ -48,15 +48,18 @@ var TSOS;
                 //execute current instruction
                 this.execute(this.fetch());
 
+                //update pcb
+                this.updatePCB();
+
                 //update CPU
                 this.updateCpu();
 
-                //TODO update program list display
                 //Increment quantum counter
                 _Scheduler.counter++;
             } else {
                 //switching programs, save state of cpu to pcb
                 this.updatePCB();
+                this.updateCpu();
 
                 //call scheduler to perform a context switch
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
@@ -77,18 +80,13 @@ var TSOS;
             this.Zflag = _ExecutingProgramPCB.Zflag;
             _Assembly = "No Instruction";
             TSOS.Control.updateCpuDisplay();
-            TSOS.Control.startPCBDisplay();
         };
 
         Cpu.prototype.updateCpu = function () {
-            if (this.isExecuting) {
-                this.updatePCB();
-            }
-
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
-            TSOS.Control.updatePCBDisplay();
-            _MemoryManager.updateMemoryDisplay();
+            TSOS.Control.updateRQDisplay();
+            TSOS.Control.updateMemoryDisplay();
         };
         Cpu.prototype.updatePCB = function () {
             //update program pcb

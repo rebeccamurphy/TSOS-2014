@@ -11,25 +11,9 @@ var TSOS;
             this.nextFreeMem = nextFreeMem;
         }
         MemoryManager.prototype.init = function () {
-            this.updateMemoryDisplay();
+            TSOS.Control.updateMemoryDisplay();
         };
 
-        MemoryManager.prototype.updateMemoryDisplay = function () {
-            //TODO move this to control.ts
-            var output = "<tr>";
-
-            for (var i = 0; i < this.memory.byteSize; i++) {
-                if (i % 8 === 0) {
-                    output += "</tr><tr><td> <b>" + TSOS.Utils.createHexIndex(i) + " </td>";
-                }
-                if (_CPU.PC === i && _CPU.isExecuting)
-                    output += "<td id='dataID" + i + "'><b>" + this.memory.Data[i] + '</b></td>';
-                else
-                    output += "<td id='dataID" + i + "'>" + this.memory.Data[i] + '</td>';
-            }
-            output += "</tr>";
-            TSOS.Control.updateMemoryDisplay(output);
-        };
         MemoryManager.prototype.findNextFreeBlock = function () {
             for (var i = 0; i < _ProgramSize * _NumPrograms; i += 256) {
                 if (this.memory.Data[i] === "00")
@@ -71,7 +55,7 @@ var TSOS;
             this.nextFreeMem = this.findNextFreeBlock();
 
             //update display
-            this.updateMemoryDisplay();
+            TSOS.Control.updateMemoryDisplay();
 
             //return program number
             return (currPCB.pid).toString();

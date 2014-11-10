@@ -44,6 +44,7 @@ module TSOS {
 
         }
         public contextSwitch(){
+            debugger;
         	if (_ExecutingProgramPCB!==null){
         		//enqueue the current executing program back into the ready queue
         		_ExecutingProgramPCB.state = State.Ready;
@@ -60,12 +61,12 @@ module TSOS {
 
         }
         public stopRunning(pid){
+            debugger;
         	//stops a program if it is currently running and puts it back on the resident queue with a new pcb
         	var tempProgramPCB =null;
         	if (_ExecutingProgramPID === pid){
         		//reset the pcb so if the program is restarted it will start from the beginning
-        		tempProgramPCB = _ExecutingProgramPCB;
-        		
+        		tempProgramPCB = _ExecutingProgramPCB;	
         		
         		//reset the executing program variables
         		_ExecutingProgramPID=null;
