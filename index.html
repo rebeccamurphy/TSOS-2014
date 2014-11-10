@@ -113,13 +113,13 @@
 
 </div>
    <div id="divLog" class="col-md-4">
-      <label>
-         Host Log
-         <br>
-         <small>
-         <div id  ="taHostLog"></div>
-         </small>
-      </label>
+        <label>
+           Host Log
+           <br>
+           <small>
+           <div id  ="taHostLog"></div>
+           </small>
+        </label>
       
       <label>
         <div style="width:360px;margin-bottom:1px">CPU<div id="instructID">No Instruction</div></div>
@@ -170,16 +170,29 @@
       </label>
      
       <div id="divUserProgramInput">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput" 
-                   cols="38"
-                   style="height:77px" 
-         ></textarea>
-      </label>
-   </div> 
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active" >
+            <a href="#programInput" data-toggle="tab"><label>User Program Input</label></a>   
+          </li>
+          <li>
+            <a href="#programList" data-toggle="tab"><label>Program List</label></a>
+          </li>
+        </ul>
+        
+        <div class="tab-content">
+          <div id="programInput" class="tab-pane active">
+                 <textarea name="taProgramInput"
+                           id  ="taProgramInput" 
+                           cols="38"
+                           style="height:50px" 
+                 ></textarea>
+          </div>
+          <div id="programList" style="height=50px">
+            <ul>
+              <li></li>
+            </ul>
+          </div>
+        </div>
    </div>
    
    
