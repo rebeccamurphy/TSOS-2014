@@ -147,3 +147,24 @@ td {
   /*border: 1px solid;
   border-color: rgb(169,169,169);*/
 }
+#taHostLog{
+  display: inline-block;
+  width:360px;
+  height:205px;
+  border: 1px solid;
+  border-color: rgb(169,169,169);
+  overflow-y: auto;
+}
+.log_source{
+  display: inline-block;
+  color:green;
+  padding: 0px 5px;
+}
+.log_msg{
+  display: inline-block;
+  font-weight: normal!important;
+}
+.log_time{
+  display: inline-block;
+  float: right;
+}

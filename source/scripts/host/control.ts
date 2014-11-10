@@ -61,11 +61,13 @@ module TSOS {
                 + String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + String(date.getSeconds());
 
             // Build the log string.
-            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
-
+            var str :string ="";
+            //var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            str +="<div class='log_source'>"+source+ " </div>"+ "<div class='log_msg'>" + msg + " </div>"
+            + "<div class='log_time'> <small>" + now +"</small></div>";
             // Update the log console.
-            var taLog = <HTMLInputElement> document.getElementById("taHostLog");
-            taLog.value = str + taLog.value;
+            var taLog = document.getElementById("taHostLog");
+            taLog.innerHTML = str +"<br>"+ taLog.innerHTML;
             // Optionally update a log database or some streaming service.
 
             //start clock display

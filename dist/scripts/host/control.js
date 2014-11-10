@@ -58,11 +58,14 @@ var TSOS;
             var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
 
             // Build the log string.
-            var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
+            var str = "";
+
+            //var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            str += "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small>" + now + "</small></div>";
 
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
-            taLog.value = str + taLog.value;
+            taLog.innerHTML = str + "<br>" + taLog.innerHTML;
 
             // Optionally update a log database or some streaming service.
             //start clock display
