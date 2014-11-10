@@ -241,7 +241,6 @@ module TSOS {
             document.getElementById("ReadyQueueDisplay").innerHTML = output;
         }
         public static c(){
-            //debugger;
             _DrawingContext.fillStyle="#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
             var i =1;

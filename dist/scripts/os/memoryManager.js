@@ -37,6 +37,9 @@ var TSOS;
             }
             return null;
         };
+        MemoryManager.prototype.setNextFreeBlock = function (pcb) {
+            this.nextFreeMem = pcb.base;
+        };
         MemoryManager.prototype.loadProgram = function (program) {
             //create new PCB
             var currPCB = new TSOS.PCB();

@@ -31,12 +31,14 @@ module TSOS {
         Control.updateMemoryDisplay(output);
         }
         public findNextFreeBlock(){
-          
             for (var i =0; i< _ProgramSize*_NumPrograms; i+=256){
                 if (this.memory.Data[i]==="00")
                     return i;
             }
             return null;
+        }
+        public setNextFreeBlock(pcb){
+            this.nextFreeMem = pcb.base;
         }
         public loadProgram(program){
  

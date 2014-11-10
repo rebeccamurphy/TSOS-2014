@@ -65,11 +65,6 @@ var TSOS;
             if (_ExecutingProgramPID === pid) {
                 //reset the pcb so if the program is restarted it will start from the beginning
                 tempProgramPCB = _ExecutingProgramPCB;
-                _ExecutingProgramPCB.reset();
-                _ExecutingProgramPCB.state = 3 /* Done */;
-
-                //put the program back in the resident queue because it is still in memory
-                this.residentQueue.enqueue(_ExecutingProgramPCB);
 
                 //reset the executing program variables
                 _ExecutingProgramPID = null;
@@ -77,10 +72,10 @@ var TSOS;
             } else {
                 //remove the program from the ready queue
                 tempProgramPCB = this.readyQueue.find(pid);
-
-                //put the program back in the resident queue because it is still in memory
-                this.residentQueue.enqueue(tempProgramPCB);
             }
+
+            //mark the memory the program was living in as free
+            _MemoryManager.setNextFreeBlock(tempProgramPCB);
 
             //finally enqueue an interrupt
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));

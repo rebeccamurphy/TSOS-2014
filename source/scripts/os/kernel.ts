@@ -86,7 +86,6 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) { 
                 //clear the interval of the clock pulse
-                
                 _CPU.cycle();
 
                 
@@ -145,7 +144,8 @@ module TSOS {
                     //first log the error
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC-1));
                     //then stop the program from executing
-                    _CPU.isExecuting = false;
+                    //_CPU.isExecuting = false;
+                    _Scheduler.stopRunning(_ExecutingProgramPCB);
                     break;
                 }
                 case SYS_OPCODE_IRQ:{
@@ -190,6 +190,7 @@ module TSOS {
                     break;
                 }
                 case PROCESS_KILLED_IRQ:{
+                    //set the state of the program to killed
                     params.state = State.Killed;
                     //log event
                     this.krnTrace("PID: "+ params.pid +" has been killed.");

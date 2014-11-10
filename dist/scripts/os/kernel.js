@@ -133,7 +133,8 @@ var TSOS;
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC - 1));
 
                     //then stop the program from executing
-                    _CPU.isExecuting = false;
+                    //_CPU.isExecuting = false;
+                    _Scheduler.stopRunning(_ExecutingProgramPCB);
                     break;
                 }
                 case SYS_OPCODE_IRQ: {
@@ -180,6 +181,7 @@ var TSOS;
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {
+                    //set the state of the program to killed
                     params.state = 4 /* Killed */;
 
                     //log event
