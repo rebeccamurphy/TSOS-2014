@@ -443,7 +443,6 @@ var TSOS;
         Shell.prototype.shellBB = function (args) {
             var boxContent = TSOS.Control.getUserProgram();
 
-            //debugger;
             var tempProgramString = null;
             tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
             var programType = TSOS.Utils.checkValidProgram(tempProgramString);

@@ -500,7 +500,7 @@ module TSOS {
 
         public shellBB(args):void{
             var boxContent  =TSOS.Control.getUserProgram();
-            //debugger;
+            
             var tempProgramString = null;
             tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
             var programType = Utils.checkValidProgram(tempProgramString);
