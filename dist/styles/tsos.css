@@ -168,8 +168,9 @@ td {
   display: inline-block;
   float: right;
 }
-.list-group-item{
+.list-group-item,.list-group-item >a:hover{
   cursor:pointer;
+  text-decoration: none;
   
 }
 #program-List{}
