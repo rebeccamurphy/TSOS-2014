@@ -143,8 +143,6 @@ var TSOS;
                     break;
                 }
                 case CPU_BREAK_IRQ: {
-                    debugger;
-
                     //TODO make a separate context switch interrupt
                     //clear program from memory
                     this.krnTrace("PID: " + params + " has reached a break.");
@@ -183,8 +181,6 @@ var TSOS;
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {
-                    debugger;
-
                     //set the state of the program to killed
                     params.state = 4 /* Killed */;
 
