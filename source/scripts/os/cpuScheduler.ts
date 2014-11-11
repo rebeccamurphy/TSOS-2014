@@ -16,6 +16,12 @@ module TSOS {
         public loadProgram(pcb){
         	this.residentQueue.enqueue(pcb);
         }
+        public emptyReadyQueue() :boolean {
+            if (this.readyQueue.getSize()===0){
+                this.counter=0;
+            }
+            return this.readyQueue.getSize()===0;
+        }
         public runProgram(){
         	//dequeue the program we want to execute from the resident queue
         	var tempProgramPCB = this.residentQueue.find(_ExecutingProgramPID);
@@ -44,7 +50,6 @@ module TSOS {
 
         }
         public contextSwitch(){
-            debugger;
         	if (_ExecutingProgramPCB!==null){
         		//enqueue the current executing program back into the ready queue
         		_ExecutingProgramPCB.state = State.Ready;
@@ -61,7 +66,7 @@ module TSOS {
 
         }
         public stopRunning(pid){
-            debugger;
+            
         	//stops a program if it is currently running and puts it back on the resident queue with a new pcb
         	var tempProgramPCB =null;
         	if (_ExecutingProgramPID === pid){

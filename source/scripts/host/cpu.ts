@@ -53,7 +53,8 @@ export class Cpu {
             //Increment quantum counter
             _Scheduler.counter++;
         }
-        else{
+        //check if context switch is needed by checking if the resident queue is empty
+        else if (!_Scheduler.emptyReadyQueue()){
             //switching programs, save state of cpu to pcb
             this.updatePCB();
             this.updateCpu();

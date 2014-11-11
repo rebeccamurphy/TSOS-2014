@@ -56,7 +56,7 @@ var TSOS;
 
                 //Increment quantum counter
                 _Scheduler.counter++;
-            } else {
+            } else if (!_Scheduler.emptyReadyQueue()) {
                 //switching programs, save state of cpu to pcb
                 this.updatePCB();
                 this.updateCpu();
