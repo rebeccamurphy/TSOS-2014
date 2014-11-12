@@ -424,7 +424,10 @@ var TSOS;
         };
 
         Shell.prototype.shellRunAll = function () {
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ, "all"));
+            if (_Scheduler.residentQueue.getSize() !== 0)
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ, "all"));
+            else
+                _StdOut.putText("Load at least one program first.");
         };
         Shell.prototype.shellSetQuantum = function (args) {
             if (args.length <= 0)

@@ -81,9 +81,19 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) {
                 //clear the interval of the clock pulse
-                _CPU.cycle();
+                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
+                    _CPU.cycle();
+                else if (!_Scheduler.emptyReadyQueue()) {
+                    //perform a context switch
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                }
             } else if (_CPU.isExecuting && !_SingleStep) {
-                _CPU.cycle();
+                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue()) {
+                    _CPU.cycle();
+                } else if (!_Scheduler.emptyReadyQueue()) {
+                    //perform a context switch
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                }
             } else if (!_SingleStep) {
                 this.krnTrace("Idle");
             }
@@ -133,7 +143,6 @@ var TSOS;
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC - 1));
 
                     //then stop the program from executing
-                    //_CPU.isExecuting = false;
                     _Scheduler.stopRunning(_ExecutingProgramPCB);
                     break;
                 }
@@ -155,7 +164,7 @@ var TSOS;
                     _ExecutingProgramPID = null;
 
                     //update the display
-                    _CPU.updateCpu();
+                    _CPU.updateDisplay();
 
                     //check if the ready queue is empty, if not continue executing
                     if (_Scheduler.readyQueue.isEmpty()) {
@@ -172,12 +181,9 @@ var TSOS;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
                     //log the error
-                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + params);
+                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + (parseInt(params) + _ExecutingProgramPCB.base));
+                    _Scheduler.stopRunning(_ExecutingProgramPID);
 
-                    //stop the cpu
-                    //TODO so something to stop the executing of the program futher
-                    _CPU.isExecuting = false;
-                    this.krnTrace("CPU had stopped executing.");
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {

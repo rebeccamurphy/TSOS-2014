@@ -43,28 +43,17 @@ var TSOS;
 
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            if (_Scheduler.counter < QUANTUM) {
-                //if program still getting its turn
-                //execute current instruction
-                this.execute(this.fetch());
+            //execute current instruction
+            this.execute(this.fetch());
 
-                //update pcb
-                this.updatePCB();
+            //update pcb
+            this.updatePCB();
 
-                //update CPU
-                this.updateCpu();
+            //update all displays related to cpu
+            this.updateDisplay();
 
-                //Increment quantum counter
-                _Scheduler.counter++;
-            } else if (!_Scheduler.emptyReadyQueue()) {
-                //switching programs, save state of cpu to pcb
-                this.updatePCB();
-                this.updateCpu();
-
-                //call scheduler to perform a context switch
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
-            }
-            TSOS.Control.updateRQDisplay();
+            //Increment quantum counter
+            _Scheduler.counter++;
         };
 
         Cpu.prototype.fetch = function () {
@@ -82,7 +71,7 @@ var TSOS;
             TSOS.Control.updateCpuDisplay();
         };
 
-        Cpu.prototype.updateCpu = function () {
+        Cpu.prototype.updateDisplay = function () {
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.updateRQDisplay();

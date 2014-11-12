@@ -108,7 +108,7 @@ font-weight: normal !important;
   overflow-y:auto;
   max-height:406px;
   height: 206px;
-  width:360px;
+  width:368px;
 }
 
 #instructID{
@@ -148,7 +148,6 @@ td {
   border-color: rgb(169,169,169);*/
 }
 #taHostLog{
-  display: inline-block;
   width:360px;
   height:205px;
   border: 1px solid;
@@ -173,4 +172,6 @@ td {
   text-decoration: none;
   
 }
-#program-List{}
+#programList{
+  border: 1px solid  rgb(169,169,169);
+}

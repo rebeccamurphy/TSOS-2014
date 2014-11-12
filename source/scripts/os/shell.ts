@@ -481,7 +481,10 @@ module TSOS {
         }
 
         public shellRunAll(){
-            _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ, "all"));
+            if (_Scheduler.residentQueue.getSize()!==0)
+                _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ, "all"));
+            else
+                _StdOut.putText("Load at least one program first.");
         }
         public shellSetQuantum(args){
             if (args.length<=0)

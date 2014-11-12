@@ -83,6 +83,8 @@ module TSOS {
         	}
             //mark the memory the program was living in as free
             _MemoryManager.setNextFreeBlock(tempProgramPCB);
+            //update the cpu display
+            _CPU.updateDisplay();
         	//finally enqueue an interrupt
         	_KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
         }

@@ -42,26 +42,14 @@ export class Cpu {
         _Kernel.krnTrace('CPU cycle');
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
-        if(_Scheduler.counter < QUANTUM){
-            //if program still getting its turn
-            //execute current instruction
-            this.execute(this.fetch());
-            //update pcb
-            this.updatePCB();
-            //update CPU
-            this.updateCpu();
-            //Increment quantum counter
-            _Scheduler.counter++;
-        }
-        //check if context switch is needed by checking if the resident queue is empty
-        else if (!_Scheduler.emptyReadyQueue()){
-            //switching programs, save state of cpu to pcb
-            this.updatePCB();
-            this.updateCpu();
-            //call scheduler to perform a context switch
-            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
-        }
-        TSOS.Control.updateRQDisplay();
+        //execute current instruction
+        this.execute(this.fetch());
+        //update pcb
+        this.updatePCB();
+        //update all displays related to cpu
+        this.updateDisplay();
+        //Increment quantum counter
+        _Scheduler.counter++;
     }
     
     public fetch(): String{
@@ -79,7 +67,7 @@ export class Cpu {
         TSOS.Control.updateCpuDisplay();
     }
     
-    public updateCpu(){
+    public updateDisplay(){
         //update the CPU display
         TSOS.Control.updateCpuDisplay();
         TSOS.Control.updateRQDisplay();

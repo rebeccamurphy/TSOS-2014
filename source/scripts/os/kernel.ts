@@ -86,9 +86,21 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting && _SingleStep && _Stepping) { 
                 //clear the interval of the clock pulse
-                _CPU.cycle();                
+                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
+                    _CPU.cycle();
+                else if (!_Scheduler.emptyReadyQueue()){
+                    //perform a context switch
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                }
+
             } else if (_CPU.isExecuting && !_SingleStep) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+                if (_Scheduler.counter < QUANTUM|| _Scheduler.emptyReadyQueue()){
+                    _CPU.cycle();
+                }
+                else if (!_Scheduler.emptyReadyQueue()){
+                    //perform a context switch
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                }
             } else if (!_SingleStep){// If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
@@ -142,7 +154,6 @@ module TSOS {
                     //first log the error
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC-1));
                     //then stop the program from executing
-                    //_CPU.isExecuting = false;
                     _Scheduler.stopRunning(_ExecutingProgramPCB);
                     break;
                 }
@@ -164,7 +175,8 @@ module TSOS {
                     _ExecutingProgramPID =null;
 
                     //update the display
-                    _CPU.updateCpu();
+                    _CPU.updateDisplay();
+                    
                     //check if the ready queue is empty, if not continue executing
                     if (_Scheduler.readyQueue.isEmpty()){
                         _CPU.isExecuting = false; //stop the cpu from executing
@@ -182,11 +194,12 @@ module TSOS {
                 case MEMORY_ACCESS_VIOLATION_IRQ:{
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + 
-                        " Attempted to access " + params);
+                        " Attempted to access " + (parseInt(params)+_ExecutingProgramPCB.base));
+                    _Scheduler.stopRunning(_ExecutingProgramPID);
                     //stop the cpu
                     //TODO so something to stop the executing of the program futher
-                    _CPU.isExecuting = false;
-                    this.krnTrace("CPU had stopped executing.");
+                    //_CPU.isExecuting = false;
+                    //this.krnTrace("CPU had stopped executing.");
                     break;
                 }
                 case PROCESS_KILLED_IRQ:{

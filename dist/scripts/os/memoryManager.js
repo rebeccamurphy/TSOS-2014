@@ -73,7 +73,7 @@ var TSOS;
 
                 //checking memory in bounds
                 if (decAddress >= _ExecutingProgramPCB.limit || decAddress < _ExecutingProgramPCB.base)
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, decAddress));
                 else
                     return this.memory.Data[decAddress];
             }
@@ -96,9 +96,9 @@ var TSOS;
             var position = this.getDecAddressFromHex(startAddress) + _ExecutingProgramPCB.base;
 
             //check if memory is in bounds
-            if (position >= _ExecutingProgramPCB.limit || position < _ExecutingProgramPCB.base)
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, startAddress));
-            else
+            if (position >= _ExecutingProgramPCB.limit || position < _ExecutingProgramPCB.base) {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, position));
+            } else
                 this.memory.Data[position] = valueHex;
         };
         MemoryManager.prototype.clearProgramFromMemory = function (pcb) {
