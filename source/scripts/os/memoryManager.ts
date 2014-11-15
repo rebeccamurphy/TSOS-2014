@@ -26,7 +26,6 @@ module TSOS {
             this.nextFreeMem = pcb.base;
         }
         public loadProgram(program){
- 
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 

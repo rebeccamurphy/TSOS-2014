@@ -67,7 +67,7 @@ module TSOS {
             + "<div class='log_time'> <small>" + now +"</small></div>";
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
-            taLog.innerHTML = str +"<br>"+ taLog.innerHTML;
+            taLog.innerHTML = "<div>"+str+"</div>" + taLog.innerHTML;
             // Optionally update a log database or some streaming service.
 
             //start clock display
@@ -134,14 +134,17 @@ module TSOS {
         public static hostBtnSingleStep_click(btn):void{
             //TODO add message or kernal thing to say entering single step mode
             if (_SingleStep ===false){
+                _Kernel.krnTrace("Single Step On");
                 _SingleStep = true;
                 btn.innerHTML = "Single Step On"
                  document.getElementById("btnStep").disabled = false;
             }
             else {
+
+                _Kernel.krnTrace("Single Step Off");
                 _SingleStep = false;
                 btn.innerHTML = "Single Step Off";
-                 document.getElementById("btnStep").disabled = true;
+                document.getElementById("btnStep").disabled = true;
 
             }
         }
@@ -163,7 +166,6 @@ module TSOS {
         }
         public static displayUserStatus(msg):void {
             document.getElementById("statusDisplay").innerHTML = msg;
-
         }
 
         public static updateClockDisplay():void{

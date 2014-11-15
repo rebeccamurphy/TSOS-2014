@@ -454,7 +454,6 @@ module TSOS {
         }
         
         public shellRun(args){
-            //TODO change to run programs from residentQueue
             if (args.length <=0)
                 _StdOut.putText("You need a program id to run.");
             else if (!_Scheduler.residentQueue.inQueue(parseInt(args[0]))){
@@ -475,7 +474,7 @@ module TSOS {
                 //run program 
                 _ExecutingProgramPID = parseInt(args[0]);
                 _KernelInterruptQueue.enqueue(new Interrupt(RUN_PROGRAM_IRQ));
-
+                _StdOut.putText("Running PID " + args[0]);
 
             }
         }
@@ -488,7 +487,7 @@ module TSOS {
         }
         public shellSetQuantum(args){
             if (args.length<=0)
-                _StdOut.putText("You need a program id to run.");
+                _StdOut.putText("You need to actually input a number.");
             else if (isNaN(args[0]))
                 _StdOut.putText("Invalid quantum.");
             else{
@@ -560,7 +559,6 @@ module TSOS {
 
         }
         public killProcess(args):void{
-            
             var program = parseInt(args[0]);
             if (_ExecutingProgramPID !==program && !_Scheduler.readyQueue.inQueue(program)){
                 if (_SarcasticMode)

@@ -403,7 +403,6 @@ var TSOS;
         };
 
         Shell.prototype.shellRun = function (args) {
-            //TODO change to run programs from residentQueue
             if (args.length <= 0)
                 _StdOut.putText("You need a program id to run.");
             else if (!_Scheduler.residentQueue.inQueue(parseInt(args[0]))) {
@@ -420,6 +419,7 @@ var TSOS;
                 //run program
                 _ExecutingProgramPID = parseInt(args[0]);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(RUN_PROGRAM_IRQ));
+                _StdOut.putText("Running PID " + args[0]);
             }
         };
 
@@ -431,7 +431,7 @@ var TSOS;
         };
         Shell.prototype.shellSetQuantum = function (args) {
             if (args.length <= 0)
-                _StdOut.putText("You need a program id to run.");
+                _StdOut.putText("You need to actually input a number.");
             else if (isNaN(args[0]))
                 _StdOut.putText("Invalid quantum.");
             else {

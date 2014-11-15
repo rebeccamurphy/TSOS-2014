@@ -65,7 +65,7 @@ var TSOS;
 
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
-            taLog.innerHTML = str + "<br>" + taLog.innerHTML;
+            taLog.innerHTML = "<div>" + str + "</div>" + taLog.innerHTML;
 
             // Optionally update a log database or some streaming service.
             //start clock display
@@ -134,10 +134,12 @@ var TSOS;
         Control.hostBtnSingleStep_click = function (btn) {
             //TODO add message or kernal thing to say entering single step mode
             if (_SingleStep === false) {
+                _Kernel.krnTrace("Single Step On");
                 _SingleStep = true;
                 btn.innerHTML = "Single Step On";
                 document.getElementById("btnStep").disabled = false;
             } else {
+                _Kernel.krnTrace("Single Step Off");
                 _SingleStep = false;
                 btn.innerHTML = "Single Step Off";
                 document.getElementById("btnStep").disabled = true;
