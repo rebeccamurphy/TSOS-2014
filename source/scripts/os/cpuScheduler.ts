@@ -96,16 +96,15 @@ module TSOS {
                 } 
                 case scheduleType.fcfs:{
                     debugger;
-                    if (_ExecutingProgramPID !==null || _ExecutingProgramPCB!== undefined){
+                    if (_CPU.isExecuting){
                         this.readyQueue.enqueue(_ExecutingProgramPCB);
                         this.readyQueue.order();
+                        _ExecutingProgramPCB =this.readyQueue.dequeue();
+                        _ExecutingProgramPID =_ExecutingProgramPCB.pid; 
+                        _CPU.loadProgram();
                     }
                     else {
                         this.readyQueue.order();
-                    }
-                    if (_CPU.isExecuting){
-                        _ExecutingProgramPCB =this.readyQueue.dequeue();
-                        _ExecutingProgramPID =_ExecutingProgramPCB.pid; 
                     }
 
                     break;

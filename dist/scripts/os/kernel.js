@@ -80,6 +80,8 @@ var TSOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if ((_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) {
+                debugger;
+
                 switch (SCHEDULE_TYPE) {
                     case 0 /* rr */: {
                         if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
@@ -91,6 +93,7 @@ var TSOS;
                         break;
                     }
                     case 1 /* fcfs */: {
+                        debugger;
                         _CPU.cycle();
                         break;
                     }

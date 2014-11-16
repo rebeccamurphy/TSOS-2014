@@ -206,6 +206,7 @@ module TSOS {
         }
 
         public static updateRQDisplay(){
+            
             var output="";
             if (_ExecutingProgramPCB!==null){
                 output = "<tr>";
