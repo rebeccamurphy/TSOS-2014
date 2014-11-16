@@ -84,23 +84,23 @@ module TSOS {
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting && _SingleStep && _Stepping) { 
+            } else if ( (_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) { 
                 //clear the interval of the clock pulse
-                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
-                    _CPU.cycle();
-                else if (!_Scheduler.emptyReadyQueue()){
-                    //perform a context switch
-                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                switch(SCHEDULE_TYPE){
+                    case scheduleType.rr:{ 
+                        if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
+                            _CPU.cycle();
+                        else if (!_Scheduler.emptyReadyQueue()){
+                            //perform a context switch
+                            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                        }
+                        break;
+                    }
+                    case scheduleType.fcfs:{
+                        break;
+                    }
                 }
 
-            } else if (_CPU.isExecuting && !_SingleStep) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                if (_Scheduler.counter < QUANTUM|| _Scheduler.emptyReadyQueue()){
-                    _CPU.cycle();
-                }
-                else if (!_Scheduler.emptyReadyQueue()){
-                    //perform a context switch
-                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
-                }
             } else if (!_SingleStep){// If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
@@ -226,6 +226,33 @@ module TSOS {
                     _MemoryManager.init();
                     //clear the scheduler
                     _Scheduler = new cpuScheduler();   
+                    break;
+                }
+                case SET_SCHEDULE_TYPE_IRQ:{
+                    var previous =scheduleTypes[SCHEDULE_TYPE];
+                    //set the correct schedule type
+                    switch (params){
+                        case "rr":{
+                            SCHEDULE_TYPE = scheduleType.rr; 
+                            break;
+                        } 
+                        case "fcfs":{
+                            SCHEDULE_TYPE= scheduleType.fcfs; 
+                            break;
+                        } 
+                        case "priority":{
+                            SCHEDULE_TYPE = scheduleType.priority; 
+                            break;
+                        }
+                        default: {
+                            _StdOut.putText("Invalid type of scheduling. ");
+                        }
+                    }
+
+                    this.krnTrace("Switching scheduling from " +previous +" to "+ scheduleTypes[SCHEDULE_TYPE]);
+                    //update to display the correct type 
+                    TSOS.Control.updateScheduleType();
+
                     break;
                 }
                 default:

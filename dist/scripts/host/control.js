@@ -65,7 +65,7 @@ var TSOS;
 
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
-            taLog.innerHTML = "<div>" + str + "</div>" + taLog.innerHTML;
+            taLog.innerHTML = "<div class='logmsg'>" + str + "</div>" + taLog.innerHTML;
 
             // Optionally update a log database or some streaming service.
             //start clock display

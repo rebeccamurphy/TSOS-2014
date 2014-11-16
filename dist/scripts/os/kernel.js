@@ -79,20 +79,20 @@ var TSOS;
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting && _SingleStep && _Stepping) {
-                //clear the interval of the clock pulse
-                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
-                    _CPU.cycle();
-                else if (!_Scheduler.emptyReadyQueue()) {
-                    //perform a context switch
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
-                }
-            } else if (_CPU.isExecuting && !_SingleStep) {
-                if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue()) {
-                    _CPU.cycle();
-                } else if (!_Scheduler.emptyReadyQueue()) {
-                    //perform a context switch
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+            } else if ((_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) {
+                switch (SCHEDULE_TYPE) {
+                    case 0 /* rr */: {
+                        if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
+                            _CPU.cycle();
+                        else if (!_Scheduler.emptyReadyQueue()) {
+                            //perform a context switch
+                            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPID));
+                        }
+                        break;
+                    }
+                    case 1 /* fcfs */: {
+                        break;
+                    }
                 }
             } else if (!_SingleStep) {
                 this.krnTrace("Idle");
@@ -212,6 +212,34 @@ var TSOS;
 
                     //clear the scheduler
                     _Scheduler = new TSOS.cpuScheduler();
+                    break;
+                }
+                case SET_SCHEDULE_TYPE_IRQ: {
+                    var previous = scheduleTypes[SCHEDULE_TYPE];
+
+                    switch (params) {
+                        case "rr": {
+                            SCHEDULE_TYPE = 0 /* rr */;
+                            break;
+                        }
+                        case "fcfs": {
+                            SCHEDULE_TYPE = 1 /* fcfs */;
+                            break;
+                        }
+                        case "priority": {
+                            SCHEDULE_TYPE = 2 /* priority */;
+                            break;
+                        }
+                        default: {
+                            _StdOut.putText("Invalid type of scheduling. ");
+                        }
+                    }
+
+                    this.krnTrace("Switching scheduling from " + previous + " to " + scheduleTypes[SCHEDULE_TYPE]);
+
+                    //update to display the correct type
+                    TSOS.Control.updateScheduleType();
+
                     break;
                 }
                 default:

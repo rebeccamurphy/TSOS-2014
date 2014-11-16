@@ -505,30 +505,15 @@ var TSOS;
                     _StdOut.putText("Process cannot be killed because process is not running.");
             } else {
                 _Scheduler.stopRunning(program);
+                _StdOut.putText("PID " + args[0] + " is running.");
             }
         };
         Shell.prototype.shellSetScheduling = function (args) {
             var type = args[0];
-            switch (type) {
-                case "rr": {
-                    SCHEDULE_TYPE = 0 /* rr */;
-                    break;
-                }
-                case "fcfs": {
-                    SCHEDULE_TYPE = 1 /* fcfs */;
-                    break;
-                }
-                case "priority": {
-                    SCHEDULE_TYPE = 2 /* priority */;
-                    break;
-                }
-                default: {
-                    _StdOut.putText("Invalid type of scheduling. ");
-                }
-            }
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SET_SCHEDULE_TYPE_IRQ, type));
 
-            TSOS.Control.updateScheduleType();
-            _StdOut.putText("Scheduling type is currently: " + scheduleTypes[SCHEDULE_TYPE]);
+            //print message to console
+            _StdOut.putText("Scheduling type changed successfully.");
         };
         return Shell;
     })();

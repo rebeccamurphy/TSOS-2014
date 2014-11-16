@@ -28,6 +28,7 @@ var MEMORY_ACCESS_VIOLATION_IRQ: number = 6;
 var PROCESS_KILLED_IRQ: number = 7;
 var CONTEXT_SWITCH_IRQ: number = 8;
 var CLEAR_MEMORY_IRQ: number = 9;
+var SET_SCHEDULE_TYPE_IRQ: number = 10;
 
 
 var CONSOLE_BGC: string = "#DFDBC3";		//default console background color

@@ -575,31 +575,15 @@ module TSOS {
             }
             else {
                 _Scheduler.stopRunning(program);
+                _StdOut.putText("PID " + args[0] +" is running.");
             }
         }
         public shellSetScheduling(args):void{
             var type = args[0];
-            switch (type){
-                case "rr":{
-                    SCHEDULE_TYPE = scheduleType.rr; 
-                    break;
-                } 
-                case "fcfs":{
-                    SCHEDULE_TYPE= scheduleType.fcfs; 
-                    break;
-                } 
-                case "priority":{
-                    SCHEDULE_TYPE = scheduleType.priority; 
-                    break;
-                }
-                default: {
-                    _StdOut.putText("Invalid type of scheduling. ");
-                }
-            }
+            _KernelInterruptQueue.enqueue(new Interrupt(SET_SCHEDULE_TYPE_IRQ, type))
+            //print message to console
+            _StdOut.putText("Scheduling type changed successfully.");
 
-                TSOS.Control.updateScheduleType();
-                _StdOut.putText("Scheduling type is currently: " + scheduleTypes[SCHEDULE_TYPE]);
-                
         }  
     }        
 }
