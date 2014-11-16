@@ -89,7 +89,7 @@ module TSOS {
             }
             return validProgramHex + validProgramBB; //should only return HEX, BB, or ""
         }
-        public static convertProgram(lang:string, code):boolean{
+        public static convertProgram(lang:string, code, priority?):boolean{
             var beepboop= [];
             var hex = [];
             var numHex, numBin, numBB, num, temp = "";
@@ -127,7 +127,7 @@ module TSOS {
                 }
                 var tempHexStr = hex.join(" "); 
                 if (lang==="runnableBB")
-                    _MemoryManager.loadProgram(hex);
+                    _MemoryManager.loadProgram(hex, priority);
                 else
                     //puts hex in text area
                     TSOS.Control.displayUserProgram(tempHexStr);

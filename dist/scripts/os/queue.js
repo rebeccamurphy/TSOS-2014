@@ -62,6 +62,10 @@ var TSOS;
                 }
             }
         };
+        Queue.prototype.priorityOrder = function () {
+            this.q.sort(this.comparePriority);
+            this.ordered = true;
+        };
         Queue.prototype.order = function () {
             this.q.sort(this.compare);
             this.ordered = true;
@@ -70,6 +74,13 @@ var TSOS;
             if (a.pid < b.pid)
                 return -1;
             if (a.pid > b.pid)
+                return 1;
+            return 0;
+        };
+        Queue.prototype.comparePriority = function (a, b) {
+            if (a.priority < b.priority)
+                return -1;
+            if (a.priority > b.priority)
                 return 1;
             return 0;
         };

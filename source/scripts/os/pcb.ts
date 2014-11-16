@@ -17,7 +17,7 @@ module TSOS {
                     public base: number =0, //starting location in the mems
                     public limit:number=0,  //max location in the mems. to prevent
                     public state: State =State.New, //new, ready, or running state of program
-                    public priority:String ="",
+                    public priority:number = DEFAULT_PRIORITY,
                     public location:String ="Memory"
                     ) {
 

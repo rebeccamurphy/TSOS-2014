@@ -25,7 +25,7 @@ module TSOS {
         public setNextFreeBlock(pcb){
             this.nextFreeMem = pcb.base;
         }
-        public loadProgram(program){
+        public loadProgram(program, priority){
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -40,6 +40,9 @@ module TSOS {
             //set the pcb state
             currPCB.state = State.New;
 
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
             //Put the program in the ready queue
             _Scheduler.loadProgram(currPCB);
 

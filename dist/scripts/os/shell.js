@@ -63,7 +63,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads user program from User Program Input, labels with name if specifed.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<number>- Loads user program from User Program Input with the given priority if specified.");
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
@@ -80,6 +80,10 @@ var TSOS;
 
             //set quantum
             sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", "<number> - Sets the quantum to the specified number.");
+            this.commandList[this.commandList.length] = sc;
+
+            //set default priority
+            sc = new TSOS.ShellCommand(this.shellSetDefaultPriority, "setDefaultPriority", "<number> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
@@ -363,7 +367,7 @@ var TSOS;
             //gets the text box content
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
-
+            var tempPriority = args[0];
             if (_MemoryManager.nextFreeMem === null) {
                 _StdOut.putText("Cannot load program, memory full.");
                 return;
@@ -383,7 +387,7 @@ var TSOS;
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX") {
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
-                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
+                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString, tempPriority));
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 TSOS.Utils.convertProgram("runnableBB", tempProgramString);
                 _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
@@ -445,6 +449,16 @@ var TSOS;
             else {
                 QUANTUM = parseInt(args[0]);
                 _StdOut.putText("Current Quantum is " + QUANTUM);
+            }
+        };
+        Shell.prototype.shellSetDefaultPriority = function (args) {
+            if (args.length <= 0)
+                _StdOut.putText("You need to actually input a number. Current default priority: " + DEFAULT_PRIORITY);
+            else if (isNaN(args[0]))
+                _StdOut.putText("Invalid default priority.");
+            else {
+                DEFAULT_PRIORITY = parseInt(args[0]);
+                _StdOut.putText("Current default priority is " + DEFAULT_PRIORITY);
             }
         };
         Shell.prototype.shellBSOD = function (args) {

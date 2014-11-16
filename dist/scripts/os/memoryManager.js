@@ -24,7 +24,7 @@ var TSOS;
         MemoryManager.prototype.setNextFreeBlock = function (pcb) {
             this.nextFreeMem = pcb.base;
         };
-        MemoryManager.prototype.loadProgram = function (program) {
+        MemoryManager.prototype.loadProgram = function (program, priority) {
             //create new PCB
             var currPCB = new TSOS.PCB();
 
@@ -40,6 +40,10 @@ var TSOS;
 
             //set the pcb state
             currPCB.state = 0 /* New */;
+
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
 
             //Put the program in the ready queue
             _Scheduler.loadProgram(currPCB);

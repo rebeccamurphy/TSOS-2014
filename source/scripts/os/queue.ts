@@ -63,6 +63,10 @@ module TSOS {
                 }
             }
         }
+        public priorityOrder(){
+            this.q.sort(this.comparePriority);
+            this.ordered = true;   
+        }
         public order(){
             this.q.sort(this.compare);
             this.ordered = true;
@@ -71,6 +75,13 @@ module TSOS {
             if (a.pid < b.pid)
                 return -1;
             if (a.pid > b.pid)
+                return 1;
+            return 0;
+        }
+        private comparePriority(a,b) {
+            if (a.priority < b.priority)
+                return -1;
+            if (a.priority > b.priority)
                 return 1;
             return 0;
         }

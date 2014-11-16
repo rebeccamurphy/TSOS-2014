@@ -15,6 +15,7 @@ module TSOS {
 
         public loadProgram(pcb){
         	this.residentQueue.enqueue(pcb);
+
         }
         public emptyReadyQueue() :boolean {
             if (this.readyQueue.getSize()===0){
@@ -33,15 +34,23 @@ module TSOS {
         	if(!_CPU.isExecuting){
         		_ExecutingProgramPCB = this.readyQueue.dequeue();
         		_ExecutingProgramPID = _ExecutingProgramPCB.pid;
+                //load it into the cpu
+                _CPU.loadProgram();
         	}
-        	//load it into the cpu
-        	_CPU.loadProgram();
+        	
+            if (SCHEDULE_TYPE == scheduleType.priority){
+                this.readyQueue.priorityOrder();
+            }
         }
         public runAllPrograms(){
         	//load all programs in the resident queue into the ready queue
         	while(!this.residentQueue.isEmpty()){
         		this.readyQueue.enqueue(this.residentQueue.dequeue());
         	}
+
+            if (SCHEDULE_TYPE == scheduleType.priority){
+                this.readyQueue.priorityOrder();
+            }
         	//set the current runnining program
         	_ExecutingProgramPCB = this.readyQueue.dequeue();
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;

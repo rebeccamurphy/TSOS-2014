@@ -91,11 +91,11 @@ var TSOS;
                         break;
                     }
                     case 1 /* fcfs */: {
-                        debugger;
                         _CPU.cycle();
                         break;
                     }
                     case 2 /* priority */: {
+                        _CPU.cycle();
                         break;
                     }
                 }

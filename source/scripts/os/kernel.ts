@@ -97,11 +97,11 @@ module TSOS {
                         break;
                     }
                     case scheduleType.fcfs:{
-                        debugger;
                         _CPU.cycle();
                         break;
                     }
                     case scheduleType.priority:{
+                        _CPU.cycle();
                         break;
                     }
                 }

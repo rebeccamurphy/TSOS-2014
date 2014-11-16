@@ -87,7 +87,7 @@ var TSOS;
             }
             return validProgramHex + validProgramBB;
         };
-        Utils.convertProgram = function (lang, code) {
+        Utils.convertProgram = function (lang, code, priority) {
             var beepboop = [];
             var hex = [];
             var numHex, numBin, numBB, num, temp = "";
@@ -125,7 +125,7 @@ var TSOS;
                 }
                 var tempHexStr = hex.join(" ");
                 if (lang === "runnableBB")
-                    _MemoryManager.loadProgram(hex);
+                    _MemoryManager.loadProgram(hex, priority);
                 else
                     //puts hex in text area
                     TSOS.Control.displayUserProgram(tempHexStr);

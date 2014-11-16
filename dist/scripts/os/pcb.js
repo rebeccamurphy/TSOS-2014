@@ -17,7 +17,7 @@ var TSOS;
             if (typeof base === "undefined") { base = 0; }
             if (typeof limit === "undefined") { limit = 0; }
             if (typeof state === "undefined") { state = 0 /* New */; }
-            if (typeof priority === "undefined") { priority = ""; }
+            if (typeof priority === "undefined") { priority = DEFAULT_PRIORITY; }
             if (typeof location === "undefined") { location = "Memory"; }
             this.PC = PC;
             this.Acc = Acc;

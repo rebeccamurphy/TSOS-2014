@@ -90,7 +90,7 @@ module TSOS {
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "- Loads user program from User Program Input, labels with name if specifed.");
+                                  "<number>- Loads user program from User Program Input with the given priority if specified.");
             this.commandList[this.commandList.length] = sc;
             
             // clearmem
@@ -115,6 +115,12 @@ module TSOS {
             sc = new ShellCommand(this.shellSetQuantum,
                                  "quantum",
                                  "<number> - Sets the quantum to the specified number.");
+            this.commandList[this.commandList.length] = sc;
+
+            //set default priority
+            sc = new ShellCommand(this.shellSetDefaultPriority,
+                                 "setDefaultPriority",
+                                 "<number> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
@@ -411,7 +417,7 @@ module TSOS {
             //gets the text box content
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
-
+            var tempPriority = args[0];
             if (_MemoryManager.nextFreeMem===null ){
                     _StdOut.putText("Cannot load program, memory full.");
                 return;
@@ -433,7 +439,7 @@ module TSOS {
             else if (Utils.checkValidProgram(tempProgramString)==="HEX"){
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
-                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString));
+                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString, tempPriority));
 
             }
             else if (Utils.checkValidProgram(tempProgramString)==="BB"){
@@ -507,6 +513,16 @@ module TSOS {
                 _StdOut.putText("Current Quantum is " + QUANTUM);
             }
 
+        }
+        public shellSetDefaultPriority(args){
+            if (args.length<=0)
+                _StdOut.putText("You need to actually input a number. Current default priority: " + DEFAULT_PRIORITY);
+            else if (isNaN(args[0]))
+                _StdOut.putText("Invalid default priority.");
+            else{
+                DEFAULT_PRIORITY= parseInt(args[0])
+                _StdOut.putText("Current default priority is " + DEFAULT_PRIORITY);
+            }            
         }
         public shellBSOD(args){
             _Kernel.krnTrapError("TEST");
