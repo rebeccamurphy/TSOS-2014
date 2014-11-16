@@ -88,5 +88,32 @@ module TSOS {
         	//finally enqueue an interrupt
         	_KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
         }
+        public switchScheduling(){
+            switch(SCHEDULE_TYPE){
+                case scheduleType.rr:{
+                    this.counter =0; 
+                    break;
+                } 
+                case scheduleType.fcfs:{
+                    debugger;
+                    if (_ExecutingProgramPID !==null || _ExecutingProgramPCB!== undefined){
+                        this.readyQueue.enqueue(_ExecutingProgramPCB);
+                        this.readyQueue.order();
+                    }
+                    else {
+                        this.readyQueue.order();
+                    }
+                    if (_CPU.isExecuting){
+                        _ExecutingProgramPCB =this.readyQueue.dequeue();
+                        _ExecutingProgramPID =_ExecutingProgramPCB.pid; 
+                    }
+
+                    break;
+                } 
+                case scheduleType.priority:{ 
+                    break;
+                }
+            }
+        }
     }
 }

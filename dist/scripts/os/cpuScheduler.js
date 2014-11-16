@@ -89,6 +89,32 @@ var TSOS;
             //finally enqueue an interrupt
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
         };
+        cpuScheduler.prototype.switchScheduling = function () {
+            switch (SCHEDULE_TYPE) {
+                case 0 /* rr */: {
+                    this.counter = 0;
+                    break;
+                }
+                case 1 /* fcfs */: {
+                    debugger;
+                    if (_ExecutingProgramPID !== null || _ExecutingProgramPCB !== undefined) {
+                        this.readyQueue.enqueue(_ExecutingProgramPCB);
+                        this.readyQueue.order();
+                    } else {
+                        this.readyQueue.order();
+                    }
+                    if (_CPU.isExecuting) {
+                        _ExecutingProgramPCB = this.readyQueue.dequeue();
+                        _ExecutingProgramPID = _ExecutingProgramPCB.pid;
+                    }
+
+                    break;
+                }
+                case 2 /* priority */: {
+                    break;
+                }
+            }
+        };
         return cpuScheduler;
     })();
     TSOS.cpuScheduler = cpuScheduler;

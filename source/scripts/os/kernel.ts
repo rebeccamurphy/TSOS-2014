@@ -97,6 +97,10 @@ module TSOS {
                         break;
                     }
                     case scheduleType.fcfs:{
+                        _CPU.cycle();
+                        break;
+                    }
+                    case scheduleType.priority:{
                         break;
                     }
                 }
@@ -248,8 +252,8 @@ module TSOS {
                             _StdOut.putText("Invalid type of scheduling. ");
                         }
                     }
-
                     this.krnTrace("Switching scheduling from " +previous +" to "+ scheduleTypes[SCHEDULE_TYPE]);
+                    _Scheduler.switchScheduling();
                     //update to display the correct type 
                     TSOS.Control.updateScheduleType();
 

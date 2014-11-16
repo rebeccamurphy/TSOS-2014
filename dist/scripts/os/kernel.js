@@ -91,6 +91,10 @@ var TSOS;
                         break;
                     }
                     case 1 /* fcfs */: {
+                        _CPU.cycle();
+                        break;
+                    }
+                    case 2 /* priority */: {
                         break;
                     }
                 }
@@ -234,8 +238,8 @@ var TSOS;
                             _StdOut.putText("Invalid type of scheduling. ");
                         }
                     }
-
                     this.krnTrace("Switching scheduling from " + previous + " to " + scheduleTypes[SCHEDULE_TYPE]);
+                    _Scheduler.switchScheduling();
 
                     //update to display the correct type
                     TSOS.Control.updateScheduleType();

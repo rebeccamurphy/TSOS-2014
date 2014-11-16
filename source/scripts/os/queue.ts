@@ -10,8 +10,9 @@
 
 module TSOS {
     export class Queue {
-        constructor(public q = new Array()) {
-
+        constructor(public q = new Array(),
+                    private ordered = false) {
+            
         }
 
         public getSize() {
@@ -20,6 +21,10 @@ module TSOS {
 
         public isEmpty(){
             return (this.q.length == 0);
+        }
+
+        public isOrdered(){
+            return this.ordered;
         }
 
         public enqueue(element) {
@@ -57,6 +62,17 @@ module TSOS {
                     return retVal;
                 }
             }
+        }
+        public order(){
+            this.q.sort(this.compare);
+            this.ordered = true;
+        }
+        private compare(a,b) {
+            if (a.pid < b.pid)
+                return -1;
+            if (a.pid > b.pid)
+                return 1;
+            return 0;
         }
         public toString() {
             var retVal = "";

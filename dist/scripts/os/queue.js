@@ -8,9 +8,11 @@ Look at the push and shift methods, as they are the least obvious here.
 var TSOS;
 (function (TSOS) {
     var Queue = (function () {
-        function Queue(q) {
+        function Queue(q, ordered) {
             if (typeof q === "undefined") { q = new Array(); }
+            if (typeof ordered === "undefined") { ordered = false; }
             this.q = q;
+            this.ordered = ordered;
         }
         Queue.prototype.getSize = function () {
             return this.q.length;
@@ -18,6 +20,10 @@ var TSOS;
 
         Queue.prototype.isEmpty = function () {
             return (this.q.length == 0);
+        };
+
+        Queue.prototype.isOrdered = function () {
+            return this.ordered;
         };
 
         Queue.prototype.enqueue = function (element) {
@@ -55,6 +61,17 @@ var TSOS;
                     return retVal;
                 }
             }
+        };
+        Queue.prototype.order = function () {
+            this.q.sort(this.compare);
+            this.ordered = true;
+        };
+        Queue.prototype.compare = function (a, b) {
+            if (a.pid < b.pid)
+                return -1;
+            if (a.pid > b.pid)
+                return 1;
+            return 0;
         };
         Queue.prototype.toString = function () {
             var retVal = "";
