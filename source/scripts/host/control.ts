@@ -206,7 +206,7 @@ module TSOS {
         }
 
         public static updateRQDisplay(){
-            
+
             var output="";
             if (_ExecutingProgramPCB!==null){
                 output = "<tr>";
@@ -290,7 +290,7 @@ module TSOS {
             document.getElementById("upi").setAttribute("class", "active");
             document.getElementById("upl").setAttribute("class", "");
             document.getElementById("programList").setAttribute("class", "tab-pane");
-            document.getElementById("programInput").className +=  " active";
+            document.getElementById("memory").className +=  " active";
         }
     }
 }

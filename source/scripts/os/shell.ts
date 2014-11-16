@@ -117,11 +117,16 @@ module TSOS {
                                  "<number> - Sets the quantum to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
-
             //set scheduling type
             sc = new ShellCommand(this.shellSetScheduling,
                                  "setschedule",
-                                 "<string> - Sets the scheduling to the specified type. Options: [rr, fcfs, priority]");
+                                 "<rr, fcfs, priority> - Sets the scheduling to the specified type.");
+            this.commandList[this.commandList.length] = sc;
+
+            //set scheduling type
+            sc = new ShellCommand(this.shellGetScheduling,
+                                 "getschedule",
+                                 "Returns the currently scheduling type.");
             this.commandList[this.commandList.length] = sc;
 
             // BSOD
@@ -494,7 +499,7 @@ module TSOS {
         }
         public shellSetQuantum(args){
             if (args.length<=0)
-                _StdOut.putText("You need to actually input a number.");
+                _StdOut.putText("You need to actually input a number. Current Quantum: " +QUANTUM);
             else if (isNaN(args[0]))
                 _StdOut.putText("Invalid quantum.");
             else{
@@ -583,6 +588,10 @@ module TSOS {
             _KernelInterruptQueue.enqueue(new Interrupt(SET_SCHEDULE_TYPE_IRQ, type))
             //print message to console
             _StdOut.putText("Scheduling type changed successfully.");
+
+        }
+        public shellGetScheduling():void{
+            _StdOut.putText("Scheduling type is currently " +scheduleTypes[SCHEDULE_TYPE] +".");
 
         }  
     }        

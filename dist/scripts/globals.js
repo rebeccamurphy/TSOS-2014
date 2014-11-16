@@ -33,7 +33,7 @@ var CONSOLE_TEXT_COLOR = "black";
 var CONSOLE_VIEWPORT_WIDTH = 500;
 var CONSOLE_VIEWPORT_HEIGHT = 500;
 var QUANTUM = 6;
-
+var DEFAULT_PRIORITY = 4;
 var SCHEDULE_TYPE = 0 /* rr */;
 
 window.onload = function () {

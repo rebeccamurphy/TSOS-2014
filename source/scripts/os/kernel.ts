@@ -85,7 +85,6 @@ module TSOS {
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if ( (_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) { 
-                debugger;
                 //clear the interval of the clock pulse
                 switch(SCHEDULE_TYPE){
                     case scheduleType.rr:{ 

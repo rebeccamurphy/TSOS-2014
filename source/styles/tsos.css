@@ -94,20 +94,22 @@ font-weight: normal !important;
   font-weight: normal !important;
   padding: 0px !important;
 }
-#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox, #ReadyQueueDisplayBox{
+#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox, #ReadyQueueDisplayBox, #FileSystemDisplayBox{
   font-weight: normal !important;
   border-color: rgb(169,169,169);
   text-align: center;
 }
-#memDisplay{
+#memDisplayBox{
  
 }
+#memory{
+}
 #memoryWrapper{
-  border: 1px solid;
-  border-color: rgb(169,169,169);
+  border-bottom: 1px solid; 
+  border-color: #ddd;
   overflow-y:auto;
   max-height:406px;
-  height: 206px;
+  height: 228px;
   width:368px;
 }
 
@@ -142,6 +144,7 @@ td {
 }
 #ReadyQueue{
   margin-top: 10px;
+  max-height: 200px;
 }
 #ReadyQueueWrapper{
   /*border: 1px solid;
@@ -173,10 +176,15 @@ td {
   
 }
 #programList{
-  border: 1px solid  rgb(169,169,169);
+  /*border: 1px solid  rgb(169,169,169);*/
+  width:350px;
+  height: 200px;
 }
 
 .logmsg{
   display: inline-block;
   width: 340px;
+}
+#FileSystem{
+  float:right;
 }

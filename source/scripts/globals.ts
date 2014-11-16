@@ -36,7 +36,7 @@ var CONSOLE_TEXT_COLOR: string = "black";	//default console text color
 var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 var QUANTUM: number = 6;
-
+var DEFAULT_PRIORITY:number =4;
 var SCHEDULE_TYPE :scheduleType= scheduleType.rr; 
 
 window.onload = function() {

@@ -83,7 +83,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
-            sc = new TSOS.ShellCommand(this.shellSetScheduling, "setschedule", "<string> - Sets the scheduling to the specified type. Options: [rr, fcfs, priority]");
+            sc = new TSOS.ShellCommand(this.shellSetScheduling, "setschedule", "<rr, fcfs, priority> - Sets the scheduling to the specified type.");
+            this.commandList[this.commandList.length] = sc;
+
+            //set scheduling type
+            sc = new TSOS.ShellCommand(this.shellGetScheduling, "getschedule", "Returns the currently scheduling type.");
             this.commandList[this.commandList.length] = sc;
 
             // BSOD
@@ -435,7 +439,7 @@ var TSOS;
         };
         Shell.prototype.shellSetQuantum = function (args) {
             if (args.length <= 0)
-                _StdOut.putText("You need to actually input a number.");
+                _StdOut.putText("You need to actually input a number. Current Quantum: " + QUANTUM);
             else if (isNaN(args[0]))
                 _StdOut.putText("Invalid quantum.");
             else {
@@ -514,6 +518,9 @@ var TSOS;
 
             //print message to console
             _StdOut.putText("Scheduling type changed successfully.");
+        };
+        Shell.prototype.shellGetScheduling = function () {
+            _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         return Shell;
     })();
