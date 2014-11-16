@@ -229,6 +229,10 @@ var TSOS;
             }
             document.getElementById("ReadyQueueDisplay").innerHTML = output;
         };
+
+        Control.updateScheduleType = function () {
+            document.getElementById("SchedulingType").innerHTML = scheduleTypes[SCHEDULE_TYPE];
+        };
         Control.c = function () {
             _DrawingContext.fillStyle = "#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);

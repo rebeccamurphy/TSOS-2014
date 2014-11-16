@@ -117,6 +117,13 @@ module TSOS {
                                  "<number> - Sets the quantum to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
+
+            //set scheduling type
+            sc = new ShellCommand(this.shellSetScheduling,
+                                 "setschedule",
+                                 "<string> - Sets the scheduling to the specified type. Options: [rr, fcfs, priority]");
+            this.commandList[this.commandList.length] = sc;
+
             // BSOD
             sc = new ShellCommand(this.shellBSOD,
                                   "bsod",
@@ -569,6 +576,30 @@ module TSOS {
             else {
                 _Scheduler.stopRunning(program);
             }
+        }
+        public shellSetScheduling(args):void{
+            var type = args[0];
+            switch (type){
+                case "rr":{
+                    SCHEDULE_TYPE = scheduleType.rr; 
+                    break;
+                } 
+                case "fcfs":{
+                    SCHEDULE_TYPE= scheduleType.fcfs; 
+                    break;
+                } 
+                case "priority":{
+                    SCHEDULE_TYPE = scheduleType.priority; 
+                    break;
+                }
+                default: {
+                    _StdOut.putText("Invalid type of scheduling. ");
+                }
+            }
+
+                TSOS.Control.updateScheduleType();
+                _StdOut.putText("Scheduling type is currently: " + scheduleTypes[SCHEDULE_TYPE]);
+                
         }  
     }        
 }

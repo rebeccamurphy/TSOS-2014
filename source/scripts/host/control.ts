@@ -237,6 +237,10 @@ module TSOS {
             }
             document.getElementById("ReadyQueueDisplay").innerHTML = output;
         }
+
+        public static updateScheduleType(){
+            document.getElementById("SchedulingType").innerHTML = scheduleTypes[SCHEDULE_TYPE];
+        }
         public static c(){
             _DrawingContext.fillStyle="#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);

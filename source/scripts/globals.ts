@@ -36,6 +36,7 @@ var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 var QUANTUM: number = 6;
 
+var SCHEDULE_TYPE :scheduleType= scheduleType.rr; 
 
 window.onload = function() {
 	//defines console original dimensions 
@@ -45,6 +46,10 @@ window.onload = function() {
 
 enum State {New,Running, Ready, Done, Killed};
 var States =["New","Running","Ready","Done", "Killed"];
+
+enum scheduleType {rr, fcfs, priority};
+var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
+
 //
 // Global Variables
 //

@@ -33,6 +33,8 @@ var CONSOLE_VIEWPORT_WIDTH = 500;
 var CONSOLE_VIEWPORT_HEIGHT = 500;
 var QUANTUM = 6;
 
+var SCHEDULE_TYPE = 0 /* rr */;
+
 window.onload = function () {
     //defines console original dimensions
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
@@ -49,6 +51,15 @@ var State;
 })(State || (State = {}));
 ;
 var States = ["New", "Running", "Ready", "Done", "Killed"];
+
+var scheduleType;
+(function (scheduleType) {
+    scheduleType[scheduleType["rr"] = 0] = "rr";
+    scheduleType[scheduleType["fcfs"] = 1] = "fcfs";
+    scheduleType[scheduleType["priority"] = 2] = "priority";
+})(scheduleType || (scheduleType = {}));
+;
+var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 
 //
 // Global Variables
