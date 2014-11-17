@@ -50,12 +50,15 @@ var TSOS;
 
         Control.hostLog = function (msg, source) {
             if (typeof source === "undefined") { source = "?"; }
+            debugger;
+
             // Note the OS CLOCK.
             var clock = _OSclock;
 
             // Note the REAL clock in milliseconds since January 1, 1970.
             var date = new Date();
-            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+            var strSecs = String(date.getSeconds());
+            var now = String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + Array(2 - (strSecs.length - 1)).join("0") + strSecs;
 
             // Build the log string.
             var str = "";
@@ -172,7 +175,8 @@ var TSOS;
 
         Control.updateClockDisplay = function () {
             var date = new Date();
-            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+            var strSecs = String(date.getSeconds());
+            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + Array(2 - (strSecs.length - 1)).join("0") + strSecs;
 
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
