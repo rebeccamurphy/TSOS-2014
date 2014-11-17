@@ -163,6 +163,12 @@ var TSOS;
                     _MemoryManager.clearProgramFromMemory();
                     this.krnTrace("PID: " + params + " has been cleared from memory.");
 
+                    //set state to done
+                    _ExecutingProgramPCB.state = 3 /* Done */;
+
+                    //add program to terminated queue
+                    _Scheduler.terminatedQueue.enqueue(_ExecutingProgramPCB);
+
                     //clear executing program
                     _ExecutingProgramPCB = null;
                     var tempPID = _ExecutingProgramPID;
@@ -194,6 +200,9 @@ var TSOS;
                 case PROCESS_KILLED_IRQ: {
                     //set the state of the program to killed
                     params.state = 4 /* Killed */;
+
+                    //add program to terminated queue
+                    _Scheduler.terminatedQueue.enqueue(params);
 
                     //log event
                     this.krnTrace("PID: " + params.pid + " has been killed.");

@@ -174,6 +174,11 @@ module TSOS {
                     _MemoryManager.clearProgramFromMemory();
                     this.krnTrace("PID: " +params +" has been cleared from memory.");
                     
+                    //set state to done
+                    _ExecutingProgramPCB.state =State.Done;
+                    //add program to terminated queue
+                    _Scheduler.terminatedQueue.enqueue(_ExecutingProgramPCB);
+
                     //clear executing program
                     _ExecutingProgramPCB =null;
                     var tempPID = _ExecutingProgramPID;
@@ -210,6 +215,10 @@ module TSOS {
                 case PROCESS_KILLED_IRQ:{
                     //set the state of the program to killed
                     params.state = State.Killed;
+
+                    //add program to terminated queue
+                    _Scheduler.terminatedQueue.enqueue(params);
+
                     //log event
                     this.krnTrace("PID: "+ params.pid +" has been killed.");
                     

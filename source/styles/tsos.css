@@ -94,13 +94,13 @@ font-weight: normal !important;
   font-weight: normal !important;
   padding: 0px !important;
 }
-#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox, #ReadyQueueDisplayBox, #FileSystemDisplayBox{
+#memDisplayBox, #cpuDisplayBox, #PCBDisplayBox, #ReadyQueueDisplayBox, #FileSystemDisplayBox, #ResidentListDisplayBox, #TerminatedListDisplayBox{
   font-weight: normal !important;
   border-color: rgb(169,169,169);
   text-align: center;
 }
 #memDisplayBox{
- 
+  margin-top: 1px;
 }
 #memory{
 }
@@ -129,9 +129,11 @@ font-weight: normal !important;
 
 td[id*="dataID"]{
   width:18px;
+  font-size: 14px;
 }
 td {
   width: 57.5px;
+  font-size: 14px;
 }
 
 #divUserProgramInput{
@@ -142,9 +144,11 @@ td {
   display:inline-block;
   float:right;
 }
-#ReadyQueue{
-  margin-top: 10px;
+#ReadyQueue, #ResidentList, #TerminatedList{
+  margin-top: 0px;
   max-height: 200px;
+  /*border:1px solid;
+  border-color: #ddd;*/
 }
 #ReadyQueueWrapper{
   /*border: 1px solid;
@@ -187,7 +191,7 @@ td {
 }
 #FileSystem{
   float:right;
-  max-width: 750px;
+  max-width: 760px;
   padding-left: 0px;
-  padding-right: 28px;
+  padding-right: 34px;
 }

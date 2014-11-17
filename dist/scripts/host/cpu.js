@@ -74,7 +74,7 @@ var TSOS;
         Cpu.prototype.updateDisplay = function () {
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
-            TSOS.Control.updateRQDisplay();
+            TSOS.Control.updateAllQueueDisplays();
             TSOS.Control.updateMemoryDisplay();
         };
         Cpu.prototype.updatePCB = function () {

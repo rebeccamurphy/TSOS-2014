@@ -208,43 +208,7 @@
    
    
 </div>
-<div id= "ReadyQueue"class="col-md-7" >
-        <div style="font-weight:700">Ready Queue<div id="SchedulingType">Round Robin</div></div>
-         <small>
-         <div id="ReadyQueueWrapper">
-            <table id = "ReadyQueueDisplayBox" class="table table-bordered">
-              <thead style="font-weight:bold">
-                <tr>
-                  <td>PID</td>
-                  <td>PC</td>
-                  <td>IR</td>
-                  <td>ACC</td>
-                  <td>X</td>
-                  <td>Y</td>
-                  <td>Z</td>
-                  <td>Priority</td>
-                  <td>State</td>
-                  <td>Location</td>
-                </tr>
-              </thead>
-              <tbody id ="ReadyQueueDisplay">
-              <tr>
-                  <td id="PCBPIDDisplay"></td>
-                  <td id="PCBPCDisplay"></td>
-                  <td id="PCBIRDisplay"></td>
-                  <td id="PCBACCDisplay"></td>
-                  <td id="PCBXDisplay"></td>
-                  <td id="PCBYDisplay"></td>
-                  <td id="PCBZDisplay"></td>
-                  <td id="PCBPriorityDisplay"></td>
-                  <td id="PCBStateDisplay"></td>
-                  <td id="PCBLocDisplay"></td>
-              </tr>
-              </tbody>
-            </table>
-         </div>
-         </small>
-</div>
+
 
 <div id= "FileSystem"class="col-md-7" >
         <div style="font-weight:700">Hard Drive</div>
@@ -262,6 +226,136 @@
          </div>
          </small>
 </div>   
+<div class="col-md-7">
+<ul class="nav nav-pills" role="tablist" style="border-bottom:none">
+              <li id="rq"role="presentation" class="active" >
+                <a href="#ReadyQueue" data-toggle="tab"><label>Ready Queue</label></a>   
+              </li>
+              <li id="rl">
+                <a href="#ResidentList" data-toggle="tab"><label>Resident List</label></a>
+              </li>
+              <li id="tl">
+                <a href="#TerminatedList" data-toggle="tab"><label>Terminated List</label></a>
+              </li>
+            </ul>
+  <div class ="tab-content">
+  <div style="font-weight:700"><div id="SchedulingType">Round Robin</div></div>
+  <div id= "ReadyQueue" class="tab-pane active">
+           <div id="ReadyQueueWrapper">
+              <table id = "ReadyQueueDisplayBox" class="table table-bordered">
+                <thead style="font-weight:bold">
+                  <tr>
+                    <small>
+                    <td>PID</td>
+                    <td>PC</td>
+                    <td>IR</td>
+                    <td>ACC</td>
+                    <td>X</td>
+                    <td>Y</td>
+                    <td>Z</td>
+                    <td>Priority</td>
+                    <td>State</td>
+                    <td>Location</td>
+                    </small>
+                  </tr>
+                </thead>
+                <tbody id ="ReadyQueueDisplay">
+                <tr>
+                    <small>
+                    <td id="PCBPIDDisplay"></td>
+                    <td id="PCBPCDisplay"></td>
+                    <td id="PCBIRDisplay"></td>
+                    <td id="PCBACCDisplay"></td>
+                    <td id="PCBXDisplay"></td>
+                    <td id="PCBYDisplay"></td>
+                    <td id="PCBZDisplay"></td>
+                    <td id="PCBPriorityDisplay"></td>
+                    <td id="PCBStateDisplay"></td>
+                    <td id="PCBLocDisplay"></td>
+                    </small>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+    </div>
+    <div id ="ResidentList" class="tab-pane">
+           <div id="ResidentListWrapper">
+              <table id = "ResidentListDisplayBox" class="table table-bordered">
+                <thead style="font-weight:bold">
+                  <tr>
+                    <small>
+                    <td>PID</td>
+                    <td>PC</td>
+                    <td>IR</td>
+                    <td>ACC</td>
+                    <td>X</td>
+                    <td>Y</td>
+                    <td>Z</td>
+                    <td>Priority</td>
+                    <td>State</td>
+                    <td>Location</td>
+                    </small>
+                  </tr>
+                </thead>
+                <tbody id ="ResidentListDisplay">
+                <tr>
+                    <small>
+                    <td id="RL_PCBPIDDisplay"></td>
+                    <td id="RL_PCBPCDisplay"></td>
+                    <td id="RL_PCBIRDisplay"></td>
+                    <td id="RL_PCBACCDisplay"></td>
+                    <td id="RL_PCBXDisplay"></td>
+                    <td id="RL_PCBYDisplay"></td>
+                    <td id="RL_PCBZDisplay"></td>
+                    <td id="RL_PCBPriorityDisplay"></td>
+                    <td id="RL_PCBStateDisplay"></td>
+                    <td id="RL_PCBLocDisplay"></td>
+                    </small>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+      </div>
+    <div id ="TerminatedList" class="tab-pane">
+      <div id="TerminatedListWrapper">
+              <table id = "TerminatedListDisplayBox" class="table table-bordered">
+                <thead style="font-weight:bold">
+                  <tr>
+                    <small>
+                    <td>PID</td>
+                    <td>PC</td>
+                    <td>IR</td>
+                    <td>ACC</td>
+                    <td>X</td>
+                    <td>Y</td>
+                    <td>Z</td>
+                    <td>Priority</td>
+                    <td>State</td>
+                    <td>Location</td>
+                    </small>
+                  </tr>
+                </thead>
+                <tbody id ="TerminatedListDisplay">
+                <tr>
+                    <small>
+                    <td id="TL_PCBPIDDisplay"></td>
+                    <td id="TL_PCBPCDisplay"></td>
+                    <td id="TL_PCBIRDisplay"></td>
+                    <td id="TL_PCBACCDisplay"></td>
+                    <td id="TL_PCBXDisplay"></td>
+                    <td id="TL_PCBYDisplay"></td>
+                    <td id="TL_PCBZDisplay"></td>
+                    <td id="TL_PCBPriorityDisplay"></td>
+                    <td id="TL_PCBStateDisplay"></td>
+                    <td id="TL_PCBLocDisplay"></td>
+                    </small>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+    </div>
+    </div>
+</div>
 <p class="footerText" style="clear:both;">
    <br>
    Copyright &copy; 2008 - 2014 No Rights Reserved.

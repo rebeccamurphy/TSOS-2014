@@ -7,6 +7,7 @@ module TSOS {
         constructor( 
                     public readyQueue: Queue = new Queue(),
                     public residentQueue: Queue = new Queue(),
+                    public terminatedQueue:Queue = new Queue(),
                     public counter :number =0
 
                     ) {
@@ -15,6 +16,8 @@ module TSOS {
 
         public loadProgram(pcb){
         	this.residentQueue.enqueue(pcb);
+            TSOS.Control.updateAllQueueDisplays();
+            //update the queue display
 
         }
         public emptyReadyQueue() :boolean {

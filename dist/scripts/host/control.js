@@ -199,7 +199,7 @@ var TSOS;
 
         Control.updateRQDisplay = function () {
             var output = "";
-            if (_ExecutingProgramPCB !== null) {
+            if (_ExecutingProgramPCB !== null && _ExecutingProgramPCB !== undefined) {
                 output = "<tr>";
                 output += "<td> " + _ExecutingProgramPCB.pid + "</td>";
                 output += "<td> " + _ExecutingProgramPCB.PC + "</td>";
@@ -229,7 +229,48 @@ var TSOS;
             }
             document.getElementById("ReadyQueueDisplay").innerHTML = output;
         };
+        Control.updateRLDisplay = function () {
+            var output = "";
+            for (var i = 0; i < _Scheduler.residentQueue.getSize(); i++) {
+                output += "<tr>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).pid + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).PC + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).IR + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).Acc + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).Xreg + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).Yreg + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).priority + "</td>";
+                output += "<td> " + States[_Scheduler.residentQueue.get(i).state] + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).location + "</td>";
+                output += "</tr>";
+            }
+            document.getElementById("ResidentListDisplay").innerHTML = output;
+        };
+        Control.updateTLDisplay = function () {
+            var output = "";
+            for (var i = 0; i < _Scheduler.terminatedQueue.getSize(); i++) {
+                output += "<tr>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).pid + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).PC + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).IR + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).Acc + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).Xreg + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).Yreg + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).priority + "</td>";
+                output += "<td> " + States[_Scheduler.terminatedQueue.get(i).state] + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).location + "</td>";
+                output += "</tr>";
+            }
+            document.getElementById("TerminatedListDisplay").innerHTML = output;
+        };
 
+        Control.updateAllQueueDisplays = function () {
+            this.updateTLDisplay();
+            this.updateRLDisplay();
+            this.updateRQDisplay();
+        };
         Control.updateScheduleType = function () {
             document.getElementById("SchedulingType").innerHTML = scheduleTypes[SCHEDULE_TYPE];
         };

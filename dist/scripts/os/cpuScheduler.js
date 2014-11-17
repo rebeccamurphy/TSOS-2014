@@ -4,16 +4,20 @@ FUTURE ME PUT HELLA SWEET COMMENTS HERE.
 var TSOS;
 (function (TSOS) {
     var cpuScheduler = (function () {
-        function cpuScheduler(readyQueue, residentQueue, counter) {
+        function cpuScheduler(readyQueue, residentQueue, terminatedQueue, counter) {
             if (typeof readyQueue === "undefined") { readyQueue = new TSOS.Queue(); }
             if (typeof residentQueue === "undefined") { residentQueue = new TSOS.Queue(); }
+            if (typeof terminatedQueue === "undefined") { terminatedQueue = new TSOS.Queue(); }
             if (typeof counter === "undefined") { counter = 0; }
             this.readyQueue = readyQueue;
             this.residentQueue = residentQueue;
+            this.terminatedQueue = terminatedQueue;
             this.counter = counter;
         }
         cpuScheduler.prototype.loadProgram = function (pcb) {
             this.residentQueue.enqueue(pcb);
+            TSOS.Control.updateAllQueueDisplays();
+            //update the queue display
         };
         cpuScheduler.prototype.emptyReadyQueue = function () {
             if (this.readyQueue.getSize() === 0) {
