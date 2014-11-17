@@ -46,7 +46,7 @@ window.onload = function() {
 };
 
 enum State {New,Running, Ready, Done, Killed};
-var States =["New","Running","Ready","Done", "Killed"];
+var States =["New","Running","Ready","Ran", "Killed"];
 
 enum scheduleType {rr, fcfs, priority};
 var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];

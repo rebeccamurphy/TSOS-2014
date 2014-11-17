@@ -51,7 +51,7 @@ var State;
     State[State["Killed"] = 4] = "Killed";
 })(State || (State = {}));
 ;
-var States = ["New", "Running", "Ready", "Done", "Killed"];
+var States = ["New", "Running", "Ready", "Ran", "Killed"];
 
 var scheduleType;
 (function (scheduleType) {
