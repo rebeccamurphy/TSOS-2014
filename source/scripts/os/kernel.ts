@@ -101,6 +101,10 @@ module TSOS {
                         break;
                     }
                     case scheduleType.priority:{
+                        if (_Scheduler.reorder){
+                            _Scheduler.readyQueue.priorityOrder();
+                            _Scheduler.reorder = false;
+                        }
                         _CPU.cycle();
                         break;
                     }

@@ -8,7 +8,8 @@ module TSOS {
                     public readyQueue: Queue = new Queue(),
                     public residentQueue: Queue = new Queue(),
                     public terminatedQueue:Queue = new Queue(),
-                    public counter :number =0
+                    public counter :number =0,
+                    public reorder :boolean=false
 
                     ) {
 
@@ -40,10 +41,11 @@ module TSOS {
                 //load it into the cpu
                 _CPU.loadProgram();
         	}
-        	
-            if (SCHEDULE_TYPE == scheduleType.priority){
-                this.readyQueue.priorityOrder();
+            if (SCHEDULE_TYPE === scheduleType.priority){
+                this.reorder = true;
             }
+
+        	
         }
         public runAllPrograms(){
         	//load all programs in the resident queue into the ready queue
@@ -51,7 +53,7 @@ module TSOS {
         		this.readyQueue.enqueue(this.residentQueue.dequeue());
         	}
 
-            if (SCHEDULE_TYPE == scheduleType.priority){
+            if (SCHEDULE_TYPE === scheduleType.priority){
                 this.readyQueue.priorityOrder();
             }
         	//set the current runnining program
@@ -107,7 +109,6 @@ module TSOS {
                     break;
                 } 
                 case scheduleType.fcfs:{
-                    debugger;
                     if (_CPU.isExecuting){
                         this.readyQueue.enqueue(_ExecutingProgramPCB);
                         this.readyQueue.order();
@@ -122,6 +123,8 @@ module TSOS {
                     break;
                 } 
                 case scheduleType.priority:{ 
+                        //because non-premptive just order the queue
+                        this.readyQueue.priorityOrder();
                     break;
                 }
             }

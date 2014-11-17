@@ -4,15 +4,17 @@ FUTURE ME PUT HELLA SWEET COMMENTS HERE.
 var TSOS;
 (function (TSOS) {
     var cpuScheduler = (function () {
-        function cpuScheduler(readyQueue, residentQueue, terminatedQueue, counter) {
+        function cpuScheduler(readyQueue, residentQueue, terminatedQueue, counter, reorder) {
             if (typeof readyQueue === "undefined") { readyQueue = new TSOS.Queue(); }
             if (typeof residentQueue === "undefined") { residentQueue = new TSOS.Queue(); }
             if (typeof terminatedQueue === "undefined") { terminatedQueue = new TSOS.Queue(); }
             if (typeof counter === "undefined") { counter = 0; }
+            if (typeof reorder === "undefined") { reorder = false; }
             this.readyQueue = readyQueue;
             this.residentQueue = residentQueue;
             this.terminatedQueue = terminatedQueue;
             this.counter = counter;
+            this.reorder = reorder;
         }
         cpuScheduler.prototype.loadProgram = function (pcb) {
             this.residentQueue.enqueue(pcb);
@@ -40,9 +42,8 @@ var TSOS;
                 //load it into the cpu
                 _CPU.loadProgram();
             }
-
-            if (SCHEDULE_TYPE == 2 /* priority */) {
-                this.readyQueue.priorityOrder();
+            if (SCHEDULE_TYPE === 2 /* priority */) {
+                this.reorder = true;
             }
         };
         cpuScheduler.prototype.runAllPrograms = function () {
@@ -50,7 +51,7 @@ var TSOS;
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
             }
 
-            if (SCHEDULE_TYPE == 2 /* priority */) {
+            if (SCHEDULE_TYPE === 2 /* priority */) {
                 this.readyQueue.priorityOrder();
             }
 
@@ -108,7 +109,6 @@ var TSOS;
                     break;
                 }
                 case 1 /* fcfs */: {
-                    debugger;
                     if (_CPU.isExecuting) {
                         this.readyQueue.enqueue(_ExecutingProgramPCB);
                         this.readyQueue.order();
@@ -122,6 +122,8 @@ var TSOS;
                     break;
                 }
                 case 2 /* priority */: {
+                    //because non-premptive just order the queue
+                    this.readyQueue.priorityOrder();
                     break;
                 }
             }
