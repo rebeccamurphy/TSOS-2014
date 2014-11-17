@@ -35,6 +35,7 @@ var CONSOLE_VIEWPORT_HEIGHT = 500;
 var QUANTUM = 6;
 var DEFAULT_PRIORITY = 4;
 var SCHEDULE_TYPE = 0 /* rr */;
+var PREVIOUS_MESSAGE = "";
 
 window.onload = function () {
     //defines console original dimensions

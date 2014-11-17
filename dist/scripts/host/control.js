@@ -59,17 +59,23 @@ var TSOS;
 
             // Build the log string.
             var str = "";
-
-            //var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
-            str += "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small>" + now + "</small></div>";
+            str += "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small id='logtime'>" + now + "</small></div>";
 
             // Update the log console.
-            var taLog = document.getElementById("taHostLog");
-            taLog.innerHTML = "<div class='logmsg'>" + str + "</div>" + taLog.innerHTML;
+            if (PREVIOUS_MESSAGE === "Idle" && msg === "Idle") {
+                //so the host log doesn't have a million idles, just changes the time if the previous messages was also idle
+                document.getElementById("logtime").innerHTML = now;
+            } else {
+                var taLog = document.getElementById("taHostLog");
+                taLog.innerHTML = "<div class='logmsg'>" + str + "</div>" + taLog.innerHTML;
+            }
 
             // Optionally update a log database or some streaming service.
             //start clock display
             this.updateClockDisplay();
+
+            //update previous message
+            PREVIOUS_MESSAGE = msg;
         };
 
         // Host Events
