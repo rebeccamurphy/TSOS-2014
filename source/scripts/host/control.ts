@@ -51,7 +51,6 @@ module TSOS {
         }
 
         public static hostLog(msg: string, source: string = "?"): void {
-            debugger;
             // Note the OS CLOCK.
             var clock: number = _OSclock;
 
@@ -94,6 +93,8 @@ module TSOS {
             ///window.onload =function(){
             var readyStateCheckInterval = setInterval(function() {
                 if (document.readyState === "complete") {
+                    //play start up noise
+                    Control.playStartUpNoise();
                      // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
@@ -181,8 +182,10 @@ module TSOS {
         public static updateClockDisplay():void{
             var date = new Date();
             var strSecs = String(date.getSeconds());
+            var numHour = date.getHours();
+            var strHours = (numHour===0 ? "12": String(numHour%12));
             var now = String(date.getMonth()+1) +"/" + String(date.getDate()) + "/" +String(date.getFullYear()).slice(-2) + " "
-                + String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + Array(2-(strSecs.length-1)).join("0") + strSecs;
+                + strHours + ":"+ String(date.getMinutes())+ ":"  + Array(2-(strSecs.length-1)).join("0") + strSecs;
 
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
@@ -298,7 +301,6 @@ module TSOS {
             document.getElementById("SchedulingType").innerHTML = scheduleTypes[SCHEDULE_TYPE];
         }
         public static c(){
-
             _DrawingContext.fillStyle="#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
             var i =1;
@@ -320,6 +322,9 @@ module TSOS {
             }, 5000);
             (<HTMLAudioElement>document.getElementById('c')).play();
 
+        }
+        public static playStartUpNoise(){
+            (<HTMLAudioElement>document.getElementById('startUpNoise')).play();
         }
         public static setProgram(programID){
             var output="";

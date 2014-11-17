@@ -50,8 +50,6 @@ var TSOS;
 
         Control.hostLog = function (msg, source) {
             if (typeof source === "undefined") { source = "?"; }
-            debugger;
-
             // Note the OS CLOCK.
             var clock = _OSclock;
 
@@ -91,6 +89,9 @@ var TSOS;
             ///window.onload =function(){
             var readyStateCheckInterval = setInterval(function () {
                 if (document.readyState === "complete") {
+                    //play start up noise
+                    Control.playStartUpNoise();
+
                     // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
@@ -176,7 +177,9 @@ var TSOS;
         Control.updateClockDisplay = function () {
             var date = new Date();
             var strSecs = String(date.getSeconds());
-            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + Array(2 - (strSecs.length - 1)).join("0") + strSecs;
+            var numHour = date.getHours();
+            var strHours = (numHour === 0 ? "12" : String(numHour % 12));
+            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + strHours + ":" + String(date.getMinutes()) + ":" + Array(2 - (strSecs.length - 1)).join("0") + strSecs;
 
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
@@ -305,6 +308,9 @@ var TSOS;
                     window.clearInterval(interval);
             }, 5000);
             document.getElementById('c').play();
+        };
+        Control.playStartUpNoise = function () {
+            document.getElementById('startUpNoise').play();
         };
         Control.setProgram = function (programID) {
             var output = "";
