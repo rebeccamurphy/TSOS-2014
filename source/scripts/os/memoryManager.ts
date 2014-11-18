@@ -25,24 +25,32 @@ module TSOS {
         public setNextFreeBlock(pcb){
             this.nextFreeMem = pcb.base;
         }
-        public loadProgram(program, priority){
-            //create new PCB
-            var currPCB = new TSOS.PCB();
-            //add to list of PCBs 
-            //because we're starting with just loading 1 program in memory the base will be 0 for now
-            currPCB.base = this.nextFreeMem;
+        public loadProgram(program, priority:number){
 
-            //set the pc of the pcb to start at the base
-            currPCB.PC = currPCB.base;
-            //set the limit?
-            currPCB.limit = currPCB.base + _ProgramSize;
+            if (typeof program !=="TSOS.PCB"){
+            //if loading a program directly into memory   
+                //create new PCB
+                var currPCB = new TSOS.PCB();
+                //add to list of PCBs 
+                //because we're starting with just loading 1 program in memory the base will be 0 for now
+                currPCB.base = this.nextFreeMem;
 
-            //set the pcb state
-            currPCB.state = State.New;
+                //set the pc of the pcb to start at the base
+                currPCB.PC = currPCB.base;
+                //set the limit?
+                currPCB.limit = currPCB.base + _ProgramSize;
 
-            //set the priority
-            if (priority !== undefined)
-                currPCB.priority = priority;
+                //set the pcb state
+                currPCB.state = State.New;
+
+                //set the location to in memory
+
+                currPCB.location = Locations.Memory;
+
+                //set the priority
+                if (priority !== undefined)
+                    currPCB.priority = priority;
+            }
             //Put the program in the ready queue
             _Scheduler.loadProgram(currPCB);
 

@@ -18,7 +18,7 @@ module TSOS {
                     public limit:number=0,  //max location in the mems. to prevent
                     public state: State =State.New, //new, ready, or running state of program
                     public priority:number = DEFAULT_PRIORITY,
-                    public location:String ="Memory"
+                    public location:Locations = Locations.Memory
                     ) {
 
         this.pid = _CurrPID;

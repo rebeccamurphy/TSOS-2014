@@ -52,6 +52,9 @@ var States =["New","Running","Ready","Ran", "Killed"];
 enum scheduleType {rr, fcfs, priority};
 var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 
+enum Locations {Memory, Disk};
+var LocationsStr = ["Memory", "Disk"];
+
 //
 // Global Variables
 //

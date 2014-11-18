@@ -44,7 +44,7 @@ module TSOS {
             this.krnTrace(_krnFileSystemDriver.status);
 
 
-            TSOS.Control.updateFileSystemDisplay();
+            
             //
             // ... more?
             //

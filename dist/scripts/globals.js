@@ -63,6 +63,14 @@ var scheduleType;
 ;
 var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 
+var Locations;
+(function (Locations) {
+    Locations[Locations["Memory"] = 0] = "Memory";
+    Locations[Locations["Disk"] = 1] = "Disk";
+})(Locations || (Locations = {}));
+;
+var LocationsStr = ["Memory", "Disk"];
+
 //
 // Global Variables
 //

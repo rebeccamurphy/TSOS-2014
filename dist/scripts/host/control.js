@@ -233,9 +233,11 @@ var TSOS;
                 output += "<td> " + _ExecutingProgramPCB.Xreg + "</td>";
                 output += "<td> " + _ExecutingProgramPCB.Yreg + "</td>";
                 output += "<td> " + _ExecutingProgramPCB.Zflag + "</td>";
+                output += "<td> " + _ExecutingProgramPCB.base + "</td>";
+                output += "<td> " + _ExecutingProgramPCB.limit + "</td>";
                 output += "<td> " + _ExecutingProgramPCB.priority + "</td>";
                 output += "<td> " + States[_ExecutingProgramPCB.state] + "</td>";
-                output += "<td> " + _ExecutingProgramPCB.location + "</td>";
+                output += "<td> " + LocationsStr[_ExecutingProgramPCB.location] + "</td>";
                 output += "</tr>";
             }
             for (var i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
@@ -247,9 +249,11 @@ var TSOS;
                 output += "<td> " + _Scheduler.readyQueue.get(i).Xreg + "</td>";
                 output += "<td> " + _Scheduler.readyQueue.get(i).Yreg + "</td>";
                 output += "<td> " + _Scheduler.readyQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).base + "</td>";
+                output += "<td> " + _Scheduler.readyQueue.get(i).limit + "</td>";
                 output += "<td> " + _Scheduler.readyQueue.get(i).priority + "</td>";
                 output += "<td> " + States[_Scheduler.readyQueue.get(i).state] + "</td>";
-                output += "<td> " + _Scheduler.readyQueue.get(i).location + "</td>";
+                output += "<td> " + LocationsStr[_Scheduler.readyQueue.get(i).location] + "</td>";
                 output += "</tr>";
             }
             document.getElementById("ReadyQueueDisplay").innerHTML = output;
@@ -265,9 +269,11 @@ var TSOS;
                 output += "<td> " + _Scheduler.residentQueue.get(i).Xreg + "</td>";
                 output += "<td> " + _Scheduler.residentQueue.get(i).Yreg + "</td>";
                 output += "<td> " + _Scheduler.residentQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).base + "</td>";
+                output += "<td> " + _Scheduler.residentQueue.get(i).limit + "</td>";
                 output += "<td> " + _Scheduler.residentQueue.get(i).priority + "</td>";
                 output += "<td> " + States[_Scheduler.residentQueue.get(i).state] + "</td>";
-                output += "<td> " + _Scheduler.residentQueue.get(i).location + "</td>";
+                output += "<td> " + LocationsStr[_Scheduler.residentQueue.get(i).location] + "</td>";
                 output += "</tr>";
             }
             document.getElementById("ResidentListDisplay").innerHTML = output;
@@ -283,9 +289,11 @@ var TSOS;
                 output += "<td> " + _Scheduler.terminatedQueue.get(i).Xreg + "</td>";
                 output += "<td> " + _Scheduler.terminatedQueue.get(i).Yreg + "</td>";
                 output += "<td> " + _Scheduler.terminatedQueue.get(i).Zflag + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).base + "</td>";
+                output += "<td> " + _Scheduler.terminatedQueue.get(i).limit + "</td>";
                 output += "<td> " + _Scheduler.terminatedQueue.get(i).priority + "</td>";
                 output += "<td> " + States[_Scheduler.terminatedQueue.get(i).state] + "</td>";
-                output += "<td> " + _Scheduler.terminatedQueue.get(i).location + "</td>";
+                output += "<td> " + LocationsStr[_Scheduler.terminatedQueue.get(i).location] + "</td>";
                 output += "</tr>";
             }
             document.getElementById("TerminatedListDisplay").innerHTML = output;
@@ -358,26 +366,16 @@ var TSOS;
             var metaStr = "";
             var tsbStr = "";
 
-            //display the master boot record
-            blockStr = _krnFileSystemDriver.getDataBytes("000");
-            metaStr = _krnFileSystemDriver.getMetaData("000");
-            output += "<tr><td>0:0:0</td>";
-            output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
-            output += "<td>" + blockStr + "</td></tr>";
-
             for (var t = 0; t < _krnFileSystemDriver.tracks; t++) {
                 for (var s = 0; s < _krnFileSystemDriver.sectors; s++) {
-                    for (var b = 1; b < _krnFileSystemDriver.blocks; b++) {
+                    for (var b = 0; b < _krnFileSystemDriver.blocks; b++) {
                         tsbStr = t + "" + s + "" + b;
                         blockStr = _krnFileSystemDriver.getDataBytes(tsbStr);
                         metaStr = _krnFileSystemDriver.getMetaData(tsbStr);
 
-                        if (blockStr !== null && blockStr !== undefined) {
-                            output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
-                            output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
-                            output += "<td>" + blockStr + "</td></tr>";
-                        } else
-                            break;
+                        output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
+                        output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
+                        output += "<td>" + blockStr + "</td></tr>";
                     }
                 }
             }
