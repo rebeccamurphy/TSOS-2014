@@ -148,6 +148,17 @@ module TSOS {
         var numHex = this.dec2hex(numDec);
         return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
     }
-
+    
+    // Method to determine if the browser that the user is using supports
+    // the HTML5 localStorage
+    // Taken from http://diveintohtml5.info/storage.html
+    public static supports_html5_storage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+    
     }
 }

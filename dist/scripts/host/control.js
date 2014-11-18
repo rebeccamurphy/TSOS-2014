@@ -339,6 +339,11 @@ var TSOS;
             document.getElementById("programList").setAttribute("class", "tab-pane");
             document.getElementById("memory").className += " active";
         };
+
+        Control.formatMemory = function () {
+            var output = "";
+            document.getElementById("FileSystemDisplay").innerHTML = output;
+        };
         return Control;
     })();
     TSOS.Control = Control;

@@ -151,7 +151,6 @@ module TSOS {
                  document.getElementById("btnStep").disabled = false;
             }
             else {
-
                 _Kernel.krnTrace("Single Step Off");
                 _SingleStep = false;
                 btn.innerHTML = "Single Step Off";
@@ -352,6 +351,12 @@ module TSOS {
             document.getElementById("upl").setAttribute("class", "");
             document.getElementById("programList").setAttribute("class", "tab-pane");
             document.getElementById("memory").className +=  " active";
+        }
+
+        public static formatMemory(){
+            var output="";
+            document.getElementById("FileSystemDisplay").innerHTML = output;
+
         }
     }
 }

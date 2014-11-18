@@ -17,8 +17,21 @@ var TSOS;
         __extends(DeviceDriverFileSystem, _super);
         function DeviceDriverFileSystem() {
             // Override the base method pointers.
-            _super.call(this);
+            this.tracks = 4;
+            this.sectors = 8;
+            this.blocks = 8;
+            this.metaData = 4;
+            this.dataBytes = 60;
+            _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
         }
+        DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
+            // Initialization routine for this, the kernel-mode Keyboard Device Driver.
+            this.status = "File System Loaded";
+            // More?
+        };
+
+        DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
+        };
         return DeviceDriverFileSystem;
     })(TSOS.DeviceDriver);
     TSOS.DeviceDriverFileSystem = DeviceDriverFileSystem;
