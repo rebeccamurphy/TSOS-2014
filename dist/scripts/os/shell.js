@@ -111,11 +111,15 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
-            sc = new TSOS.ShellCommand(this.displayActiveProcesses, "ps", "List the running processes and their IDs");
+            sc = new TSOS.ShellCommand(this.shellDisplayActiveProcesses, "ps", "List the running processes and their IDs");
             this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
-            sc = new TSOS.ShellCommand(this.killProcess, "kill", "<int> - Kill the specified process if it is running.");
+            sc = new TSOS.ShellCommand(this.shellKillProcess, "kill", "<int> - Kill the specified process if it is running.");
+            this.commandList[this.commandList.length] = sc;
+
+            // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.
+            sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<-force> - formats disk, with an extra parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;
 
             //
@@ -503,7 +507,7 @@ var TSOS;
             } else
                 _StdOut.putText("Invalid status.");
         };
-        Shell.prototype.displayActiveProcesses = function (args) {
+        Shell.prototype.shellDisplayActiveProcesses = function (args) {
             var msg = "";
             if (_Scheduler.readyQueue.isEmpty() && _ExecutingProgramPID == null)
                 _StdOut.putText("There are no running processes.");
@@ -514,7 +518,7 @@ var TSOS;
                 _StdOut.putText("PID: " + _ExecutingProgramPID + msg);
             }
         };
-        Shell.prototype.killProcess = function (args) {
+        Shell.prototype.shellKillProcess = function (args) {
             var program = parseInt(args[0]);
             if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program)) {
                 if (_SarcasticMode)
@@ -535,6 +539,9 @@ var TSOS;
         };
         Shell.prototype.shellGetScheduling = function () {
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
+        };
+        Shell.prototype.shellFormatDisk = function (args) {
+            //TODO
         };
         return Shell;
     })();

@@ -29,29 +29,16 @@ module TSOS {
         }
 
 
-        public getMetaData(tsb:string){
-          return sessionStorage.getItem(tsb);
-        }
-            
-        public checkInUse(tsb:string):boolean{
-          return this.getMetaData(tsb).charAt(0) ==='1';
-        }
-
-        public getNextTSB(tsb:string){
-          return this.getMetaData(tsb).substring(1, this.metaData);
-        }
-
-        public getDataBytes(tsb:string){
-          return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData+this.dataBytes);
-        }
-
         public krnFileSystemDriverEntry() {
           debugger;
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
           this.status = "File System Loaded";
             // More?
-          
-          if (sessionStorage.length===0){
+          this.init(false);
+        }
+
+        public init(format:boolean){
+          if ( (sessionStorage.length===0&&!format)||format) {
             //set the master boot record
             sessionStorage.setItem("000", "1---"+ "001"+new Array(57).join('0'));                  
             for (var t=0; t<this.tracks; t++){
@@ -68,9 +55,27 @@ module TSOS {
               }
             }
           }
-        
         }
 
+        public getMetaData(tsb:string){
+          return sessionStorage.getItem(tsb);
+        }
+            
+        public checkInUse(tsb:string):boolean{
+          return this.getMetaData(tsb).charAt(0) ==='1';
+        }
+
+        public getNextTSB(tsb:string){
+          return this.getMetaData(tsb).substring(1, this.metaData);
+        }
+
+        public getDataBytes(tsb:string){
+          return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData+this.dataBytes);
+        }
+
+        public formatDisk(){
+          this.init(true);
+        }
         public krnDiskInUse(params){
 
         }

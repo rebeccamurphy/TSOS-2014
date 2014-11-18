@@ -24,22 +24,6 @@ var TSOS;
             this.dataBytes = 60;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
         }
-        DeviceDriverFileSystem.prototype.getMetaData = function (tsb) {
-            return sessionStorage.getItem(tsb);
-        };
-
-        DeviceDriverFileSystem.prototype.checkInUse = function (tsb) {
-            return this.getMetaData(tsb).charAt(0) === '1';
-        };
-
-        DeviceDriverFileSystem.prototype.getNextTSB = function (tsb) {
-            return this.getMetaData(tsb).substring(1, this.metaData);
-        };
-
-        DeviceDriverFileSystem.prototype.getDataBytes = function (tsb) {
-            return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData + this.dataBytes);
-        };
-
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
             debugger;
 
@@ -47,7 +31,11 @@ var TSOS;
             this.status = "File System Loaded";
 
             // More?
-            if (sessionStorage.length === 0) {
+            this.init(false);
+        };
+
+        DeviceDriverFileSystem.prototype.init = function (format) {
+            if ((sessionStorage.length === 0 && !format) || format) {
                 //set the master boot record
                 sessionStorage.setItem("000", "1---" + "001" + new Array(57).join('0'));
                 for (var t = 0; t < this.tracks; t++) {
@@ -64,6 +52,25 @@ var TSOS;
             }
         };
 
+        DeviceDriverFileSystem.prototype.getMetaData = function (tsb) {
+            return sessionStorage.getItem(tsb);
+        };
+
+        DeviceDriverFileSystem.prototype.checkInUse = function (tsb) {
+            return this.getMetaData(tsb).charAt(0) === '1';
+        };
+
+        DeviceDriverFileSystem.prototype.getNextTSB = function (tsb) {
+            return this.getMetaData(tsb).substring(1, this.metaData);
+        };
+
+        DeviceDriverFileSystem.prototype.getDataBytes = function (tsb) {
+            return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData + this.dataBytes);
+        };
+
+        DeviceDriverFileSystem.prototype.formatDisk = function () {
+            this.init(true);
+        };
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
         };
         return DeviceDriverFileSystem;

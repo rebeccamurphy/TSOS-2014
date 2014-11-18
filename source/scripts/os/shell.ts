@@ -160,15 +160,21 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
-            sc = new ShellCommand(this.displayActiveProcesses,
+            sc = new ShellCommand(this.shellDisplayActiveProcesses,
                                   "ps",
                                   "List the running processes and their IDs");
             this.commandList[this.commandList.length] = sc;            
             
             // kill <id> - kills the specified process id.
-            sc = new ShellCommand(this.killProcess,
+            sc = new ShellCommand(this.shellKillProcess,
                                   "kill",
                                   "<int> - Kill the specified process if it is running.");
+            this.commandList[this.commandList.length] = sc;    
+
+            // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.    
+            sc = new ShellCommand(this.shellFormatDisk,
+                                  "format",
+                                  "<-force> - formats disk, with an extra parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;    
             //
             // Display the initial prompt.
@@ -574,7 +580,7 @@ module TSOS {
             else
                 _StdOut.putText("Invalid status.");
         } 
-        public displayActiveProcesses(args):void{
+        public shellDisplayActiveProcesses(args):void{
             var msg="";
             if (_Scheduler.readyQueue.isEmpty()&& _ExecutingProgramPID==null)
                 _StdOut.putText("There are no running processes.");
@@ -586,7 +592,7 @@ module TSOS {
             }
 
         }
-        public killProcess(args):void{
+        public shellKillProcess(args):void{
             var program = parseInt(args[0]);
             if (_ExecutingProgramPID !==program && !_Scheduler.readyQueue.inQueue(program)){
                 if (_SarcasticMode)
@@ -608,6 +614,10 @@ module TSOS {
         }
         public shellGetScheduling():void{
             _StdOut.putText("Scheduling type is currently " +scheduleTypes[SCHEDULE_TYPE] +".");
+
+        }
+        public shellFormatDisk(args):void{
+            //TODO
 
         }  
     }        
