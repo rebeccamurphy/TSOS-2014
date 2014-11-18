@@ -29,6 +29,7 @@ var PROCESS_KILLED_IRQ: number = 7;
 var CONTEXT_SWITCH_IRQ: number = 8;
 var CLEAR_MEMORY_IRQ: number = 9;
 var SET_SCHEDULE_TYPE_IRQ: number = 10;
+var FILESYSTEM_IRQ: number = 10;
 
 
 var CONSOLE_BGC: string = "#DFDBC3";		//default console background color
@@ -39,7 +40,7 @@ var QUANTUM: number = 6;
 var DEFAULT_PRIORITY:number =4;
 var SCHEDULE_TYPE :scheduleType= scheduleType.rr; 
 var PREVIOUS_MESSAGE:string ="";
-
+var DISK_IN_USE:boolean = false;
 window.onload = function() {
 	//defines console original dimensions 
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
@@ -54,6 +55,9 @@ var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 
 enum Locations {Memory, Disk};
 var LocationsStr = ["Memory", "Disk"];
+
+enum DiskAction {Create, Read, Write, Delete, FullFormat, QuickFormat};
+var DiskActions = ['creating', 'reading', 'writing', 'deleting', 'full formatting', 'quick formatting'];
 
 //
 // Global Variables

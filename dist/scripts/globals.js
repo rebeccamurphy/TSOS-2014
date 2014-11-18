@@ -27,6 +27,7 @@ var PROCESS_KILLED_IRQ = 7;
 var CONTEXT_SWITCH_IRQ = 8;
 var CLEAR_MEMORY_IRQ = 9;
 var SET_SCHEDULE_TYPE_IRQ = 10;
+var FILESYSTEM_IRQ = 10;
 
 var CONSOLE_BGC = "#DFDBC3";
 var CONSOLE_TEXT_COLOR = "black";
@@ -36,7 +37,7 @@ var QUANTUM = 6;
 var DEFAULT_PRIORITY = 4;
 var SCHEDULE_TYPE = 0 /* rr */;
 var PREVIOUS_MESSAGE = "";
-
+var DISK_IN_USE = false;
 window.onload = function () {
     //defines console original dimensions
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));
@@ -70,6 +71,18 @@ var Locations;
 })(Locations || (Locations = {}));
 ;
 var LocationsStr = ["Memory", "Disk"];
+
+var DiskAction;
+(function (DiskAction) {
+    DiskAction[DiskAction["Create"] = 0] = "Create";
+    DiskAction[DiskAction["Read"] = 1] = "Read";
+    DiskAction[DiskAction["Write"] = 2] = "Write";
+    DiskAction[DiskAction["Delete"] = 3] = "Delete";
+    DiskAction[DiskAction["FullFormat"] = 4] = "FullFormat";
+    DiskAction[DiskAction["QuickFormat"] = 5] = "QuickFormat";
+})(DiskAction || (DiskAction = {}));
+;
+var DiskActions = ['creating', 'reading', 'writing', 'deleting', 'full formatting', 'quick formatting'];
 
 //
 // Global Variables

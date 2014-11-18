@@ -142,6 +142,11 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case FILESYSTEM_IRQ:
+                    this.krnTrace("The Disk is " + DiskActions[params] + ".");
+                    _krnFileSystemDriver.isr(params);
+                    this.krnTrace("The Disk is done" + DiskActions[params] + ".");
+                    break;
                 case RUN_PROGRAM_IRQ: {
                     //start the program
                     //since where just running the first program in mem, just setting isexecuting true

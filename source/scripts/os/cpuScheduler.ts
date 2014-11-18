@@ -76,6 +76,7 @@ module TSOS {
         	_ExecutingProgramPCB = this.readyQueue.dequeue();
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;
         	//load it into the cpu
+            //TODO make sure the program is loaded into memory 
         	_CPU.loadProgram();
 
         }

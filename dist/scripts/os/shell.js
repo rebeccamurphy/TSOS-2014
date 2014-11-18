@@ -119,7 +119,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.
-            sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<-force> - formats disk, with an extra parameter of -force to force format even if program is running.");
+            sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<quick, full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;
 
             //
@@ -541,7 +541,61 @@ var TSOS;
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         Shell.prototype.shellFormatDisk = function (args) {
-            //TODO
+            debugger;
+            var firstParam = args[0];
+            var secondParam = args[1];
+            var thirdParam = args[2];
+
+            if (firstParam === undefined && DISK_IN_USE) {
+                //disk in use and force not specified
+                _StdOut.putPrompt("Disk in use please use -force.");
+                return;
+            } else if (firstParam === undefined && !DISK_IN_USE) {
+                //disk not inuse and full formatting
+                _StdOut.putText("Disk full format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                return;
+            }
+
+            if (firstParam === "-force") {
+                //forcing file system to be formatted
+                _StdOut.putText("Disk full format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                return;
+            }
+
+            if (firstParam === "quick" && !DISK_IN_USE) {
+                //file system to be quick formatted
+                _StdOut.putText("Disk quick format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* QuickFormat */));
+                return;
+            } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
+                //disk in use and force not specified
+                _StdOut.putPrompt("Disk in use please use -force.");
+                return;
+            } else if (firstParam === "quick" && secondParam === "-force") {
+                //forcing file system to be formatted
+                _StdOut.putText("Disk quick format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* QuickFormat */));
+                return;
+            }
+            if (firstParam === "full" && !DISK_IN_USE) {
+                //file system to be quick formatted
+                _StdOut.putText("Disk full format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                return;
+            } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
+                //disk in use and force not specified
+                _StdOut.putPrompt("Disk in use please use -force.");
+                return;
+            } else if (firstParam === "full" && secondParam === "-force") {
+                //forcing file system to be formatted
+                _StdOut.putText("Disk full format starting.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                return;
+            }
+
+            _StdOut.putText("Invalid parameter.");
         };
         return Shell;
     })();

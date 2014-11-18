@@ -72,10 +72,38 @@ var TSOS;
             return this.getBlock(tsb).substring(this.metaData, this.metaData + this.dataBytes);
         };
 
-        DeviceDriverFileSystem.prototype.formatDisk = function () {
+        DeviceDriverFileSystem.prototype.fullFormatDisk = function () {
             this.init(true);
         };
-        DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
+        DeviceDriverFileSystem.prototype.quickFormatDisk = function () {
+            for (var t = 0; t < this.tracks; t++) {
+                for (var s = 0; s < this.sectors; s++) {
+                    for (var b = 0; b < this.blocks; b++) {
+                        if ("" + t + "" + b + "" + s !== "000") {
+                            try  {
+                                sessionStorage.setItem(t + "" + s + "" + b, "0" + sessionStorage.getItem(t + "" + s + "" + b).substring(1));
+                            } catch (e) {
+                                alert('Quota exceeded!');
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        DeviceDriverFileSystem.prototype.krnDiskInUse = function (diskAction, data) {
+            DISK_IN_USE = true;
+            switch (diskAction) {
+                case 4 /* FullFormat */: {
+                    this.fullFormatDisk();
+                    break;
+                }
+                case 5 /* QuickFormat */: {
+                    this.quickFormatDisk();
+                    break;
+                }
+            }
+
+            DISK_IN_USE = false;
         };
         return DeviceDriverFileSystem;
     })(TSOS.DeviceDriver);
