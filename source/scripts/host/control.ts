@@ -80,7 +80,7 @@ module TSOS {
 
             //update previous message
             PREVIOUS_MESSAGE = msg;
-                
+
         }
 
 
@@ -124,14 +124,16 @@ module TSOS {
                     _Kernel = new Kernel();
                     _Kernel.krnBootstrap();
 
-                    TSOS.Control.updateFileSystemDisplay();
+
+                    TSOS.Control.updateFileSystemDisplay();   
                     //set a listener to update file system display anytime its changed
-                    window.addEventListener('storage', storageEventHandler, false);
+                    /*window.addEventListener('storage', storageEventHandler, false);
                     function storageEventHandler(event) {
                         TSOS.Control.updateFileSystemDisplay();
                     }
-
+                    */
                     clearInterval(readyStateCheckInterval);
+                    
                 }
             }, 10);
            
@@ -370,12 +372,20 @@ module TSOS {
             var blockStr="";
             var metaStr ="";
             var tsbStr=""
+            //display the master boot record
+            blockStr=_krnFileSystemDriver.getDataBytes("000");
+            metaStr =_krnFileSystemDriver.getMetaData("000");
+            output+="<tr><td>0:0:0</td>";
+            output+="<td>"+ "<b>"+metaStr.charAt(0)+ "</b>" + metaStr.substring(1, 4) +"</td>";
+            output+="<td>"+ blockStr +"</td></tr>";
+            //loop through all of the other memory
             for (var t=0; t<_krnFileSystemDriver.tracks; t++){
               for (var s=0; s<_krnFileSystemDriver.sectors; s++){
-                for (var b=0; b<_krnFileSystemDriver.blocks; b++){
+                for (var b=1; b<_krnFileSystemDriver.blocks; b++){
                     tsbStr =t+""+s+""+b;
                     blockStr=_krnFileSystemDriver.getDataBytes(tsbStr);
                     metaStr =_krnFileSystemDriver.getMetaData(tsbStr);
+
                     if (blockStr!==null && blockStr!==undefined){
                         output+="<tr><td>"+t+":"+s+":"+b+"</td>";
                         output+="<td>"+ "<b>"+metaStr.charAt(0)+ "</b>" + metaStr.substring(1, 4) +"</td>";
@@ -389,6 +399,8 @@ module TSOS {
               }
             }
             document.getElementById("FileSystemDisplay").innerHTML = output;
+            debugger;
+
 
         }
     }

@@ -25,8 +25,6 @@ var TSOS;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
         }
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
-            debugger;
-
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "File System Loaded";
 
@@ -52,8 +50,12 @@ var TSOS;
             }
         };
 
-        DeviceDriverFileSystem.prototype.getMetaData = function (tsb) {
+        DeviceDriverFileSystem.prototype.getBlock = function (tsb) {
             return sessionStorage.getItem(tsb);
+        };
+
+        DeviceDriverFileSystem.prototype.getMetaData = function (tsb) {
+            return this.getBlock(tsb).substring(0, this.metaData);
         };
 
         DeviceDriverFileSystem.prototype.checkInUse = function (tsb) {
@@ -65,7 +67,7 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.getDataBytes = function (tsb) {
-            return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData + this.dataBytes);
+            return this.getBlock(tsb).substring(this.metaData, this.metaData + this.dataBytes);
         };
 
         DeviceDriverFileSystem.prototype.formatDisk = function () {

@@ -43,6 +43,8 @@ module TSOS {
             _krnFileSystemDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnFileSystemDriver.status);
 
+
+            TSOS.Control.updateFileSystemDisplay();
             //
             // ... more?
             //

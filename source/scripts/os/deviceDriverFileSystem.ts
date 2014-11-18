@@ -30,7 +30,7 @@ module TSOS {
 
 
         public krnFileSystemDriverEntry() {
-          debugger;
+          
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
           this.status = "File System Loaded";
             // More?
@@ -57,8 +57,12 @@ module TSOS {
           }
         }
 
-        public getMetaData(tsb:string){
+        public getBlock(tsb:string){
           return sessionStorage.getItem(tsb);
+        }
+
+        public getMetaData(tsb:string){
+          return this.getBlock(tsb).substring(0, this.metaData);
         }
             
         public checkInUse(tsb:string):boolean{
@@ -70,7 +74,7 @@ module TSOS {
         }
 
         public getDataBytes(tsb:string){
-          return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData+this.dataBytes);
+          return this.getBlock(tsb).substring(this.metaData, this.metaData+this.dataBytes);
         }
 
         public formatDisk(){
