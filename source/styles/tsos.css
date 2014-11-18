@@ -195,3 +195,12 @@ td {
   padding-left: 0px;
   padding-right: 34px;
 }
+#FileSystemWrapper{
+  height: 134px;
+  border: 1px solid;
+  border-color: #ddd;
+  overflow-y: auto;
+}
+#Queues{
+  padding-top: 5px;
+}

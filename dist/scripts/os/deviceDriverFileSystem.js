@@ -24,10 +24,44 @@ var TSOS;
             this.dataBytes = 60;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
         }
+        DeviceDriverFileSystem.prototype.getMetaData = function (tsb) {
+            return sessionStorage.getItem(tsb);
+        };
+
+        DeviceDriverFileSystem.prototype.checkInUse = function (tsb) {
+            return this.getMetaData(tsb).charAt(0) === '1';
+        };
+
+        DeviceDriverFileSystem.prototype.getNextTSB = function (tsb) {
+            return this.getMetaData(tsb).substring(1, this.metaData);
+        };
+
+        DeviceDriverFileSystem.prototype.getDataBytes = function (tsb) {
+            return sessionStorage.getItem(tsb).substring(this.metaData, this.metaData + this.dataBytes);
+        };
+
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
+            debugger;
+
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "File System Loaded";
+
             // More?
+            if (sessionStorage.length === 0) {
+                //set the master boot record
+                sessionStorage.setItem("000", "1---" + "001" + new Array(57).join('0'));
+                for (var t = 0; t < this.tracks; t++) {
+                    for (var s = 0; s < this.sectors; s++) {
+                        for (var b = 1; b < this.blocks; b++) {
+                            try  {
+                                sessionStorage.setItem(t + "" + s + "" + b, new Array(this.dataBytes + this.metaData).join('0'));
+                            } catch (e) {
+                                alert('Quota exceeded!');
+                            }
+                        }
+                    }
+                }
+            }
         };
 
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {

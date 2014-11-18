@@ -26,6 +26,7 @@
    <script type="text/javascript" src="dist/scripts/os/console.js"></script>
    <script type="text/javascript" src="dist/scripts/os/deviceDriver.js"></script>
    <script type="text/javascript" src="dist/scripts/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="dist/scripts/os/deviceDriverFileSystem.js"></script>
    <script type="text/javascript" src="dist/scripts/os/queue.js"></script>
    <script type="text/javascript" src="dist/scripts/os/shell.js"></script>
    <script type="text/javascript" src="dist/scripts/os/shellCommand.js"></script>
@@ -104,11 +105,11 @@
         <div id="clockDisplay"></div> <div id="statusDisplay"></div>
       </div>
 </div>
-<div id="divConsole" style="margin:4px; width:515px; height:504px; float:left;" class="col-md-6">
+<div id="divConsole" style="margin:4px; width:515px; height:654px; float:left;" class="col-md-6">
 
   <canvas id="display"
           width="500"
-          height="500" 
+          height="650" 
           tabindex="3">
   </canvas>
 
@@ -222,15 +223,13 @@
                 </tr>
               </thead>
               <tbody id ="FileSystemDisplay">
-                <tr>
-                  <td>0:0:0</td><td>0000</td><td>00000000000000000000000000000000000000000000000000000000000000000000000000000</td>
-                </tr>
+                <tr><td colspan="3">File System will be displayed on start up.</td></tr>
               </tbody>
             </table>
          </div>
          </small>
 </div>   
-<div class="col-md-7">
+<div class="col-md-7" id="Queues">
 <ul class="nav nav-pills" role="tablist" style="border-bottom:none">
               <li id="rq"role="presentation" class="active" >
                 <a href="#ReadyQueue" data-toggle="tab"><label>Ready Queue</label></a>   
