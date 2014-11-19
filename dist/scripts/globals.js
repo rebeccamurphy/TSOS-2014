@@ -79,11 +79,12 @@ var DiskAction;
     DiskAction[DiskAction["Read"] = 2] = "Read";
     DiskAction[DiskAction["Write"] = 3] = "Write";
     DiskAction[DiskAction["Delete"] = 4] = "Delete";
-    DiskAction[DiskAction["FullFormat"] = 5] = "FullFormat";
-    DiskAction[DiskAction["QuickFormat"] = 6] = "QuickFormat";
+    DiskAction[DiskAction["DeleteAll"] = 5] = "DeleteAll";
+    DiskAction[DiskAction["FullFormat"] = 6] = "FullFormat";
+    DiskAction[DiskAction["QuickFormat"] = 7] = "QuickFormat";
 })(DiskAction || (DiskAction = {}));
 ;
-var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'deleting', 'full formatting', 'quick formatting'];
+var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'deleting', 'deleting all', 'full formatting', 'quick formatting'];
 var _FileNames = [];
 
 //

@@ -37,12 +37,11 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.init = function (format) {
-            debugger;
             if ((sessionStorage.length === 0 && !format) || format) {
                 //set the master boot record
                 //first 3 spots of data is next available file name
                 //next 3 spots are for the next available datablock
-                sessionStorage.setItem("000", "1---" + "001" + "100" + new Array(54).join('0'));
+                sessionStorage.setItem("000", "1---" + TSOS.Utils.str2hex("001100") + new Array(54).join('0'));
                 for (var t = 0; t < this.tracks; t++) {
                     for (var s = 0; s < this.sectors; s++) {
                         for (var b = 0; b < this.blocks; b++) {
@@ -56,9 +55,33 @@ var TSOS;
                         }
                     }
                 }
+            } else {
+                for (var t = 0; t <= 0; t++) {
+                    for (var s = 0; s <= 7; s++) {
+                        for (var b = 0; b <= 7; b++) {
+                            if ("" + t + "" + s + "" + b !== "000") {
+                                var tempName = this.getFileName(t + "" + s + "" + b);
+                                if (tempName !== "" && tempName.charAt(0) !== ".")
+                                    _FileNames.push(tempName);
+                            }
+                        }
+                    }
+                }
             }
         };
 
+        DeviceDriverFileSystem.prototype.getFileName = function (tsb) {
+            debugger;
+            var temp = this.getDataBytes(tsb);
+
+            //remove trailing 0s
+            temp = temp.replace(/0+$/g, "");
+            if (temp.length % 2 !== 0)
+                temp += '0'; //accidentally removed an important hex 0.
+            if (temp === "")
+                return "";
+            return TSOS.Utils.hex2str(temp);
+        };
         DeviceDriverFileSystem.prototype.getBlock = function (tsb) {
             return sessionStorage.getItem(tsb);
         };
@@ -72,6 +95,7 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.getNextTSB = function (tsb) {
+            debugger;
             return this.getMetaData(tsb).substring(1, this.metaData);
         };
 
@@ -80,10 +104,10 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.getNextAvailbleFileTSB = function () {
-            return this.getDataBytes("000").substring(0, 3);
+            return TSOS.Utils.hex2str(this.getDataBytes("000").substring(0, 6));
         };
         DeviceDriverFileSystem.prototype.getNextAvailbleDataTSB = function () {
-            return this.getDataBytes("000").substring(3, 6);
+            return TSOS.Utils.hex2str(this.getDataBytes("000").substring(6, 12));
         };
         DeviceDriverFileSystem.prototype.setNextAvailbleTSB = function (type) {
             if (type === "file") {
@@ -109,7 +133,7 @@ var TSOS;
                         if ("" + t + "" + s + "" + b !== "000") {
                             if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
                                 var newMBRData = sessionStorage.getItem("000");
-                                newMBRData = newMBRData.replace(startTSB, t + "" + s + "" + b);
+                                newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
                                 sessionStorage.setItem("000", newMBRData);
                                 this.diskFull = false;
                                 return;
@@ -125,7 +149,7 @@ var TSOS;
                         if ("" + t + "" + s + "" + b !== "000") {
                             if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
                                 var newMBRData = sessionStorage.getItem("000");
-                                newMBRData = newMBRData.replace(startTSB, t + "" + s + "" + b);
+                                newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
                                 sessionStorage.setItem("000", newMBRData);
                                 this.diskFull = false;
                                 return;
@@ -185,13 +209,14 @@ var TSOS;
             this.markBlockAsAvail(tempTSB);
         };
         DeviceDriverFileSystem.prototype.findFile = function (name) {
+            debugger;
             var hexName = TSOS.Utils.str2hex(name);
             var swapFile1Chr = TSOS.Utils.str2hex(".");
             for (var t = 0; t <= 0; t++) {
                 for (var s = 0; s <= 7; s++) {
                     for (var b = 0; b <= 7; b++) {
                         var tempData = this.getDataBytes(t + "" + s + "" + b);
-                        if (tempData.indexOf(hexName) !== -1) {
+                        if (tempData.substring(0, hexName.length) === hexName) {
                             if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)) {
                                 //scheduler finding a swap file
                             } else {
@@ -241,7 +266,7 @@ var TSOS;
                     tsb = nextTSB;
                 }
                 this.setNextAvailbleTSB('file');
-                newData = hexName + new Array(64 - hexName.length - this.metaData).join(TSOS.Utils.str2hex("~"));
+                newData = hexName + new Array(64 - hexName.length - this.metaData).join("0");
                 sessionStorage.setItem(tsb, '1' + "000" + newData);
             }
         };
@@ -251,11 +276,11 @@ var TSOS;
             var data = params[1];
             DISK_IN_USE = true;
             switch (diskAction) {
-                case 5 /* FullFormat */: {
+                case 6 /* FullFormat */: {
                     this.fullFormatDisk();
                     break;
                 }
-                case 6 /* QuickFormat */: {
+                case 7 /* QuickFormat */: {
                     this.quickFormatDisk();
                     break;
                 }
@@ -265,6 +290,13 @@ var TSOS;
                 }
                 case 1 /* CreateForce */: {
                     this.createFile(true, data);
+                    break;
+                }
+                case 4 /* Delete */: {
+                    this.deleteFile(this.findFile(data));
+                    break;
+                }
+                case 5 /* DeleteAll */: {
                     break;
                 }
             }

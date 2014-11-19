@@ -75,7 +75,7 @@ module TSOS {
         public getMemory(address:any){
             if (typeof address==="number"){
                 //checking memory in bounds
-                if (address>= _ExecutingProgramPCB.limit || address <_ExecutingProgramPCB.base )
+                if (address> _ExecutingProgramPCB.limit || address <_ExecutingProgramPCB.base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, Utils.dec2hex(address)));
                 else
                     return this.memory.Data[address];
@@ -85,7 +85,7 @@ module TSOS {
                 var decAddress = Utils.hex2dec(address) +_ExecutingProgramPCB.base;
 
                 //checking memory in bounds
-                if (decAddress>= _ExecutingProgramPCB.limit || decAddress <_ExecutingProgramPCB.base )
+                if (decAddress> _ExecutingProgramPCB.limit || decAddress <_ExecutingProgramPCB.base )
                     _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, decAddress));
                 else
                     return this.memory.Data[decAddress];
@@ -108,7 +108,7 @@ module TSOS {
             //add the base of the Executing program so it knows where to go
             var position = this.getDecAddressFromHex(startAddress) + _ExecutingProgramPCB.base;
             //check if memory is in bounds
-            if (position>= _ExecutingProgramPCB.limit || position <_ExecutingProgramPCB.base ){
+            if (position> _ExecutingProgramPCB.limit || position <_ExecutingProgramPCB.base ){
                 _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, position));
             }
             else

@@ -177,12 +177,18 @@ module TSOS {
                                   "<quick, full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;  
 
-            // create   Create  the File    "ilename    and display a   message denoting    success or  failure.       
+            // create   Create  the File    filename    and display a   message denoting    success or  failure.       
             sc = new ShellCommand(this.shellCreateFile,
                                   "create",
                                   "<filename, -force> - create file with filename specified, use -force to override file with the same name.");
             this.commandList[this.commandList.length] = sc;    
-            //
+            
+            // delete       Remove  filename    from    storage and display a   message denoting    success or  failure
+            sc = new ShellCommand(this.shellDeleteFile,
+                                  "delete",
+                                  "<filename, *> - deletes file with filename specified, or use * to delete all files.");
+            this.commandList[this.commandList.length] = sc;    
+            
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -697,6 +703,10 @@ module TSOS {
                 _StdOut.putText("You can't name a file -force you butt.");
                 return;
             }
+            if (firstParam.charAt(0) ==="."){
+                _StdOut.putText("File names cannot start with .");
+                return;
+            }
 
             if ( _FileNames.indexOf(firstParam)===-1){
                 //create the file
@@ -713,7 +723,32 @@ module TSOS {
                 //file already exits and -force not used
                 _StdOut.putText("File already exists. Delete file or use -force to write over file.");
             }
+        }
+        public shellDeleteFile(args){
+            var fileName = args[0];
 
+            if (fileName===undefined){
+                _StdOut.putText("Please specify a file name.");
+                return;   
+            }
+            else if (fileName ==="*"){
+                //delete all files in directory
+                _StdOut.putText("Deleting All Files");
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.DeleteAll]));
+                _FileNames=[];
+                return;
+            }
+            else if (_FileNames.indexOf(fileName) !==-1){
+                //delete existing file
+                _StdOut.putText("Deleting File: " + fileName);
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Delete, fileName]));
+                //remove file from file names
+                _FileNames.splice(_FileNames.indexOf(fileName),1);
+                return;
+            }
+            else{
+                _StdOut.putText("Invalid file name. ");
+            }
 
         }
     }        

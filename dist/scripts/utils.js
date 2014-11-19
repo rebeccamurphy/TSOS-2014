@@ -147,9 +147,20 @@ var TSOS;
         Utils.str2hex = function (name) {
             var hexStr = "";
             for (var i = 0; i < name.length; i++) {
-                hexStr += this.dec2hex(name.charCodeAt(i));
+                var temp = this.dec2hex(name.charCodeAt(i));
+                temp = new Array(2 - temp.length).join('0') + temp;
+                hexStr += temp;
             }
             return hexStr;
+        };
+        Utils.hex2str = function (hexName) {
+            var str = "";
+            var hexArray = hexName.match(/.{1,2}/g);
+            for (var i = 0; i < hexArray.length; i++) {
+                var charFromHex = String.fromCharCode(this.hex2dec(hexArray[i]));
+                str += charFromHex;
+            }
+            return str;
         };
 
         // Method to determine if the browser that the user is using supports
