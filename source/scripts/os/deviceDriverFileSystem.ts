@@ -204,16 +204,25 @@ module TSOS {
           this.markBlockAsAvail(tempTSB);
         }
         public deleteFileData(tsb:string){
-          //skip deleting the file name
+          debugger;
+          //skip deleting the file Unreadname
           var tempTSB = this.getNextTSB(tsb);
-          while (this.getNextTSB(tempTSB)!="000"){
+          while (tempTSB!=="000"){
             this.markBlockAsAvail(tempTSB);
             tempTSB = this.getNextTSB(tempTSB);
           }
-          //remove the last block associate with that file
-          this.markBlockAsAvail(tempTSB);
 
         }
+        /*
+        public cycle(tMin:number, sMin:number, bMin:number, tMax:number, sMax:number, bMax:number, functionName{
+          for (var t=tMin; t<tMax; t++){
+            for (var s=sMin; s<sMax;s++){
+              for(var b=bMin; b<bMax;b++){
+                if (""+t+""+b+""+s !== "000"){
+                  functionName(t+""+""+s+""b);
+                }
+        }
+        */
         public findFile(name:string){
           debugger;
           var hexName = TSOS.Utils.str2hex(name);
@@ -284,10 +293,13 @@ module TSOS {
           switch(diskAction){
             case DiskAction.FullFormat:{
               this.fullFormatDisk();
+              _FileNames=[];
               break;
             }
             case DiskAction.QuickFormat:{
               this.quickFormatDisk();
+              _Trash = _FileNames;
+              _FileNames=[];
               break;
             }
             case DiskAction.Create:{

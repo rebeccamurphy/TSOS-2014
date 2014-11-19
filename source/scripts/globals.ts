@@ -59,6 +59,7 @@ var LocationsStr = ["Memory", "Disk"];
 enum DiskAction {Create, CreateForce, Read, Write, Delete,DeleteAll, FullFormat, QuickFormat};
 var DiskActions = ['creating','force creating', 'reading', 'writing', 'deleting','deleting all', 'full formatting', 'quick formatting'];
 var _FileNames=[];
+var _Trash=[];
 //
 // Global Variables
 //

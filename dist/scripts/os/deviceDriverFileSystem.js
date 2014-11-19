@@ -198,16 +198,26 @@ var TSOS;
             this.markBlockAsAvail(tempTSB);
         };
         DeviceDriverFileSystem.prototype.deleteFileData = function (tsb) {
-            //skip deleting the file name
+            debugger;
+
+            //skip deleting the file Unreadname
             var tempTSB = this.getNextTSB(tsb);
-            while (this.getNextTSB(tempTSB) != "000") {
+            while (tempTSB !== "000") {
                 this.markBlockAsAvail(tempTSB);
                 tempTSB = this.getNextTSB(tempTSB);
             }
-
-            //remove the last block associate with that file
-            this.markBlockAsAvail(tempTSB);
         };
+
+        /*
+        public cycle(tMin:number, sMin:number, bMin:number, tMax:number, sMax:number, bMax:number, functionName{
+        for (var t=tMin; t<tMax; t++){
+        for (var s=sMin; s<sMax;s++){
+        for(var b=bMin; b<bMax;b++){
+        if (""+t+""+b+""+s !== "000"){
+        functionName(t+""+""+s+""b);
+        }
+        }
+        */
         DeviceDriverFileSystem.prototype.findFile = function (name) {
             debugger;
             var hexName = TSOS.Utils.str2hex(name);
@@ -278,10 +288,13 @@ var TSOS;
             switch (diskAction) {
                 case 6 /* FullFormat */: {
                     this.fullFormatDisk();
+                    _FileNames = [];
                     break;
                 }
                 case 7 /* QuickFormat */: {
                     this.quickFormatDisk();
+                    _Trash = _FileNames;
+                    _FileNames = [];
                     break;
                 }
                 case 0 /* Create */: {
