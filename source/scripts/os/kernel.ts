@@ -157,9 +157,10 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case FILESYSTEM_IRQ:
-                    this.krnTrace("The Disk is " + DiskActions[params] +".");
+
+                    this.krnTrace("The Disk is " + DiskActions[params[0]] +" "+ params[1]+".");
                     _krnFileSystemDriver.isr(params);
-                    this.krnTrace("The Disk is done " + DiskActions[params] +".");
+                    this.krnTrace("The Disk is done " + DiskActions[params[0]] +" " +params[1]+".");
                     
                     break;
                 case RUN_PROGRAM_IRQ:{

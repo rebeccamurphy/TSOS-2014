@@ -148,6 +148,13 @@ module TSOS {
         var numHex = this.dec2hex(numDec);
         return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
     }
+    public static str2hex(name:string){
+        var hexStr ="";
+        for(var i =0; i< name.length; i++){
+            hexStr+= this.dec2hex(name.charCodeAt(i));
+        }
+        return hexStr;
+    }
     
     // Method to determine if the browser that the user is using supports
     // the HTML5 localStorage

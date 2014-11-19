@@ -623,7 +623,7 @@ module TSOS {
 
         }
         public shellFormatDisk(args):void{
-            
+            debugger;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -636,21 +636,21 @@ module TSOS {
             else if (firstParam ===undefined &&!DISK_IN_USE){
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.FullFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.FullFormat]));
                 return;
             }
 
             if (firstParam==="-force"){
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.FullFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.FullFormat]));
                 return;
             }
 
             if (firstParam==="quick"&&!DISK_IN_USE){
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.QuickFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.QuickFormat]));
                 return;   
             }
             else if (firstParam==="quick"&& secondParam===undefined &&DISK_IN_USE ){
@@ -661,13 +661,13 @@ module TSOS {
             else if (firstParam==="quick" && secondParam==="-force"){
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.QuickFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.QuickFormat]));
                 return;    
             }
             if (firstParam==="full"&&!DISK_IN_USE){
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.FullFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.FullFormat]));
                 return;   
             }
             else if (firstParam==="full"&& secondParam===undefined &&DISK_IN_USE ){
@@ -678,7 +678,7 @@ module TSOS {
             else if (firstParam==="full" && secondParam==="-force"){
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, DiskAction.FullFormat));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.FullFormat]));
                 return;    
             }
 
@@ -688,6 +688,7 @@ module TSOS {
         public shellCreateFile(args):void{
             var firstParam = args[0];
             var secondParam = args[1];
+            
             if (firstParam===undefined){
                 _StdOut.putText("Please specify a file name.");
                 return;
@@ -696,10 +697,12 @@ module TSOS {
                 _StdOut.putText("You can't name a file -force you butt.");
                 return;
             }
-            if ( _FileNames.indexOf(firstParam)!==-1){
+
+            if ( _FileNames.indexOf(firstParam)===-1){
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Create, firstParam]));
+                _FileNames.push(firstParam);
             }
             else if (secondParam==="-force"){
                 //create the file

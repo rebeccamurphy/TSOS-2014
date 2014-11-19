@@ -22,7 +22,11 @@ var TSOS;
             this.blocks = 8;
             this.metaData = 4;
             this.dataBytes = 60;
+            this.diskFull = false;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
+            //001-077 is for file names
+            //100-377 is for data
+            //swap files begin with .
         }
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
@@ -33,13 +37,16 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.init = function (format) {
+            debugger;
             if ((sessionStorage.length === 0 && !format) || format) {
                 //set the master boot record
-                sessionStorage.setItem("000", "1---" + "001" + new Array(57).join('0'));
+                //first 3 spots of data is next available file name
+                //next 3 spots are for the next available datablock
+                sessionStorage.setItem("000", "1---" + "001" + "100" + new Array(54).join('0'));
                 for (var t = 0; t < this.tracks; t++) {
                     for (var s = 0; s < this.sectors; s++) {
                         for (var b = 0; b < this.blocks; b++) {
-                            if ("" + t + "" + b + "" + s !== "000") {
+                            if ("" + t + "" + s + "" + b !== "000") {
                                 try  {
                                     sessionStorage.setItem(t + "" + s + "" + b, new Array(this.dataBytes + this.metaData).join('0'));
                                 } catch (e) {
@@ -60,7 +67,7 @@ var TSOS;
             return this.getBlock(tsb).substring(0, this.metaData);
         };
 
-        DeviceDriverFileSystem.prototype.checkInUse = function (tsb) {
+        DeviceDriverFileSystem.prototype.InUse = function (tsb) {
             return this.getMetaData(tsb).charAt(0) === '1';
         };
 
@@ -72,6 +79,65 @@ var TSOS;
             return this.getBlock(tsb).substring(this.metaData, this.metaData + this.dataBytes);
         };
 
+        DeviceDriverFileSystem.prototype.getNextAvailbleFileTSB = function () {
+            return this.getDataBytes("000").substring(0, 3);
+        };
+        DeviceDriverFileSystem.prototype.getNextAvailbleDataTSB = function () {
+            return this.getDataBytes("000").substring(3, 6);
+        };
+        DeviceDriverFileSystem.prototype.setNextAvailbleTSB = function (type) {
+            if (type === "file") {
+                var startTSB = this.getNextAvailbleFileTSB();
+                var tmax = 0;
+                var smax = 7;
+                var bmax = 7;
+            } else if (type === "data") {
+                var startTSB = this.getNextAvailbleDataTSB();
+                var tmax = 3;
+                var smax = 7;
+                var bmax = 7;
+            }
+
+            //parse the current availbe tsb
+            var currt = parseInt(startTSB.charAt(0));
+            var currs = parseInt(startTSB.charAt(1));
+            var currb = parseInt(startTSB.charAt(2));
+
+            for (var t = currt; t < tmax + 1; t++) {
+                for (var s = currs; s < smax + 1; s++) {
+                    for (var b = currb; b < bmax + 1; b++) {
+                        if ("" + t + "" + s + "" + b !== "000") {
+                            if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
+                                var newMBRData = sessionStorage.getItem("000");
+                                newMBRData = newMBRData.replace(startTSB, t + "" + s + "" + b);
+                                sessionStorage.setItem("000", newMBRData);
+                                this.diskFull = false;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (var t = 0; t < currt; t++) {
+                for (var s = 0; s < currs; s++) {
+                    for (var b = 0; b < currb; b++) {
+                        if ("" + t + "" + s + "" + b !== "000") {
+                            if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
+                                var newMBRData = sessionStorage.getItem("000");
+                                newMBRData = newMBRData.replace(startTSB, t + "" + s + "" + b);
+                                sessionStorage.setItem("000", newMBRData);
+                                this.diskFull = false;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //if neither prove fruitful make the disk as full
+            this.diskFull = true;
+        };
         DeviceDriverFileSystem.prototype.fullFormatDisk = function () {
             this.init(true);
         };
@@ -81,7 +147,8 @@ var TSOS;
                     for (var b = 0; b < this.blocks; b++) {
                         if ("" + t + "" + b + "" + s !== "000") {
                             try  {
-                                sessionStorage.setItem(t + "" + s + "" + b, "0" + sessionStorage.getItem(t + "" + s + "" + b).substring(1));
+                                //set all items except the master boot record as not in use
+                                this.markBlockAsAvail(t + "" + s + "" + b);
                             } catch (e) {
                                 alert('Quota exceeded!');
                             }
@@ -90,13 +157,98 @@ var TSOS;
                 }
             }
         };
+        DeviceDriverFileSystem.prototype.markBlockAsAvail = function (tsb) {
+            sessionStorage.setItem(tsb, "0" + sessionStorage.getItem(tsb).substring(1));
+        };
+        DeviceDriverFileSystem.prototype.deleteFile = function (tsb) {
+            //sets file name and all data as available
+            var tempTSB = tsb;
 
-        DeviceDriverFileSystem.prototype.createFile = function (force) {
+            //delete the file name
+            this.markBlockAsAvail(tempTSB);
+
+            //delete the data
+            this.deleteFileData(tempTSB);
+
+            //remove the last block associate with that file
+            this.markBlockAsAvail(tempTSB);
+        };
+        DeviceDriverFileSystem.prototype.deleteFileData = function (tsb) {
+            //skip deleting the file name
+            var tempTSB = this.getNextTSB(tsb);
+            while (this.getNextTSB(tempTSB) != "000") {
+                this.markBlockAsAvail(tempTSB);
+                tempTSB = this.getNextTSB(tempTSB);
+            }
+
+            //remove the last block associate with that file
+            this.markBlockAsAvail(tempTSB);
+        };
+        DeviceDriverFileSystem.prototype.findFile = function (name) {
+            var hexName = TSOS.Utils.str2hex(name);
+            var swapFile1Chr = TSOS.Utils.str2hex(".");
+            for (var t = 0; t <= 0; t++) {
+                for (var s = 0; s <= 7; s++) {
+                    for (var b = 0; b <= 7; b++) {
+                        var tempData = this.getDataBytes(t + "" + s + "" + b);
+                        if (tempData.indexOf(hexName) !== -1) {
+                            if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)) {
+                                //scheduler finding a swap file
+                            } else {
+                                //user creating a file
+                                return t + "" + s + "" + b;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        };
+        DeviceDriverFileSystem.prototype.createFile = function (force, fileName) {
             if (force) {
-                //find previous file and remove it
+                //find previous file
+                var tsb = this.findFile(fileName);
+
+                //delete its data
+                this.deleteFileData(tsb);
+
+                //update next available block if disk is full
+                if (this.diskFull) {
+                    this.setNextAvailbleTSB('data');
+                }
+
+                //return true that creation of file was successfull heh
+                return true;
+            } else {
+                debugger;
+
+                //just create the file
+                var tsb = this.getNextAvailbleFileTSB();
+                var hexName = TSOS.Utils.str2hex(fileName);
+                var newData = "";
+                var nextTSB;
+
+                while (hexName.length > 60) {
+                    newData = hexName.substring(0, 60);
+                    this.setNextAvailbleTSB('file');
+                    if (this.diskFull) {
+                        //TODO
+                        //disk file space interrupt error
+                    }
+                    nextTSB = this.getNextAvailbleFileTSB();
+                    sessionStorage.setItem(tsb, "1" + nextTSB + newData);
+                    hexName.replace(newData, '');
+                    tsb = nextTSB;
+                }
+                this.setNextAvailbleTSB('file');
+                newData = hexName + new Array(64 - hexName.length - this.metaData).join(TSOS.Utils.str2hex("~"));
+                sessionStorage.setItem(tsb, '1' + "000" + newData);
             }
         };
-        DeviceDriverFileSystem.prototype.krnDiskInUse = function (diskAction, data) {
+        DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
+            debugger;
+            var diskAction = params[0];
+            var data = params[1];
             DISK_IN_USE = true;
             switch (diskAction) {
                 case 5 /* FullFormat */: {
@@ -108,16 +260,17 @@ var TSOS;
                     break;
                 }
                 case 0 /* Create */: {
-                    this.createFile(false);
+                    this.createFile(false, data);
                     break;
                 }
                 case 1 /* CreateForce */: {
-                    this.createFile(true);
+                    this.createFile(true, data);
                     break;
                 }
             }
 
             DISK_IN_USE = false;
+            TSOS.Control.updateFileSystemDisplay();
         };
         return DeviceDriverFileSystem;
     })(TSOS.DeviceDriver);

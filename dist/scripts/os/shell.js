@@ -545,6 +545,7 @@ var TSOS;
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         Shell.prototype.shellFormatDisk = function (args) {
+            debugger;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -556,21 +557,21 @@ var TSOS;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "quick" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 6 /* QuickFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* QuickFormat */]));
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -579,13 +580,13 @@ var TSOS;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 6 /* QuickFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* QuickFormat */]));
                 return;
             }
             if (firstParam === "full" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* FullFormat */]));
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -594,7 +595,7 @@ var TSOS;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* FullFormat */]));
                 return;
             }
 
@@ -604,6 +605,7 @@ var TSOS;
         Shell.prototype.shellCreateFile = function (args) {
             var firstParam = args[0];
             var secondParam = args[1];
+
             if (firstParam === undefined) {
                 _StdOut.putText("Please specify a file name.");
                 return;
@@ -612,10 +614,12 @@ var TSOS;
                 _StdOut.putText("You can't name a file -force you butt.");
                 return;
             }
-            if (_FileNames.indexOf(firstParam) !== -1) {
+
+            if (_FileNames.indexOf(firstParam) === -1) {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [0 /* Create */, firstParam]));
+                _FileNames.push(firstParam);
             } else if (secondParam === "-force") {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
