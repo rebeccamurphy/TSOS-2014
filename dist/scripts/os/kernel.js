@@ -146,7 +146,7 @@ var TSOS;
                     this.krnTrace("The Disk is " + DiskActions[params] + ".");
                     _krnFileSystemDriver.isr(params);
                     this.krnTrace("The Disk is done " + DiskActions[params] + ".");
-                    _StdOut.putText("Disk has successfully performed action.");
+
                     break;
                 case RUN_PROGRAM_IRQ: {
                     //start the program
@@ -231,6 +231,7 @@ var TSOS;
                         //only perform a context switch if the running process was killed
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
                     }
+                    TSOS.Control.updateAllQueueDisplays();
                     break;
                 }
                 case CLEAR_MEMORY_IRQ: {
@@ -241,7 +242,7 @@ var TSOS;
                     _MemoryManager.init();
 
                     //clear the scheduler
-                    _Scheduler = new TSOS.cpuScheduler();
+                    _Scheduler.clearMem();
                     break;
                 }
                 case SET_SCHEDULE_TYPE_IRQ: {

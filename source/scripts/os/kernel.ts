@@ -160,7 +160,7 @@ module TSOS {
                     this.krnTrace("The Disk is " + DiskActions[params] +".");
                     _krnFileSystemDriver.isr(params);
                     this.krnTrace("The Disk is done " + DiskActions[params] +".");
-                    _StdOut.putText("Disk has successfully performed action.");
+                    
                     break;
                 case RUN_PROGRAM_IRQ:{
                     //start the program
@@ -224,10 +224,7 @@ module TSOS {
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + 
                         " Attempted to access " + (parseInt(params)+_ExecutingProgramPCB.base));
                     _Scheduler.stopRunning(_ExecutingProgramPID);
-                    //stop the cpu
-                    //TODO so something to stop the executing of the program futher
-                    //_CPU.isExecuting = false;
-                    //this.krnTrace("CPU had stopped executing.");
+                    
                     break;
                 }
                 case PROCESS_KILLED_IRQ:{
@@ -249,6 +246,7 @@ module TSOS {
                         //only perform a context switch if the running process was killed
                         _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
                     }
+                    TSOS.Control.updateAllQueueDisplays();
                     break;
                 }
                 case CLEAR_MEMORY_IRQ:{  
@@ -257,7 +255,7 @@ module TSOS {
                     _MemoryManager= new MemoryManager();
                     _MemoryManager.init();
                     //clear the scheduler
-                    _Scheduler = new cpuScheduler();   
+                    _Scheduler.clearMem();  
                     break;
                 }
                 case SET_SCHEDULE_TYPE_IRQ:{

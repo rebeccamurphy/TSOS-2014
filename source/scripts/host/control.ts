@@ -98,9 +98,10 @@ module TSOS {
             }
             var readyStateCheckInterval = setInterval(function() {
                 if (document.readyState === "complete") {
-                    //play start up noise
-                    Control.playStartUpNoise();
+                    
+
                      // .. enable the Halt and Reset buttons ...
+                    
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
                     document.getElementById("btnSingleStep").disabled = false;
@@ -124,7 +125,11 @@ module TSOS {
                     _Kernel = new Kernel();
                     _Kernel.krnBootstrap();
 
-
+                    //play start up screen
+                    /*TODO
+                    _Console.startUp();
+                    setTimeout(function() {_Console.init() }, 10000);
+                    */
                     TSOS.Control.updateFileSystemDisplay();   
                     //set a listener to update file system display anytime its changed
                     /*window.addEventListener('storage', storageEventHandler, false);

@@ -51,7 +51,7 @@ module TSOS {
             }
             return false;
         }
-        public find(pid){
+        public getAndRemove(pid){
             //returns pcb and removes it from the queue
             var retVal = null;
             for (var i =0; i<this.q.length; i++){

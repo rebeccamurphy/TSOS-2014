@@ -122,6 +122,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<quick, full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;
 
+            // create   Create  the File    "ilename    and display a   message denoting    success or  failure.
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<filename, -force> - create file with filename specified, use -force to override file with the same name.");
+            this.commandList[this.commandList.length] = sc;
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -541,7 +545,6 @@ var TSOS;
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         Shell.prototype.shellFormatDisk = function (args) {
-            debugger;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -553,21 +556,21 @@ var TSOS;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
                 return;
             }
 
             if (firstParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
                 return;
             }
 
             if (firstParam === "quick" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* QuickFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 6 /* QuickFormat */));
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -576,13 +579,13 @@ var TSOS;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* QuickFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 6 /* QuickFormat */));
                 return;
             }
             if (firstParam === "full" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -591,11 +594,36 @@ var TSOS;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 4 /* FullFormat */));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, 5 /* FullFormat */));
                 return;
             }
 
             _StdOut.putText("Invalid parameter.");
+        };
+
+        Shell.prototype.shellCreateFile = function (args) {
+            var firstParam = args[0];
+            var secondParam = args[1];
+            if (firstParam === undefined) {
+                _StdOut.putText("Please specify a file name.");
+                return;
+            }
+            if (firstParam === "-force") {
+                _StdOut.putText("You can't name a file -force you butt.");
+                return;
+            }
+            if (_FileNames.indexOf(firstParam) !== -1) {
+                //create the file
+                _StdOut.putText("Creating File: " + firstParam);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [0 /* Create */, firstParam]));
+            } else if (secondParam === "-force") {
+                //create the file
+                _StdOut.putText("Creating File: " + firstParam);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [1 /* CreateForce */, firstParam]));
+            } else {
+                //file already exits and -force not used
+                _StdOut.putText("File already exists. Delete file or use -force to write over file.");
+            }
         };
         return Shell;
     })();

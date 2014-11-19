@@ -99,6 +99,12 @@ module TSOS {
           }
 
         }
+
+        public createFile(force:boolean){
+          if (force){
+            //find previous file and remove it
+          }
+        }
         public krnDiskInUse(diskAction:DiskAction, data?){
           DISK_IN_USE = true;
           switch(diskAction){
@@ -108,6 +114,14 @@ module TSOS {
             }
             case DiskAction.QuickFormat:{
               this.quickFormatDisk();
+              break;
+            }
+            case DiskAction.Create:{
+              this.createFile(false);
+              break;
+            }
+            case DiskAction.CreateForce:{
+              this.createFile(true);
               break;
             }
 

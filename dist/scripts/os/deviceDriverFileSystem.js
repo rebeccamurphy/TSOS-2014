@@ -90,15 +90,29 @@ var TSOS;
                 }
             }
         };
+
+        DeviceDriverFileSystem.prototype.createFile = function (force) {
+            if (force) {
+                //find previous file and remove it
+            }
+        };
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (diskAction, data) {
             DISK_IN_USE = true;
             switch (diskAction) {
-                case 4 /* FullFormat */: {
+                case 5 /* FullFormat */: {
                     this.fullFormatDisk();
                     break;
                 }
-                case 5 /* QuickFormat */: {
+                case 6 /* QuickFormat */: {
                     this.quickFormatDisk();
+                    break;
+                }
+                case 0 /* Create */: {
+                    this.createFile(false);
+                    break;
+                }
+                case 1 /* CreateForce */: {
+                    this.createFile(true);
                     break;
                 }
             }

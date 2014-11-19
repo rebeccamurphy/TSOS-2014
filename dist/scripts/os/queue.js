@@ -50,7 +50,7 @@ var TSOS;
             }
             return false;
         };
-        Queue.prototype.find = function (pid) {
+        Queue.prototype.getAndRemove = function (pid) {
             //returns pcb and removes it from the queue
             var retVal = null;
             for (var i = 0; i < this.q.length; i++) {

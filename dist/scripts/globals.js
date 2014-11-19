@@ -75,14 +75,16 @@ var LocationsStr = ["Memory", "Disk"];
 var DiskAction;
 (function (DiskAction) {
     DiskAction[DiskAction["Create"] = 0] = "Create";
-    DiskAction[DiskAction["Read"] = 1] = "Read";
-    DiskAction[DiskAction["Write"] = 2] = "Write";
-    DiskAction[DiskAction["Delete"] = 3] = "Delete";
-    DiskAction[DiskAction["FullFormat"] = 4] = "FullFormat";
-    DiskAction[DiskAction["QuickFormat"] = 5] = "QuickFormat";
+    DiskAction[DiskAction["CreateForce"] = 1] = "CreateForce";
+    DiskAction[DiskAction["Read"] = 2] = "Read";
+    DiskAction[DiskAction["Write"] = 3] = "Write";
+    DiskAction[DiskAction["Delete"] = 4] = "Delete";
+    DiskAction[DiskAction["FullFormat"] = 5] = "FullFormat";
+    DiskAction[DiskAction["QuickFormat"] = 6] = "QuickFormat";
 })(DiskAction || (DiskAction = {}));
 ;
-var DiskActions = ['creating', 'reading', 'writing', 'deleting', 'full formatting', 'quick formatting'];
+var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'deleting', 'full formatting', 'quick formatting'];
+var _FileNames = [];
 
 //
 // Global Variables

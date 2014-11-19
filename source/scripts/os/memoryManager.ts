@@ -38,7 +38,7 @@ module TSOS {
                 //set the pc of the pcb to start at the base
                 currPCB.PC = currPCB.base;
                 //set the limit?
-                currPCB.limit = currPCB.base + _ProgramSize;
+                currPCB.limit = currPCB.base + _ProgramSize-1;
 
                 //set the pcb state
                 currPCB.state = State.New;

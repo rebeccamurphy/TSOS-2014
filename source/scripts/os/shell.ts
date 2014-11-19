@@ -175,6 +175,12 @@ module TSOS {
             sc = new ShellCommand(this.shellFormatDisk,
                                   "format",
                                   "<quick, full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
+            this.commandList[this.commandList.length] = sc;  
+
+            // create   Create  the File    "ilename    and display a   message denoting    success or  failure.       
+            sc = new ShellCommand(this.shellCreateFile,
+                                  "create",
+                                  "<filename, -force> - create file with filename specified, use -force to override file with the same name.");
             this.commandList[this.commandList.length] = sc;    
             //
             // Display the initial prompt.
@@ -617,7 +623,7 @@ module TSOS {
 
         }
         public shellFormatDisk(args):void{
-            debugger;
+            
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -678,5 +684,34 @@ module TSOS {
 
             _StdOut.putText("Invalid parameter.");
         }  
+
+        public shellCreateFile(args):void{
+            var firstParam = args[0];
+            var secondParam = args[1];
+            if (firstParam===undefined){
+                _StdOut.putText("Please specify a file name.");
+                return;
+            }
+            if (firstParam==="-force"){
+                _StdOut.putText("You can't name a file -force you butt.");
+                return;
+            }
+            if ( _FileNames.indexOf(firstParam)!==-1){
+                //create the file
+                _StdOut.putText("Creating File: " + firstParam);
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Create, firstParam]));
+            }
+            else if (secondParam==="-force"){
+                //create the file
+                _StdOut.putText("Creating File: " + firstParam);
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.CreateForce, firstParam]));
+            }
+            else {
+                //file already exits and -force not used
+                _StdOut.putText("File already exists. Delete file or use -force to write over file.");
+            }
+
+
+        }
     }        
 }

@@ -204,3 +204,6 @@ td {
 #Queues{
   padding-top: 5px;
 }
+#memDisplay>tr>td{
+  padding:5px!important;
+}

@@ -21,6 +21,16 @@ var TSOS;
             TSOS.Control.updateAllQueueDisplays();
             //update the queue display
         };
+        cpuScheduler.prototype.clearMem = function () {
+            for (var i = 0; i < this.readyQueue.getSize(); i++) {
+                if (this.readyQueue.get(i).location === 0 /* Memory */)
+                    this.readyQueue.getAndRemove(i);
+            }
+            for (var j = 0; j < this.residentQueue.getSize(); j++) {
+                if (this.residentQueue.get(j).location === 0 /* Memory */)
+                    this.residentQueue.getAndRemove(j);
+            }
+        };
         cpuScheduler.prototype.emptyReadyQueue = function () {
             if (this.readyQueue.getSize() === 0) {
                 this.counter = 0;
@@ -29,7 +39,7 @@ var TSOS;
         };
         cpuScheduler.prototype.runProgram = function () {
             //dequeue the program we want to execute from the resident queue
-            var tempProgramPCB = this.residentQueue.find(_ExecutingProgramPID);
+            var tempProgramPCB = this.residentQueue.getAndRemove(_ExecutingProgramPID);
 
             //enqueue program to the ready queue
             this.readyQueue.enqueue(tempProgramPCB);
@@ -91,7 +101,7 @@ var TSOS;
                 _ExecutingProgramPCB = null;
             } else {
                 //remove the program from the ready queue
-                tempProgramPCB = this.readyQueue.find(pid);
+                tempProgramPCB = this.readyQueue.getAndRemove(pid);
             }
 
             //mark the memory the program was living in as free

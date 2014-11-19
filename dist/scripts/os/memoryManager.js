@@ -38,7 +38,7 @@ var TSOS;
                 currPCB.PC = currPCB.base;
 
                 //set the limit?
-                currPCB.limit = currPCB.base + _ProgramSize;
+                currPCB.limit = currPCB.base + _ProgramSize - 1;
 
                 //set the pcb state
                 currPCB.state = 0 /* New */;

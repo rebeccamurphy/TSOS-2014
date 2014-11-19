@@ -265,7 +265,8 @@ module TSOS {
         }
         public computerOver():void{
 
-            /*Old blue screen I dont wanna remove yet. this.clearScreen();
+            /*Old blue screen I dont wanna remove yet. 
+            this.clearScreen();
             _DrawingContext.fillStyle="#3a50b6";
             _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
             var img = new Image();
@@ -277,6 +278,17 @@ module TSOS {
             //new blue screen of death 
             this.clearScreen();
             TSOS.Control.c();
+        }
+        public startUp():void{
+            this.clearScreen();
+            _DrawingContext.fillStyle="#3a50b6";
+            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+            var img = new Image();
+            img.onload = function() {
+                _DrawingContext.drawImage(img, 0, 100);
+            };
+            img.src ="http://i.imgur.com/5PP6VmW.gif";
+            TSOS.Control.playStartUpNoise();
         }
         public handleSysOpCode():void{
             if (_CPU.Xreg===1){
