@@ -189,6 +189,21 @@ module TSOS {
                                   "<filename, *> - deletes file with filename specified, or use * to delete all files.");
             this.commandList[this.commandList.length] = sc;    
             
+            
+            // ls  -lists all files stored on disk
+            sc = new ShellCommand(this.shellListFiles,
+                                  "ls",
+                                  "- lists all files in current directory.");
+            this.commandList[this.commandList.length] = sc;
+
+
+            // trash  -displays all files that are deleted but still recoverable
+            sc = new ShellCommand(this.shellTrashFiles,
+                                  "trash",
+                                  "- displays all deleted files that are still recoverable.");
+            this.commandList[this.commandList.length] = sc;
+
+            
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -708,11 +723,11 @@ module TSOS {
                 return;
             }
 
-            if ( _FileNames.indexOf(firstParam)===-1){
+            if (!_FileNames.inQueue(firstParam)){
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Create, firstParam]));
-                _FileNames.push(firstParam);
+                _FileNames.enqueue(firstParam);
             }
             else if (secondParam==="-force"){
                 //create the file
@@ -735,21 +750,46 @@ module TSOS {
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.DeleteAll]));
-                _FileNames=[];
+                _FileNames=new Queue();
                 return;
             }
-            else if (_FileNames.indexOf(fileName) !==-1){
+            else if (_FileNames.inQueue(fileName)){
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Delete, fileName]));
                 //remove file from file names
-                _FileNames.splice(_FileNames.indexOf(fileName),1);
+                _FileNames.getAndRemove(fileName);
                 return;
             }
             else{
                 _StdOut.putText("Invalid file name. ");
             }
 
+        }
+
+        public shellListFiles(){
+            if (_FileNames.getSize()===0){
+                _StdOut.putText("No files created.");
+                return;
+            }
+            _StdOut.putText("Files in current directory:")
+            _StdOut.advanceLine();
+            for (var i=0; i<_FileNames.getSize(); i++){
+                _StdOut.putText(_FileNames.get(i));
+                _StdOut.advanceLine();
+            }
+        }
+        public shellTrashFiles(){
+            if (_Trash.getSize()===0){
+                _StdOut.putText("Trash empty.");
+                return;
+            }
+            _StdOut.putText("Recoverable files in trash are:")
+            _StdOut.advanceLine();
+            for (var i=0; i<_Trash.getSize(); i++){
+                _StdOut.putText(_Trash.get(i));
+                _StdOut.advanceLine();
+            }
         }
     }        
 }

@@ -130,6 +130,14 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename, *> - deletes file with filename specified, or use * to delete all files.");
             this.commandList[this.commandList.length] = sc;
 
+            // ls  -lists all files stored on disk
+            sc = new TSOS.ShellCommand(this.shellListFiles, "ls", "- lists all files in current directory.");
+            this.commandList[this.commandList.length] = sc;
+
+            // trash  -displays all files that are deleted but still recoverable
+            sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -622,11 +630,11 @@ var TSOS;
                 return;
             }
 
-            if (_FileNames.indexOf(firstParam) === -1) {
+            if (!_FileNames.inQueue(firstParam)) {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [0 /* Create */, firstParam]));
-                _FileNames.push(firstParam);
+                _FileNames.enqueue(firstParam);
             } else if (secondParam === "-force") {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
@@ -646,18 +654,43 @@ var TSOS;
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* DeleteAll */]));
-                _FileNames = [];
+                _FileNames = new TSOS.Queue();
                 return;
-            } else if (_FileNames.indexOf(fileName) !== -1) {
+            } else if (_FileNames.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Delete */, fileName]));
 
                 //remove file from file names
-                _FileNames.splice(_FileNames.indexOf(fileName), 1);
+                _FileNames.getAndRemove(fileName);
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
+            }
+        };
+
+        Shell.prototype.shellListFiles = function () {
+            if (_FileNames.getSize() === 0) {
+                _StdOut.putText("No files created.");
+                return;
+            }
+            _StdOut.putText("Files in current directory:");
+            _StdOut.advanceLine();
+            for (var i = 0; i < _FileNames.getSize(); i++) {
+                _StdOut.putText(_FileNames.get(i));
+                _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellTrashFiles = function () {
+            if (_Trash.getSize() === 0) {
+                _StdOut.putText("Trash empty.");
+                return;
+            }
+            _StdOut.putText("Recoverable files in trash are:");
+            _StdOut.advanceLine();
+            for (var i = 0; i < _Trash.getSize(); i++) {
+                _StdOut.putText(_Trash.get(i));
+                _StdOut.advanceLine();
             }
         };
         return Shell;

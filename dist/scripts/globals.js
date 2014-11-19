@@ -85,8 +85,8 @@ var DiskAction;
 })(DiskAction || (DiskAction = {}));
 ;
 var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'deleting', 'deleting all', 'full formatting', 'quick formatting'];
-var _FileNames = [];
-var _Trash = [];
+var _FileNames = null;
+var _Trash = null;
 
 //
 // Global Variables

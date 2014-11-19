@@ -171,12 +171,16 @@ module TSOS {
     // the HTML5 localStorage
     // Taken from http://diveintohtml5.info/storage.html
     public static supports_html5_storage() {
+
       try {
         return 'localStorage' in window && window['localStorage'] !== null;
       } catch (e) {
         return false;
+
       }
     }
-    
+
+
+
     }
 }

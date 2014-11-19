@@ -34,7 +34,8 @@ module TSOS {
 
 
         public krnFileSystemDriverEntry() {
-          
+          _FileNames= new Queue();
+          _Trash= new Queue();
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
           this.status = "File System Loaded";
             // More?
@@ -69,8 +70,8 @@ module TSOS {
                 for(var b=0; b<=7;b++){
                   if (""+t+""+s+""+b !== "000"){
                     var tempName = this.getFileName(t+""+s+""+b);
-                    if(tempName!=="" && tempName.charAt(0)!==".")
-                      _FileNames.push(tempName);  
+                    if(tempName!=="" && tempName.charAt(0)!=="." && this.InUse(t+""+s+""+b))
+                      _FileNames.enqueue(tempName);  
                   } 
                 }
               }
@@ -297,13 +298,14 @@ module TSOS {
           switch(diskAction){
             case DiskAction.FullFormat:{
               this.fullFormatDisk();
-              _FileNames=[];
+              _FileNames= new Queue();
+              _Trash = new Queue();
               break;
             }
             case DiskAction.QuickFormat:{
               this.quickFormatDisk();
               _Trash = _FileNames;
-              _FileNames=[];
+              _FileNames= new Queue();
               break;
             }
             case DiskAction.Create:{
@@ -316,6 +318,8 @@ module TSOS {
             }
             case DiskAction.Delete:{
               this.deleteFile(this.findFile(data, false));
+              _Trash.enqueue(data);
+              _FileNames.getAndRemove(data);
               break;
             }
             case DiskAction.DeleteAll:{
@@ -329,8 +333,5 @@ module TSOS {
           DISK_IN_USE =false;
           TSOS.Control.updateFileSystemDisplay(); 
         }
-
-
-
     }
 }

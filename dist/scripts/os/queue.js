@@ -43,9 +43,17 @@ var TSOS;
             return this.q[i];
         };
         Queue.prototype.inQueue = function (pid) {
-            for (var i = 0; i < this.q.length; i++) {
-                if (this.q[i].pid === pid) {
-                    return true;
+            if (typeof pid === 'number') {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i].pid === pid) {
+                        return true;
+                    }
+                }
+            } else {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i] === pid) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -53,12 +61,23 @@ var TSOS;
         Queue.prototype.getAndRemove = function (pid) {
             //returns pcb and removes it from the queue
             var retVal = null;
-            for (var i = 0; i < this.q.length; i++) {
-                if (this.q[i].pid === pid) {
-                    retVal = this.q[i];
-                    if (i > -1)
-                        this.q.splice(i, 1);
-                    return retVal;
+            if (typeof pid === 'number') {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i].pid === pid) {
+                        retVal = this.q[i];
+                        if (i > -1)
+                            this.q.splice(i, 1);
+                        return retVal;
+                    }
+                }
+            } else {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i] === pid) {
+                        retVal = this.q[i];
+                        if (i > -1)
+                            this.q.splice(i, 1);
+                        return retVal;
+                    }
                 }
             }
         };

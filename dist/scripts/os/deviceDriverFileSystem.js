@@ -29,6 +29,9 @@ var TSOS;
             //swap files begin with .
         }
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
+            _FileNames = new TSOS.Queue();
+            _Trash = new TSOS.Queue();
+
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "File System Loaded";
 
@@ -61,8 +64,8 @@ var TSOS;
                         for (var b = 0; b <= 7; b++) {
                             if ("" + t + "" + s + "" + b !== "000") {
                                 var tempName = this.getFileName(t + "" + s + "" + b);
-                                if (tempName !== "" && tempName.charAt(0) !== ".")
-                                    _FileNames.push(tempName);
+                                if (tempName !== "" && tempName.charAt(0) !== "." && this.InUse(t + "" + s + "" + b))
+                                    _FileNames.enqueue(tempName);
                             }
                         }
                     }
@@ -292,13 +295,14 @@ var TSOS;
             switch (diskAction) {
                 case 6 /* FullFormat */: {
                     this.fullFormatDisk();
-                    _FileNames = [];
+                    _FileNames = new TSOS.Queue();
+                    _Trash = new TSOS.Queue();
                     break;
                 }
                 case 7 /* QuickFormat */: {
                     this.quickFormatDisk();
                     _Trash = _FileNames;
-                    _FileNames = [];
+                    _FileNames = new TSOS.Queue();
                     break;
                 }
                 case 0 /* Create */: {
@@ -311,6 +315,8 @@ var TSOS;
                 }
                 case 4 /* Delete */: {
                     this.deleteFile(this.findFile(data, false));
+                    _Trash.enqueue(data);
+                    _FileNames.getAndRemove(data);
                     break;
                 }
                 case 5 /* DeleteAll */: {
