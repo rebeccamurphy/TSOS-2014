@@ -218,7 +218,7 @@ var TSOS;
         }
         }
         */
-        DeviceDriverFileSystem.prototype.findFile = function (name) {
+        DeviceDriverFileSystem.prototype.findFile = function (name, recover) {
             debugger;
             var hexName = TSOS.Utils.str2hex(name);
             var swapFile1Chr = TSOS.Utils.str2hex(".");
@@ -226,13 +226,17 @@ var TSOS;
                 for (var s = 0; s <= 7; s++) {
                     for (var b = 0; b <= 7; b++) {
                         var tempData = this.getDataBytes(t + "" + s + "" + b);
-                        if (tempData.substring(0, hexName.length) === hexName) {
+                        if (tempData.substring(0, hexName.length) === hexName && !recover && this.InUse(t + "" + s + "" + b)) {
                             if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)) {
                                 //scheduler finding a swap file
+                                //TODO
                             } else {
                                 //user creating a file
                                 return t + "" + s + "" + b;
                             }
+                        } else {
+                            //TODO
+                            //recovering file data
                         }
                     }
                 }
@@ -242,7 +246,7 @@ var TSOS;
         DeviceDriverFileSystem.prototype.createFile = function (force, fileName) {
             if (force) {
                 //find previous file
-                var tsb = this.findFile(fileName);
+                var tsb = this.findFile(fileName, false);
 
                 //delete its data
                 this.deleteFileData(tsb);
@@ -306,7 +310,7 @@ var TSOS;
                     break;
                 }
                 case 4 /* Delete */: {
-                    this.deleteFile(this.findFile(data));
+                    this.deleteFile(this.findFile(data, false));
                     break;
                 }
                 case 5 /* DeleteAll */: {
