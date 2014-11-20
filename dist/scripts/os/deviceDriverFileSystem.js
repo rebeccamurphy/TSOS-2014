@@ -314,6 +314,12 @@ var TSOS;
             //now we start writing the data to disk
             var prevTSB = nextTSB;
             for (var i = 0; i < dataArray.length; i++) {
+                //and make the nextTSB the previous TSB
+                prevTSB = nextTSB;
+
+                //update the next availble data block
+                this.setNextAvailbleTSB('data');
+
                 //local storage of next available data tsb
                 var nextTSB = this.getNextAvailbleDataTSB();
 
@@ -325,13 +331,10 @@ var TSOS;
 
                 //and we write out the data to said block
                 this.setDataBytes(prevTSB, dataArray[i]);
-
-                //update the next availble data block
-                this.setNextAvailbleTSB('data');
-
-                //and make the nextTSB the previous TSB
-                prevTSB = nextTSB;
             }
+
+            //set the last block to not point to anything
+            this.setMetaData(prevTSB, "000");
         };
         DeviceDriverFileSystem.prototype.readFile = function (fileName) {
             debugger;
@@ -348,17 +351,10 @@ var TSOS;
                 nextTSB = this.getNextTSB(nextTSB);
             }
 
-            //get last block data
-            hexContents = this.getDataBytes(nextTSB);
-            if (hexContents % 2 !== 0) {
-                hexContents += '0';
-            }
-            contents += TSOS.Utils.hex2str(hexContents);
-            nextTSB = this.getNextTSB(nextTSB);
-
             this.displayContents(contents);
         };
         DeviceDriverFileSystem.prototype.displayContents = function (contents) {
+            debugger;
             if (contents.indexOf('/n') !== -1) {
                 var contentsArray = contents.split('/n');
                 _StdOut.advanceLine();

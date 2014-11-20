@@ -687,7 +687,7 @@ var TSOS;
             }
 
             //strip the quotes from the data
-            data = data.substring(1, data.length);
+            data = data.substring(1, data.length - 1);
             if (data.length === 0) {
                 _StdOut.putText("Please specify text to write.");
                 return;

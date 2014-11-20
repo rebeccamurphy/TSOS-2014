@@ -318,6 +318,10 @@ module TSOS {
           //now we start writing the data to disk
           var prevTSB:string = nextTSB;
           for (var i=0; i<dataArray.length; i++){
+            //and make the nextTSB the previous TSB
+            prevTSB= nextTSB;
+            //update the next availble data block
+            this.setNextAvailbleTSB('data');
             //local storage of next available data tsb
             var nextTSB =this.getNextAvailbleDataTSB();
             //and mark that data block as in use
@@ -326,11 +330,10 @@ module TSOS {
             this.setMetaData(prevTSB, nextTSB);            
             //and we write out the data to said block
             this.setDataBytes(prevTSB, dataArray[i]);
-            //update the next availble data block
-            this.setNextAvailbleTSB('data');
-            //and make the nextTSB the previous TSB
-            prevTSB= nextTSB;
           }
+          //set the last block to not point to anything
+          this.setMetaData(prevTSB, "000");
+
         }
         public readFile(fileName:string){
           debugger;
@@ -346,17 +349,11 @@ module TSOS {
             contents+= TSOS.Utils.hex2str(hexContents);
             nextTSB = this.getNextTSB(nextTSB);
           }
-          //get last block data
-          hexContents = this.getDataBytes(nextTSB);
-          if (hexContents%2 !==0){
-            hexContents+='0';
-          }
-          contents+= TSOS.Utils.hex2str(hexContents);
-          nextTSB = this.getNextTSB(nextTSB);
 
           this.displayContents(contents);
         }
         public displayContents(contents:string){
+          debugger;
           if (contents.indexOf('/n')!==-1){
             var contentsArray= contents.split('/n');
             _StdOut.advanceLine();
