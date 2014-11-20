@@ -333,6 +333,42 @@ var TSOS;
                 prevTSB = nextTSB;
             }
         };
+        DeviceDriverFileSystem.prototype.readFile = function (fileName) {
+            debugger;
+            var tsb = this.findFile(fileName, false);
+            var contents = "";
+            var nextTSB = this.getNextTSB(tsb);
+            while (nextTSB != "000") {
+                var hexContents = this.getDataBytes(nextTSB);
+                hexContents = TSOS.Utils.trimTrailingChars(hexContents, "0");
+                if (hexContents % 2 !== 0) {
+                    hexContents += '0';
+                }
+                contents += TSOS.Utils.hex2str(hexContents);
+                nextTSB = this.getNextTSB(nextTSB);
+            }
+
+            //get last block data
+            hexContents = this.getDataBytes(nextTSB);
+            if (hexContents % 2 !== 0) {
+                hexContents += '0';
+            }
+            contents += TSOS.Utils.hex2str(hexContents);
+            nextTSB = this.getNextTSB(nextTSB);
+
+            this.displayContents(contents);
+        };
+        DeviceDriverFileSystem.prototype.displayContents = function (contents) {
+            if (contents.indexOf('/n') !== -1) {
+                var contentsArray = contents.split('/n');
+                _StdOut.advanceLine();
+                for (var i = 0; i < contentsArray.length; i++) {
+                    _StdOut.putText(contentsArray[i]);
+                    _StdOut.advanceLine();
+                }
+            } else
+                _StdOut.putText(contents);
+        };
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
             debugger;
             var diskAction = params[0];
@@ -389,6 +425,10 @@ var TSOS;
                         _StdOut.advanceLine();
                         _StdOut.putText("File name track full, please empty trash.");
                     }
+                    break;
+                }
+                case 2 /* Read */: {
+                    this.readFile(fileName);
                     break;
                 }
             }

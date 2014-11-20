@@ -177,6 +177,13 @@ var TSOS;
         Utils.InvalidFileName = function (fileName) {
             return fileName.indexOf(' ') !== -1 || fileName.indexOf('.') !== -1 || fileName.length > 60;
         };
+
+        Utils.trimTrailingChars = function (s, charToTrim) {
+            var regExp = new RegExp(charToTrim + "+$");
+            var result = s.replace(regExp, "");
+
+            return result;
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;

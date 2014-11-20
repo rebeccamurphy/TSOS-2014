@@ -688,9 +688,14 @@ var TSOS;
 
             //strip the quotes from the data
             data = data.substring(1, data.length);
+            if (data.length === 0) {
+                _StdOut.putText("Please specify text to write.");
+                return;
+            }
 
             if (fileName === undefined) {
                 _StdOut.putText("Please specify the file name you wish to write to.");
+                return;
             }
             if (data === undefined) {
                 _StdOut.putText("Please specify the data you want written to the file.");
@@ -705,6 +710,12 @@ var TSOS;
             }
         };
         Shell.prototype.shellReadFile = function (args) {
+            var fileName = args[0];
+            if (!_FileNames.inQueue(fileName)) {
+                _StdOut.putText("Invalid fileName");
+            }
+
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [2 /* Read */, fileName]));
         };
 
         Shell.prototype.shellListFiles = function () {

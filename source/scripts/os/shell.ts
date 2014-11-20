@@ -791,9 +791,14 @@ module TSOS {
             }
             //strip the quotes from the data
             data =data.substring(1, data.length);
+            if (data.length===0){
+                _StdOut.putText("Please specify text to write.");
+                return;
+            }
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify the file name you wish to write to.");
+                return;
             }
             if (data===undefined){
                 _StdOut.putText("Please specify the data you want written to the file.");
@@ -811,7 +816,12 @@ module TSOS {
 
         }
         public shellReadFile(args){
+            var fileName = args[0];
+            if (!_FileNames.inQueue(fileName)){
+                _StdOut.putText("Invalid fileName");
+            }
 
+            _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Read, fileName]));    
         }
 
 

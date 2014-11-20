@@ -184,6 +184,11 @@ module TSOS {
         return fileName.indexOf(' ') !==-1 || fileName.indexOf('.')!==-1 || fileName.length>60;
     }
 
+    public static trimTrailingChars(s, charToTrim){
+     var regExp = new RegExp(charToTrim + "+$");
+     var result = s.replace(regExp, "");
 
+     return result;
     }
+}
 }
