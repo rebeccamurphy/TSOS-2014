@@ -138,6 +138,14 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
+            //write - write   the data    inside  the quotes  to  filename    and display a   message denoting    success or  failure.
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename>,<-append, -overwrite>, 'data'  - writes to data to specified file name. Defaults to" + "overwrite if not specified. Use /n for newlines in your data.");
+            this.commandList[this.commandList.length] = sc;
+
+            //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Displays the contents of specified file.");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -568,21 +576,21 @@ var TSOS;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "quick" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* QuickFormat */]));
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -591,13 +599,13 @@ var TSOS;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* QuickFormat */]));
                 return;
             }
             if (firstParam === "full" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -606,7 +614,7 @@ var TSOS;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
                 return;
             }
 
@@ -634,7 +642,6 @@ var TSOS;
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [0 /* Create */, firstParam]));
-                _FileNames.enqueue(firstParam);
             } else if (secondParam === "-force") {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
@@ -653,20 +660,51 @@ var TSOS;
             } else if (fileName === "*") {
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* DeleteAll */]));
-                _FileNames = new TSOS.Queue();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* DeleteAll */]));
                 return;
             } else if (_FileNames.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Delete */, fileName]));
-
-                //remove file from file names
-                _FileNames.getAndRemove(fileName);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* Delete */, fileName]));
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
             }
+        };
+
+        Shell.prototype.shellWriteFile = function (args) {
+            debugger;
+            var fileName = args[0];
+            var typeOfWrite = args[1];
+            if (typeOfWrite === "-append" || typeOfWrite === "-overwrite")
+                var data = args.slice(2);
+            else
+                var data = args.slice(1);
+            data = data.join('');
+            if (data.charAt(0) !== "'" && data.charAt(0) !== '"' && data.charAt(data.length - 1) !== "'" && data.charAt(data.length - 1) !== '"') {
+                _StdOut.putText("Data must be surrounded by quotes.");
+                return;
+            }
+
+            //strip the quotes from the data
+            data = data.substring(1, data.length);
+
+            if (fileName === undefined) {
+                _StdOut.putText("Please specify the file name you wish to write to.");
+            }
+            if (data === undefined) {
+                _StdOut.putText("Please specify the data you want written to the file.");
+                return;
+            }
+            if (typeOfWrite === '-append') {
+                _StdOut.putText("Appending data to file: " + fileName);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* AppendWrite */, fileName, data]));
+            } else {
+                _StdOut.putText("Writing data to file: " + fileName);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* Write */, fileName, data]));
+            }
+        };
+        Shell.prototype.shellReadFile = function (args) {
         };
 
         Shell.prototype.shellListFiles = function () {

@@ -101,9 +101,19 @@ module TSOS {
         public getBlock(tsb:string){
           return sessionStorage.getItem(tsb);
         }
+        
 
         public getMetaData(tsb:string){
           return this.getBlock(tsb).substring(0, this.metaData);
+        }
+
+        public setMetaData(tsb:string, metaData:string){
+          if (this.InUse(tsb)){
+            sessionStorage.setItem(tsb,"1"+ metaData+ this.getDataBytes(tsb));
+          }
+          else {
+            sessionStorage.setItem(tsb,"0"+ metaData+ this.getDataBytes(tsb));  
+          }
         }
             
         public InUse(tsb:string):boolean{
@@ -118,12 +128,22 @@ module TSOS {
         public getDataBytes(tsb:string){
           return this.getBlock(tsb).substring(this.metaData, this.metaData+this.dataBytes);
         }
+        public setDataBytes(tsb:string, blockData:string){
+          sessionStorage.setItem(tsb, this.getMetaData(tsb) + blockData+new Array(61-blockData.length).join('0'));
+        }
 
         public getNextAvailbleFileTSB(){
           return TSOS.Utils.hex2str(this.getDataBytes("000").substring(0, 6));
         }
         public getNextAvailbleDataTSB(){
           return TSOS.Utils.hex2str(this.getDataBytes("000").substring(6, 12));
+        }
+
+        public markBlockAsAvail(tsb){
+            sessionStorage.setItem(tsb, "0"+ sessionStorage.getItem(tsb).substring(1));
+        }
+        public markBlockAsUnAvail(tsb){
+            sessionStorage.setItem(tsb, "1"+ sessionStorage.getItem(tsb).substring(1));
         }
         public setNextAvailbleTSB(type:string){
           if (type==="file"){
@@ -205,12 +225,6 @@ module TSOS {
           }
 
         }
-        public markBlockAsAvail(tsb){
-            sessionStorage.setItem(tsb, "0"+ sessionStorage.getItem(tsb).substring(1));
-        }
-        public markBlockAsUnAvail(tsb){
-            sessionStorage.setItem(tsb, "1"+ sessionStorage.getItem(tsb).substring(1));
-        }
         public deleteFile(tsb:string){
           //sets file name and all data as available
           var tempTSB = tsb;
@@ -231,35 +245,37 @@ module TSOS {
           }
         }
         public findFile(name:string, recover:boolean){
-          debugger;
+          //debugger;
           var hexName = TSOS.Utils.str2hex(name);
           var swapFile1Chr = TSOS.Utils.str2hex(".");
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
-                  var tempData = this.getDataBytes(t+""+s+""+b);
-                  if (tempData.substring(0, hexName.length)===hexName){
-                    if (!recover && this.InUse(t+""+s+""+b)){
-                      if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)){
-                        //scheduler finding a swap file
-                        //TODO
+                  if (t+""+s+""+b!=="000"){
+                    var tempData = this.getDataBytes(t+""+s+""+b);
+                    if (tempData.substring(0, hexName.length)===hexName){
+                      if (!recover && this.InUse(t+""+s+""+b)){
+                        if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)){
+                          //scheduler finding a swap file
+                          //TODO
+                        }
+                        else {
+                          //user creating a file
+                          return t+""+s+""+b;
+                        }
                       }
                       else {
-                        //user creating a file
-                        return t+""+s+""+b;
-                      }
+                      //TODO
+                      //recovering file data
+                      }   
                     }
-                    else {
-                    //TODO
-                    //recovering file data
-                    }   
                   }                  
                 }
               }
             }
             return null;
         }
-        public createFile(force:boolean, fileName:string){
+        public createFile(fileName:string, force:boolean){
           if (force){
             //find previous file
             var tsb:string = this.findFile(fileName, false);
@@ -273,30 +289,47 @@ module TSOS {
             return true;
           }
           else{
-            debugger;
-            //just create the file
             var tsb:string = this.getNextAvailbleFileTSB();
             var hexName = TSOS.Utils.str2hex(fileName);
             var newData = "";
-            var nextTSB;
-            //if the name is longet than 60 chars
-            /*while(hexName.length >60){
-              newData = hexName.substring(0, 60);
-              this.setNextAvailbleTSB('file');
-              if (this.diskFull){
-                //TODO
-                //disk file space interrupt error
-              }
-            
-              nextTSB = this.getNextAvailbleFileTSB();
-              sessionStorage.setItem(tsb, "1" + nextTSB + newData);
-              hexName.replace(newData, '');
-              tsb =nextTSB;
-            }*/
-            this.setNextAvailbleTSB('file');
+            //pad the hexName data with 00s
             newData = hexName + new Array(65-hexName.length-this.metaData).join("0");
+            //set the tsb in use with new data
             sessionStorage.setItem(tsb, '1'+"000"+newData);
+            //add file name to list
+            _FileNames.enqueue(fileName);
 
+            //update next availbale file tsb
+            this.setNextAvailbleTSB('file');
+
+          }
+        }
+        public writeFile(fileName:string, data:string){
+          debugger;
+          //convert the data to hex and split the data into 60 char chunks
+          var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
+          //then we find the file
+          var tsbFile:string = this.findFile(fileName, false);
+          //local storage of next available data tsb
+          var nextTSB:string =this.getNextAvailbleDataTSB();
+          //then we make the meta data point to the next available datablock
+          this.setMetaData(tsbFile, nextTSB);
+
+          //now we start writing the data to disk
+          var prevTSB:string = nextTSB;
+          for (var i=0; i<dataArray.length; i++){
+            //local storage of next available data tsb
+            var nextTSB =this.getNextAvailbleDataTSB();
+            //and mark that data block as in use
+            this.markBlockAsUnAvail(prevTSB);
+            //then we make the meta data point to the next available datablock
+            this.setMetaData(prevTSB, nextTSB);            
+            //and we write out the data to said block
+            this.setDataBytes(prevTSB, dataArray[i]);
+            //update the next availble data block
+            this.setNextAvailbleTSB('data');
+            //and make the nextTSB the previous TSB
+            prevTSB= nextTSB;
           }
         }
         public krnDiskInUse(params){
@@ -320,7 +353,7 @@ module TSOS {
             }
             case DiskAction.Create:{
               if (this.fileTFull===false)
-                this.createFile(false, fileName);
+                this.createFile(fileName, false);
               else{
                 _StdOut.advanceLine();
                 _StdOut.putText("File name track full, please empty trash.");
@@ -328,7 +361,7 @@ module TSOS {
               break;
             }
             case DiskAction.CreateForce:{
-              this.createFile(true, fileName);
+              this.createFile(fileName, false);
               break;
             }
             case DiskAction.Delete:{
@@ -346,6 +379,11 @@ module TSOS {
               //TODO
               if (this.fileTFull===false){
                 //this.writeFile(false, fileName, data);
+                if (this.findFile(fileName, false)===null){
+                  //first create the file then write to it
+                  this.createFile(fileName, false);
+                  this.writeFile(fileName, data);
+                }
               }
               else{
                 _StdOut.advanceLine();

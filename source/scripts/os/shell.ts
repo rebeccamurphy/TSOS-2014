@@ -203,7 +203,18 @@ module TSOS {
                                   "- displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
-            
+            //write - write   the data    inside  the quotes  to  filename    and display a   message denoting    success or  failure.    
+            sc = new ShellCommand(this.shellWriteFile,
+                                  "write",
+                                  "<filename>,<-append, -overwrite>, 'data'  - writes to data to specified file name. Defaults to"
+                                   +"overwrite if not specified. Use /n for newlines in your data.");
+            this.commandList[this.commandList.length] = sc;
+
+            //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
+            sc = new ShellCommand(this.shellReadFile,
+                                  "read",
+                                  "<filename> - Displays the contents of specified file.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -728,7 +739,6 @@ module TSOS {
                 //create the file
                 _StdOut.putText("Creating File: " + firstParam);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Create, firstParam]));
-                _FileNames.enqueue(firstParam);
             }
             else if (secondParam==="-force"){
                 //create the file
@@ -751,15 +761,12 @@ module TSOS {
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.DeleteAll]));
-                _FileNames=new Queue();
                 return;
             }
             else if (_FileNames.inQueue(fileName)){
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Delete, fileName]));
-                //remove file from file names
-                _FileNames.getAndRemove(fileName);
                 return;
             }
             else{
@@ -767,6 +774,46 @@ module TSOS {
             }
 
         }
+
+        public shellWriteFile(args){
+            debugger;
+            var fileName = args[0];
+            var typeOfWrite = args[1];
+            if (typeOfWrite==="-append"||typeOfWrite==="-overwrite" )
+                var data = args.slice(2);
+            else
+                var data = args.slice(1);
+            data = data.join('');
+            if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
+                data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"'){
+                    _StdOut.putText("Data must be surrounded by quotes.");
+                    return;
+            }
+            //strip the quotes from the data
+            data =data.substring(1, data.length);
+
+            if (fileName===undefined){
+                _StdOut.putText("Please specify the file name you wish to write to.");
+            }
+            if (data===undefined){
+                _StdOut.putText("Please specify the data you want written to the file.");
+                return;
+            }
+            if (typeOfWrite==='-append'){
+                _StdOut.putText("Appending data to file: " + fileName );
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.AppendWrite, fileName, data]));
+
+            }
+            else {
+                _StdOut.putText("Writing data to file: " + fileName);
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, fileName, data]));    
+            }
+
+        }
+        public shellReadFile(args){
+
+        }
+
 
         public shellListFiles(){
             if (_FileNames.getSize()===0){
