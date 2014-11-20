@@ -173,6 +173,10 @@ var TSOS;
                 return false;
             }
         };
+
+        Utils.InvalidFileName = function (fileName) {
+            return fileName.indexOf(' ') !== -1 || fileName.indexOf('.') !== -1 || fileName.length > 60;
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;

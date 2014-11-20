@@ -38,6 +38,7 @@ var DEFAULT_PRIORITY = 4;
 var SCHEDULE_TYPE = 0 /* rr */;
 var PREVIOUS_MESSAGE = "";
 var DISK_IN_USE = false;
+var SWAP_FILE_START_CHAR = "";
 window.onload = function () {
     //defines console original dimensions
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));

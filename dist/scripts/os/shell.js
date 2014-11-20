@@ -616,7 +616,7 @@ var TSOS;
         Shell.prototype.shellCreateFile = function (args) {
             var firstParam = args[0];
             var secondParam = args[1];
-
+            debugger;
             if (firstParam === undefined) {
                 _StdOut.putText("Please specify a file name.");
                 return;
@@ -625,8 +625,8 @@ var TSOS;
                 _StdOut.putText("You can't name a file -force you butt.");
                 return;
             }
-            if (firstParam.charAt(0) === ".") {
-                _StdOut.putText("File names cannot start with .");
+            if (TSOS.Utils.InvalidFileName(firstParam)) {
+                _StdOut.putText("Invalid file name. File names are limited to 60 characters, no spaces, and no periods.");
                 return;
             }
 

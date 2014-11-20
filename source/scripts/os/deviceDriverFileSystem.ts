@@ -18,6 +18,7 @@ module TSOS {
         private metaData:  number;
         private dataBytes: number;
         public  diskFull:  boolean;
+        private fileTFull: boolean;//file track full
         constructor() {
             // Override the base method pointers.
             this.tracks   =4;
@@ -26,10 +27,13 @@ module TSOS {
             this.metaData =4;
             this.dataBytes=60;
             this.diskFull=false;
+            this.fileTFull = false;
             super(this.krnFileSystemDriverEntry, this.krnDiskInUse);
+            SWAP_FILE_START_CHAR = TSOS.Utils.str2hex('.');
             //001-077 is for file names
             //100-377 is for data
             //swap files begin with .
+
         }
 
 
@@ -52,8 +56,11 @@ module TSOS {
               for (var s=0; s<this.sectors;s++){
                 for(var b=0; b<this.blocks;b++){
                   if (""+t+""+s+""+b !== "000"){
+                    //TODO Find out if swap files should be deleted on format
                   try {
-                    sessionStorage.setItem( t+""+s+""+b, new Array(this.dataBytes+this.metaData).join('0'));                  
+                    //debugger;
+                    var blankBlock =new Array(this.dataBytes+this.metaData+1).join('0');
+                    sessionStorage.setItem( t+""+s+""+b, blankBlock);                  
                   } 
                   catch (e) {
                       alert('Quota exceeded!');
@@ -70,7 +77,8 @@ module TSOS {
                 for(var b=0; b<=7;b++){
                   if (""+t+""+s+""+b !== "000"){
                     var tempName = this.getFileName(t+""+s+""+b);
-                    if(tempName!=="" && tempName.charAt(0)!=="." && this.InUse(t+""+s+""+b))
+                    if(tempName!=="" && tempName.indexOf(SWAP_FILE_START_CHAR)===-1 && this.InUse(t+""+s+""+b))
+                      //makes sure swap files are not added to the file list
                       _FileNames.enqueue(tempName);  
                   } 
                 }
@@ -166,8 +174,14 @@ module TSOS {
                 } 
               }
             }
-            //if neither prove fruitful make the disk as full
-            this.diskFull = true;
+            if (type ==='data'){
+              //if neither prove fruitful make the disk as full
+              this.diskFull = true;
+            }
+            else if (type==='file'){
+              //fileNames full
+              this.fileTFull=true;
+            }
         }
         public fullFormatDisk(){
           this.init(true);
@@ -194,6 +208,9 @@ module TSOS {
         public markBlockAsAvail(tsb){
             sessionStorage.setItem(tsb, "0"+ sessionStorage.getItem(tsb).substring(1));
         }
+        public markBlockAsUnAvail(tsb){
+            sessionStorage.setItem(tsb, "1"+ sessionStorage.getItem(tsb).substring(1));
+        }
         public deleteFile(tsb:string){
           //sets file name and all data as available
           var tempTSB = tsb;
@@ -212,18 +229,7 @@ module TSOS {
             this.markBlockAsAvail(tempTSB);
             tempTSB = this.getNextTSB(tempTSB);
           }
-
         }
-        /*
-        public cycle(tMin:number, sMin:number, bMin:number, tMax:number, sMax:number, bMax:number, functionName{
-          for (var t=tMin; t<tMax; t++){
-            for (var s=sMin; s<sMax;s++){
-              for(var b=bMin; b<bMax;b++){
-                if (""+t+""+b+""+s !== "000"){
-                  functionName(t+""+""+s+""b);
-                }
-        }
-        */
         public findFile(name:string, recover:boolean){
           debugger;
           var hexName = TSOS.Utils.str2hex(name);
@@ -232,20 +238,22 @@ module TSOS {
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
                   var tempData = this.getDataBytes(t+""+s+""+b);
-                  if (tempData.substring(0, hexName.length)===hexName &&!recover && this.InUse(t+""+s+""+b)){
-                    if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)){
-                      //scheduler finding a swap file
-                      //TODO
+                  if (tempData.substring(0, hexName.length)===hexName){
+                    if (!recover && this.InUse(t+""+s+""+b)){
+                      if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)){
+                        //scheduler finding a swap file
+                        //TODO
+                      }
+                      else {
+                        //user creating a file
+                        return t+""+s+""+b;
+                      }
                     }
                     else {
-                      //user creating a file
-                      return t+""+s+""+b;
-                    }
-                  }
-                  else {
                     //TODO
                     //recovering file data
-                  } 
+                    }   
+                  }                  
                 }
               }
             }
@@ -272,20 +280,21 @@ module TSOS {
             var newData = "";
             var nextTSB;
             //if the name is longet than 60 chars
-            while(hexName.length >60){
+            /*while(hexName.length >60){
               newData = hexName.substring(0, 60);
               this.setNextAvailbleTSB('file');
               if (this.diskFull){
                 //TODO
                 //disk file space interrupt error
               }
+            
               nextTSB = this.getNextAvailbleFileTSB();
               sessionStorage.setItem(tsb, "1" + nextTSB + newData);
               hexName.replace(newData, '');
               tsb =nextTSB;
-            }
+            }*/
             this.setNextAvailbleTSB('file');
-            newData = hexName + new Array(64-hexName.length-this.metaData).join("0");
+            newData = hexName + new Array(65-hexName.length-this.metaData).join("0");
             sessionStorage.setItem(tsb, '1'+"000"+newData);
 
           }
@@ -293,7 +302,8 @@ module TSOS {
         public krnDiskInUse(params){
           debugger;
           var diskAction = params[0];
-          var data = params[1];
+          var fileName = params[1];
+          var data= params[2];
           DISK_IN_USE = true;
           switch(diskAction){
             case DiskAction.FullFormat:{
@@ -309,21 +319,38 @@ module TSOS {
               break;
             }
             case DiskAction.Create:{
-              this.createFile(false, data);
+              if (this.fileTFull===false)
+                this.createFile(false, fileName);
+              else{
+                _StdOut.advanceLine();
+                _StdOut.putText("File name track full, please empty trash.");
+              }
               break;
             }
             case DiskAction.CreateForce:{
-              this.createFile(true, data);
+              this.createFile(true, fileName);
               break;
             }
             case DiskAction.Delete:{
-              this.deleteFile(this.findFile(data, false));
-              _Trash.enqueue(data);
-              _FileNames.getAndRemove(data);
+              this.deleteFile(this.findFile(fileName, false));
+              _Trash.enqueue(fileName);
+              _FileNames.getAndRemove(fileName);
               break;
             }
             case DiskAction.DeleteAll:{
-
+              _Trash = _FileNames;
+              _FileNames = new Queue();
+              break;
+            }
+            case DiskAction.Write:{
+              //TODO
+              if (this.fileTFull===false){
+                //this.writeFile(false, fileName, data);
+              }
+              else{
+                _StdOut.advanceLine();
+                _StdOut.putText("File name track full, please empty trash.");
+              }
               break;
             }
 

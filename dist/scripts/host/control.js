@@ -371,6 +371,7 @@ var TSOS;
             for (var t = 0; t < _krnFileSystemDriver.tracks; t++) {
                 for (var s = 0; s < _krnFileSystemDriver.sectors; s++) {
                     for (var b = 0; b < _krnFileSystemDriver.blocks; b++) {
+                        debugger;
                         tsbStr = t + "" + s + "" + b;
                         blockStr = _krnFileSystemDriver.getDataBytes(tsbStr);
                         metaStr = _krnFileSystemDriver.getMetaData(tsbStr);
@@ -382,7 +383,7 @@ var TSOS;
                         } else {
                             //trick the user into think they're data is deleted
                             output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + "000" + "</td>";
-                            output += "<td>" + new Array(60).join('0') + "</td></tr>";
+                            output += "<td>" + new Array(61).join('0') + "</td></tr>";
                         }
                     }
                 }
