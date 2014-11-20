@@ -22,13 +22,34 @@ var TSOS;
             //update the queue display
         };
         cpuScheduler.prototype.clearMem = function () {
-            for (var i = 0; i < this.readyQueue.getSize(); i++) {
-                if (this.readyQueue.get(i).location === 0 /* Memory */)
-                    this.readyQueue.getAndRemove(i);
+            debugger;
+            var tempProgramPCB = _ExecutingProgramPCB;
+            _ExecutingProgramPCB = null;
+            _ExecutingProgramPID = null;
+
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            var tempReadyQueue = this.readyQueue;
+            var tempResidentQueue = this.residentQueue;
+
+            while (!tempReadyQueue.isEmpty()) {
+                tempProgramPCB = tempReadyQueue.dequeue();
+
+                //check if the program is in memory
+                if (tempProgramPCB.location === 0 /* Memory */) {
+                    //remove program from the ready queue
+                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
+
+                    //and kill program if so
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
             }
-            for (var j = 0; j < this.residentQueue.getSize(); j++) {
-                if (this.residentQueue.get(j).location === 0 /* Memory */)
-                    this.residentQueue.getAndRemove(j);
+
+            while (!tempResidentQueue.isEmpty()) {
+                tempProgramPCB = tempResidentQueue.dequeue();
+                if (tempProgramPCB.location === 0 /* Memory */) {
+                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
             }
         };
         cpuScheduler.prototype.emptyReadyQueue = function () {

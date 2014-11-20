@@ -22,13 +22,33 @@ module TSOS {
 
         }
         public clearMem(){
-            for (var i =0; i<this.readyQueue.getSize(); i++){
-                if (this.readyQueue.get(i).location === Locations.Memory)
-                    this.readyQueue.getAndRemove(i);
+            //clear current executing program
+            debugger;
+            var tempProgramPCB = _ExecutingProgramPCB;
+            _ExecutingProgramPCB =null;
+            _ExecutingProgramPID =null;
+
+            _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            var tempReadyQueue = this.readyQueue;
+            var tempResidentQueue = this.residentQueue;
+            //clear programs in memory from ready queue
+            while (! tempReadyQueue.isEmpty() ){
+                tempProgramPCB = tempReadyQueue.dequeue();
+                //check if the program is in memory 
+                if (tempProgramPCB.location === Locations.Memory){
+                    //remove program from the ready queue
+                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
+                    //and kill program if so
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
             }
-            for (var j=0; j< this.residentQueue.getSize(); j++){
-                if (this.residentQueue.get(j).location === Locations.Memory)
-                    this.residentQueue.getAndRemove(j);
+            //clear programs in memory from resident list.
+            while (!tempResidentQueue.isEmpty()){
+                tempProgramPCB = tempResidentQueue.dequeue();
+                if (tempProgramPCB.location === Locations.Memory){
+                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
             }
         }
         public emptyReadyQueue() :boolean {

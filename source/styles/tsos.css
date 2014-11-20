@@ -190,7 +190,7 @@ td {
   width: 335px;
 }
 #FileSystem{
-  float:right;
+  /*float:right;*/
   max-width: 760px;
   padding-left: 0px;
   padding-right: 34px;
