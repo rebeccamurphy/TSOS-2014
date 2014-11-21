@@ -42,6 +42,7 @@ var SCHEDULE_TYPE :scheduleType= scheduleType.rr;
 var PREVIOUS_MESSAGE:string ="";
 var DISK_IN_USE:boolean = false;
 var SWAP_FILE_START_CHAR = "";
+var PUT_PROMPT = true;
 window.onload = function() {
 	//defines console original dimensions 
     CONSOLE_VIEWPORT_WIDTH = parseInt(document.getElementById("display").getAttribute("width"));

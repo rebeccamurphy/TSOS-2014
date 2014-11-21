@@ -56,8 +56,10 @@ module TSOS {
 
             // Note the REAL clock in milliseconds since January 1, 1970.
             var date = new Date();
-            var strSecs = String(date.getSeconds());
-            var now = String(date.getHours()) + ":"+ String(date.getMinutes())+ ":"  + Array(2-(strSecs.length-1)).join("0") + strSecs;
+            var strSecs = Array(2-(String(date.getSeconds()).length-1)).join("0")+ String(date.getSeconds());
+            var strHours = Array(2-(String(date.getHours()).length-1)).join("0") +String(date.getHours());
+            var strMins = Array(2-(String(date.getMinutes()).length-1)).join("0") +String(date.getMinutes());
+            var now = strHours + ":"+ strMins+ ":" + strSecs;
 
             // Build the log string.
             var str :string ="";
@@ -190,6 +192,16 @@ module TSOS {
         public static getUserProgram() :string {
             return (<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();
         }
+        public static getFileData() :string {
+            return (<HTMLInputElement>document.getElementById("taDataInput")).value.trim();
+        }
+        public static setFileData(data:string) {
+            (<HTMLInputElement>document.getElementById("taDataInput")).value = data;
+            document.getElementById("di").setAttribute("class", "active");
+            document.getElementById("pi").setAttribute("class", "");
+            document.getElementById("programInput").setAttribute("class", "tab-pane");
+            document.getElementById("dataInput").className +=  " active";
+        }
         public static displayUserProgram(code):void{
             (<HTMLInputElement>document.getElementById("taProgramInput")).value =code;
         }
@@ -201,9 +213,12 @@ module TSOS {
             var date = new Date();
             var strSecs = String(date.getSeconds());
             var numHour = date.getHours();
-            var strHours = (numHour===0 ? "12": String(numHour%12));
+            var strHours = (numHour===0 ? "12": "0"+String(numHour%12));
+            var strSecs = Array(2-(String(date.getSeconds()).length-1)).join("0") +String(date.getSeconds());
+            var strMins = Array(2-(String(date.getMinutes()).length-1)).join("0") +String(date.getMinutes());
+            
             var now = String(date.getMonth()+1) +"/" + String(date.getDate()) + "/" +String(date.getFullYear()).slice(-2) + " "
-                + strHours + ":"+ String(date.getMinutes())+ ":"  + Array(2-(strSecs.length-1)).join("0") + strSecs;
+                + strHours + ":"+ strMins+ ":"  +strSecs;
 
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;

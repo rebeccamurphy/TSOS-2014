@@ -17,8 +17,9 @@ module TSOS {
         private blocks:    number;
         private metaData:  number;
         private dataBytes: number;
-        public  diskFull:  boolean;
+        public  diskFull:  boolean;//data full
         private fileTFull: boolean;//file track full
+        p
         constructor() {
             // Override the base method pointers.
             this.tracks   =4;
@@ -64,11 +65,13 @@ module TSOS {
                   } 
                   catch (e) {
                       alert('Quota exceeded!');
+                      return false;
                     }
                  } 
                 } 
               }
             }
+            return true;
           }
           else{
             //add the file names to file name global
@@ -88,7 +91,6 @@ module TSOS {
         }
 
         public getFileName(tsb:string){
-          debugger;
           var temp = this.getDataBytes(tsb);
           //remove trailing 0s
           temp = temp.replace(/0+$/g, "");
@@ -98,6 +100,7 @@ module TSOS {
             return "";
           return TSOS.Utils.hex2str(temp);
         }
+
         public getBlock(tsb:string){
           return sessionStorage.getItem(tsb);
         }
@@ -204,7 +207,7 @@ module TSOS {
             }
         }
         public fullFormatDisk(){
-          this.init(true);
+          return this.init(true);
         }
         public quickFormatDisk(){
           //sets every block as not inuse, but keeps the data
@@ -218,11 +221,13 @@ module TSOS {
                 } 
                 catch (e) {
                     alert('Quota exceeded!');
+                    return false;
                   }
                } 
               } 
             }
           }
+          return true;
 
         }
         public deleteFile(tsb:string){
@@ -234,9 +239,10 @@ module TSOS {
           this.deleteFileData(tempTSB);
           //remove the last block associate with that file
           this.markBlockAsAvail(tempTSB);
+          return true;
         }
         public deleteFileData(tsb:string){
-          debugger;
+          
           //skip deleting the file Unreadname
           var tempTSB = this.getNextTSB(tsb);
           while (tempTSB!=="000"){
@@ -245,17 +251,16 @@ module TSOS {
           }
         }
         public findFile(name:string, recover:boolean){
-          //debugger;
-          var hexName = TSOS.Utils.str2hex(name);
+          
           var swapFile1Chr = TSOS.Utils.str2hex(".");
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
                   if (t+""+s+""+b!=="000"){
-                    var tempData = this.getDataBytes(t+""+s+""+b);
-                    if (tempData.substring(0, hexName.length)===hexName){
+                    var tempData = this.getFileName(t+""+s+""+b);
+                    if (tempData===name){
                       if (!recover && this.InUse(t+""+s+""+b)){
-                        if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)){
+                        if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(name)){
                           //scheduler finding a swap file
                           //TODO
                         }
@@ -288,7 +293,7 @@ module TSOS {
             //return true that creation of file was successfull heh
             return true;
           }
-          else{
+          else if (!this.fileTFull){
             var tsb:string = this.getNextAvailbleFileTSB();
             var hexName = TSOS.Utils.str2hex(fileName);
             var newData = "";
@@ -302,10 +307,14 @@ module TSOS {
             //update next availbale file tsb
             this.setNextAvailbleTSB('file');
 
+            return true;
+
           }
+          else
+            return false;
         }
         public writeFile(fileName:string, data:string){
-          debugger;
+          
           //convert the data to hex and split the data into 60 char chunks
           var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
           //then we find the file
@@ -318,25 +327,30 @@ module TSOS {
           //now we start writing the data to disk
           var prevTSB:string = nextTSB;
           for (var i=0; i<dataArray.length; i++){
-            //and make the nextTSB the previous TSB
-            prevTSB= nextTSB;
-            //update the next availble data block
-            this.setNextAvailbleTSB('data');
-            //local storage of next available data tsb
-            var nextTSB =this.getNextAvailbleDataTSB();
-            //and mark that data block as in use
-            this.markBlockAsUnAvail(prevTSB);
-            //then we make the meta data point to the next available datablock
-            this.setMetaData(prevTSB, nextTSB);            
-            //and we write out the data to said block
-            this.setDataBytes(prevTSB, dataArray[i]);
+            if (!this.diskFull){
+              //and make the nextTSB the previous TSB
+              prevTSB= nextTSB;
+              //update the next availble data block
+              this.setNextAvailbleTSB('data');
+              //local storage of next available data tsb
+              var nextTSB =this.getNextAvailbleDataTSB();
+              //and mark that data block as in use
+              this.markBlockAsUnAvail(prevTSB);
+              //then we make the meta data point to the next available datablock
+              this.setMetaData(prevTSB, nextTSB);            
+              //and we write out the data to said block
+              this.setDataBytes(prevTSB, dataArray[i]);
+            }
+            else // if disk full return false
+              return false;
           }
           //set the last block to not point to anything
           this.setMetaData(prevTSB, "000");
+          return true;
 
         }
         public readFile(fileName:string){
-          debugger;
+          
           var tsb = this.findFile(fileName, false);
           var contents ="";
           var nextTSB = this.getNextTSB(tsb);
@@ -351,87 +365,107 @@ module TSOS {
           }
 
           this.displayContents(contents);
+          return true;
         }
         public displayContents(contents:string){
           debugger;
           if (contents.indexOf('/n')!==-1){
             var contentsArray= contents.split('/n');
-            _StdOut.advanceLine();
             for (var i=0; i< contentsArray.length; i++){
               _StdOut.putText(contentsArray[i]);
               _StdOut.advanceLine();
             }
+            TSOS.Control.setFileData(contents);
           }
-          else
+          else{
             _StdOut.putText(contents);
+            _StdOut.advanceLine();
+            TSOS.Control.setFileData(contents);
+          }
         }
         public krnDiskInUse(params){
           debugger;
           var diskAction = params[0];
           var fileName = params[1];
           var data= params[2];
+          var success=false;
           DISK_IN_USE = true;
           switch(diskAction){
             case DiskAction.FullFormat:{
-              this.fullFormatDisk();
+              success =this.fullFormatDisk();
               _FileNames= new Queue();
               _Trash = new Queue();
               break;
             }
             case DiskAction.QuickFormat:{
-              this.quickFormatDisk();
+              success =this.quickFormatDisk();
               _Trash = _FileNames;
               _FileNames= new Queue();
               break;
             }
             case DiskAction.Create:{
               if (this.fileTFull===false)
-                this.createFile(fileName, false);
+                success =this.createFile(fileName, false);
               else{
-                _StdOut.advanceLine();
                 _StdOut.putText("File name track full, please empty trash.");
+                _StdOut.advanceLine();
+                success = false;
               }
               break;
             }
             case DiskAction.CreateForce:{
-              this.createFile(fileName, false);
+              success=this.createFile(fileName, false);
               break;
             }
             case DiskAction.Delete:{
-              this.deleteFile(this.findFile(fileName, false));
+              success=this.deleteFile(this.findFile(fileName, false));
               _Trash.enqueue(fileName);
               _FileNames.getAndRemove(fileName);
               break;
             }
             case DiskAction.DeleteAll:{
+              //TODO
               _Trash = _FileNames;
               _FileNames = new Queue();
               break;
             }
             case DiskAction.Write:{
-              //TODO
+              
               if (this.fileTFull===false){
-                //this.writeFile(false, fileName, data);
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
                   this.createFile(fileName, false);
-                  this.writeFile(fileName, data);
+                  success=this.writeFile(fileName, data);
+                }
+                else{
+                  //write to existing file
+                  success =this.writeFile(fileName, data);
                 }
               }
-              else{
-                _StdOut.advanceLine();
+              if (!success){
+                this.deleteFile(this.findFile(fileName, false));
                 _StdOut.putText("File name track full, please empty trash.");
+                _StdOut.advanceLine();
+                
               }
               break;
             }
             case DiskAction.Read:{
-              this.readFile(fileName);
+              success= this.readFile(fileName);
               break;
             }
 
           }
-
-
+          fileName = (fileName===undefined)? "" : fileName;
+          if (success){
+            _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+" was successful.");
+          }
+          else {
+            _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) +" " +fileName+" failed."); 
+            
+          }
+          _StdOut.advanceLine();
+          _OsShell.putPrompt();
           DISK_IN_USE =false;
           TSOS.Control.updateFileSystemDisplay(); 
         }

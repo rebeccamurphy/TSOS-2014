@@ -197,14 +197,29 @@
       </div>
     
       <div id="divUserProgramInput">
-          <label style="margin-bottom:1px;margin-top:10px">User Program Input</label>
-          <div id="programInput" class="" style="height:77px;width:368px;">
+            <ul class="nav nav-tabs" role="tablist" style="border-bottom:none">
+              <li id="pi"role="presentation" class="active" >
+                <a href="#programInput" data-toggle="tab"><label>Program Input</label></a>   
+              </li>
+              <li id="di">
+                <a href="#dataInput" data-toggle="tab"><label>File Data Input</label></a>
+              </li>
+            </ul>
+          <div class="tab-content">        
+          <!--<label style="margin-bottom:1px;margin-top:10px">User Program Input</label>-->
+          <div id="programInput" class="tab-pane active" style="height:77px;width:368px;">
                  <textarea name="taProgramInput"
                            id  ="taProgramInput" 
-                           style="height:77px;width:368px;" 
+                           style="height:62px;width:368px;border-color:#ddd" 
                  ></textarea>
           </div>
-         
+          <div id="dataInput" class="tab-pane" style="height:77px;width:368px;">
+                 <textarea name="taDataInput"
+                           id  ="taDataInput" 
+                           style="height:62px;width:368px;border-color:#ddd" 
+                 ></textarea>
+          </div>
+          </div>
         </div>
    </div>
    

@@ -57,11 +57,13 @@ var TSOS;
                                     sessionStorage.setItem(t + "" + s + "" + b, blankBlock);
                                 } catch (e) {
                                     alert('Quota exceeded!');
+                                    return false;
                                 }
                             }
                         }
                     }
                 }
+                return true;
             } else {
                 for (var t = 0; t <= 0; t++) {
                     for (var s = 0; s <= 7; s++) {
@@ -79,7 +81,6 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.getFileName = function (tsb) {
-            debugger;
             var temp = this.getDataBytes(tsb);
 
             //remove trailing 0s
@@ -90,6 +91,7 @@ var TSOS;
                 return "";
             return TSOS.Utils.hex2str(temp);
         };
+
         DeviceDriverFileSystem.prototype.getBlock = function (tsb) {
             return sessionStorage.getItem(tsb);
         };
@@ -193,7 +195,7 @@ var TSOS;
             }
         };
         DeviceDriverFileSystem.prototype.fullFormatDisk = function () {
-            this.init(true);
+            return this.init(true);
         };
         DeviceDriverFileSystem.prototype.quickFormatDisk = function () {
             for (var t = 0; t < this.tracks; t++) {
@@ -205,11 +207,13 @@ var TSOS;
                                 this.markBlockAsAvail(t + "" + s + "" + b);
                             } catch (e) {
                                 alert('Quota exceeded!');
+                                return false;
                             }
                         }
                     }
                 }
             }
+            return true;
         };
         DeviceDriverFileSystem.prototype.deleteFile = function (tsb) {
             //sets file name and all data as available
@@ -223,10 +227,9 @@ var TSOS;
 
             //remove the last block associate with that file
             this.markBlockAsAvail(tempTSB);
+            return true;
         };
         DeviceDriverFileSystem.prototype.deleteFileData = function (tsb) {
-            debugger;
-
             //skip deleting the file Unreadname
             var tempTSB = this.getNextTSB(tsb);
             while (tempTSB !== "000") {
@@ -235,17 +238,15 @@ var TSOS;
             }
         };
         DeviceDriverFileSystem.prototype.findFile = function (name, recover) {
-            //debugger;
-            var hexName = TSOS.Utils.str2hex(name);
             var swapFile1Chr = TSOS.Utils.str2hex(".");
             for (var t = 0; t <= 0; t++) {
                 for (var s = 0; s <= 7; s++) {
                     for (var b = 0; b <= 7; b++) {
                         if (t + "" + s + "" + b !== "000") {
-                            var tempData = this.getDataBytes(t + "" + s + "" + b);
-                            if (tempData.substring(0, hexName.length) === hexName) {
+                            var tempData = this.getFileName(t + "" + s + "" + b);
+                            if (tempData === name) {
                                 if (!recover && this.InUse(t + "" + s + "" + b)) {
-                                    if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(hexName)) {
+                                    if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(name)) {
                                         //scheduler finding a swap file
                                         //TODO
                                     } else {
@@ -278,7 +279,7 @@ var TSOS;
 
                 //return true that creation of file was successfull heh
                 return true;
-            } else {
+            } else if (!this.fileTFull) {
                 var tsb = this.getNextAvailbleFileTSB();
                 var hexName = TSOS.Utils.str2hex(fileName);
                 var newData = "";
@@ -294,11 +295,12 @@ var TSOS;
 
                 //update next availbale file tsb
                 this.setNextAvailbleTSB('file');
-            }
+
+                return true;
+            } else
+                return false;
         };
         DeviceDriverFileSystem.prototype.writeFile = function (fileName, data) {
-            debugger;
-
             //convert the data to hex and split the data into 60 char chunks
             var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
 
@@ -314,30 +316,33 @@ var TSOS;
             //now we start writing the data to disk
             var prevTSB = nextTSB;
             for (var i = 0; i < dataArray.length; i++) {
-                //and make the nextTSB the previous TSB
-                prevTSB = nextTSB;
+                if (!this.diskFull) {
+                    //and make the nextTSB the previous TSB
+                    prevTSB = nextTSB;
 
-                //update the next availble data block
-                this.setNextAvailbleTSB('data');
+                    //update the next availble data block
+                    this.setNextAvailbleTSB('data');
 
-                //local storage of next available data tsb
-                var nextTSB = this.getNextAvailbleDataTSB();
+                    //local storage of next available data tsb
+                    var nextTSB = this.getNextAvailbleDataTSB();
 
-                //and mark that data block as in use
-                this.markBlockAsUnAvail(prevTSB);
+                    //and mark that data block as in use
+                    this.markBlockAsUnAvail(prevTSB);
 
-                //then we make the meta data point to the next available datablock
-                this.setMetaData(prevTSB, nextTSB);
+                    //then we make the meta data point to the next available datablock
+                    this.setMetaData(prevTSB, nextTSB);
 
-                //and we write out the data to said block
-                this.setDataBytes(prevTSB, dataArray[i]);
+                    //and we write out the data to said block
+                    this.setDataBytes(prevTSB, dataArray[i]);
+                } else
+                    return false;
             }
 
             //set the last block to not point to anything
             this.setMetaData(prevTSB, "000");
+            return true;
         };
         DeviceDriverFileSystem.prototype.readFile = function (fileName) {
-            debugger;
             var tsb = this.findFile(fileName, false);
             var contents = "";
             var nextTSB = this.getNextTSB(tsb);
@@ -352,83 +357,100 @@ var TSOS;
             }
 
             this.displayContents(contents);
+            return true;
         };
         DeviceDriverFileSystem.prototype.displayContents = function (contents) {
             debugger;
             if (contents.indexOf('/n') !== -1) {
                 var contentsArray = contents.split('/n');
-                _StdOut.advanceLine();
                 for (var i = 0; i < contentsArray.length; i++) {
                     _StdOut.putText(contentsArray[i]);
                     _StdOut.advanceLine();
                 }
-            } else
+                TSOS.Control.setFileData(contents);
+            } else {
                 _StdOut.putText(contents);
+                _StdOut.advanceLine();
+                TSOS.Control.setFileData(contents);
+            }
         };
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
             debugger;
             var diskAction = params[0];
             var fileName = params[1];
             var data = params[2];
+            var success = false;
             DISK_IN_USE = true;
             switch (diskAction) {
                 case 7 /* FullFormat */: {
-                    this.fullFormatDisk();
+                    success = this.fullFormatDisk();
                     _FileNames = new TSOS.Queue();
                     _Trash = new TSOS.Queue();
                     break;
                 }
                 case 8 /* QuickFormat */: {
-                    this.quickFormatDisk();
+                    success = this.quickFormatDisk();
                     _Trash = _FileNames;
                     _FileNames = new TSOS.Queue();
                     break;
                 }
                 case 0 /* Create */: {
                     if (this.fileTFull === false)
-                        this.createFile(fileName, false);
+                        success = this.createFile(fileName, false);
                     else {
-                        _StdOut.advanceLine();
                         _StdOut.putText("File name track full, please empty trash.");
+                        _StdOut.advanceLine();
+                        success = false;
                     }
                     break;
                 }
                 case 1 /* CreateForce */: {
-                    this.createFile(fileName, false);
+                    success = this.createFile(fileName, false);
                     break;
                 }
                 case 5 /* Delete */: {
-                    this.deleteFile(this.findFile(fileName, false));
+                    success = this.deleteFile(this.findFile(fileName, false));
                     _Trash.enqueue(fileName);
                     _FileNames.getAndRemove(fileName);
                     break;
                 }
                 case 6 /* DeleteAll */: {
+                    //TODO
                     _Trash = _FileNames;
                     _FileNames = new TSOS.Queue();
                     break;
                 }
                 case 3 /* Write */: {
-                    //TODO
                     if (this.fileTFull === false) {
-                        //this.writeFile(false, fileName, data);
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
                             this.createFile(fileName, false);
-                            this.writeFile(fileName, data);
+                            success = this.writeFile(fileName, data);
+                        } else {
+                            //write to existing file
+                            success = this.writeFile(fileName, data);
                         }
-                    } else {
-                        _StdOut.advanceLine();
+                    }
+                    if (!success) {
+                        this.deleteFile(this.findFile(fileName, false));
                         _StdOut.putText("File name track full, please empty trash.");
+                        _StdOut.advanceLine();
                     }
                     break;
                 }
                 case 2 /* Read */: {
-                    this.readFile(fileName);
+                    success = this.readFile(fileName);
                     break;
                 }
             }
-
+            fileName = (fileName === undefined) ? "" : fileName;
+            if (success) {
+                _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName + " was successful.");
+            } else {
+                _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName + " failed.");
+            }
+            _StdOut.advanceLine();
+            _OsShell.putPrompt();
             DISK_IN_USE = false;
             TSOS.Control.updateFileSystemDisplay();
         };

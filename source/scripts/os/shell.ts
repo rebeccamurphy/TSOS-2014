@@ -207,7 +207,7 @@ module TSOS {
             sc = new ShellCommand(this.shellWriteFile,
                                   "write",
                                   "<filename>,<-append, -overwrite>, 'data'  - writes to data to specified file name. Defaults to"
-                                   +"overwrite if not specified. Use /n for newlines in your data.");
+                                   +"overwrite if not specified. Use /n for newlines in your data. If you have a lot of data you can paste it into the file data input.");
             this.commandList[this.commandList.length] = sc;
 
             //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
@@ -278,8 +278,11 @@ module TSOS {
                 _StdOut.advanceLine();
             }
             // ... and finally write the prompt again.
-            if (fn !== this.shellBSOD &&  fn!==this.shellShutdown) //unless we're BS-ing or shutting down
-                this.putPrompt();
+            if (fn !== this.shellBSOD &&  fn!==this.shellShutdown &&fn!==this.shellCreateFile &&fn!==this.shellFormatDisk
+                && fn !== this.shellReadFile && fn!==this.shellWriteFile && fn!==this.shellDeleteFile) {
+              //unless we're BS-ing or shutting down, or any disk commands
+              this.putPrompt();
+            }
         }
 
         public parseInput(buffer) {
@@ -779,18 +782,28 @@ module TSOS {
             debugger;
             var fileName = args[0];
             var typeOfWrite = args[1];
+            var boxContent  =TSOS.Control.getFileData();
             if (typeOfWrite==="-append"||typeOfWrite==="-overwrite" )
                 var data = args.slice(2);
             else
                 var data = args.slice(1);
-            data = data.join('');
-            if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
-                data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"'){
-                    _StdOut.putText("Data must be surrounded by quotes.");
-                    return;
+            data = data.join(' ');
+            if (typeOfWrite ==='' && boxContent===''){
+              _StdOut.putText("Write some data or put some data in the next box.");
+              return;
             }
-            //strip the quotes from the data
-            data =data.substring(1, data.length-1);
+            else if (boxContent!==''){
+              data = boxContent;
+            }
+            else if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
+                data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"'){
+                  _StdOut.putText("Data must be surrounded by quotes.");
+                   return;
+            }
+            else{
+              //strip the quotes from the data
+              data =data.substring(1, data.length-1);
+            }
             if (data.length===0){
                 _StdOut.putText("Please specify text to write.");
                 return;
