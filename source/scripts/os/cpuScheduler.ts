@@ -15,10 +15,37 @@ module TSOS {
 
         }
 
-        public loadProgram(pcb){
+        public loadProgramMem(pcb){
         	this.residentQueue.enqueue(pcb);
             TSOS.Control.updateAllQueueDisplays();
             //update the queue display
+
+        }
+        public loadProgramDisk(program:string, priority){
+            //create new PCB
+            var currPCB = new TSOS.PCB();
+            //add to list of PCBs 
+            //because we're starting with just loading 1 program in memory the base will be 0 for now
+            currPCB.base = null;
+
+            //set the pc of the pcb to start at the base
+            currPCB.PC = null;
+            //set the limit?
+            currPCB.limit = null;
+
+            //set the pcb state
+            currPCB.state = State.New;
+            //set the location to in memory
+            currPCB.location = Locations.Disk;
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
+            //add to the resident queue
+            this.residentQueue.enqueue(currPCB);
+            //update the displays
+            TSOS.Control.updateAllQueueDisplays();
+            //write program to disk
+            _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR+currPCB.pid, program]));
 
         }
         public clearMem(){

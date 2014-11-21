@@ -22,8 +22,8 @@ var TSOS;
             this.blocks = 8;
             this.metaData = 4;
             this.dataBytes = 60;
-            this.diskFull = false;
-            this.fileTFull = false;
+            this.diskDataFull = false;
+            this.diskFileFull = false;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
             SWAP_FILE_START_CHAR = TSOS.Utils.str2hex('.');
             //001-077 is for file names
@@ -63,6 +63,8 @@ var TSOS;
                         }
                     }
                 }
+                this.diskDataFull = false;
+                this.diskFileFull = false;
                 return true;
             } else {
                 for (var t = 0; t <= 0; t++) {
@@ -163,7 +165,7 @@ var TSOS;
                                 var newMBRData = sessionStorage.getItem("000");
                                 newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
                                 sessionStorage.setItem("000", newMBRData);
-                                this.diskFull = false;
+                                this.diskDataFull = false;
                                 return;
                             }
                         }
@@ -179,7 +181,7 @@ var TSOS;
                                 var newMBRData = sessionStorage.getItem("000");
                                 newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
                                 sessionStorage.setItem("000", newMBRData);
-                                this.diskFull = false;
+                                this.diskDataFull = false;
                                 return;
                             }
                         }
@@ -188,10 +190,10 @@ var TSOS;
             }
             if (type === 'data') {
                 //if neither prove fruitful make the disk as full
-                this.diskFull = true;
+                this.diskDataFull = true;
             } else if (type === 'file') {
                 //fileNames full
-                this.fileTFull = true;
+                this.diskFileFull = true;
             }
         };
         DeviceDriverFileSystem.prototype.fullFormatDisk = function () {
@@ -273,13 +275,13 @@ var TSOS;
                 this.deleteFileData(tsb);
 
                 //update next available block if disk is full
-                if (this.diskFull) {
+                if (this.diskDataFull) {
                     this.setNextAvailbleTSB('data');
                 }
 
                 //return true that creation of file was successfull heh
                 return true;
-            } else if (!this.fileTFull) {
+            } else if (!this.diskFileFull) {
                 var tsb = this.getNextAvailbleFileTSB();
                 var hexName = TSOS.Utils.str2hex(fileName);
                 var newData = "";
@@ -316,7 +318,7 @@ var TSOS;
             //now we start writing the data to disk
             var prevTSB = nextTSB;
             for (var i = 0; i < dataArray.length; i++) {
-                if (!this.diskFull) {
+                if (!this.diskDataFull) {
                     //and make the nextTSB the previous TSB
                     prevTSB = nextTSB;
 
@@ -395,7 +397,7 @@ var TSOS;
                     break;
                 }
                 case 0 /* Create */: {
-                    if (this.fileTFull === false)
+                    if (this.diskFileFull === false)
                         success = this.createFile(fileName, false);
                     else {
                         _StdOut.putText("File name track full, please empty trash.");
@@ -421,7 +423,7 @@ var TSOS;
                     break;
                 }
                 case 3 /* Write */: {
-                    if (this.fileTFull === false) {
+                    if (this.diskFileFull === false) {
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
                             this.createFile(fileName, false);

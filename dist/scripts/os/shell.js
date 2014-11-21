@@ -398,7 +398,12 @@ var TSOS;
             var tempProgramString = null;
             var tempPriority = args[0];
             if (_MemoryManager.nextFreeMem === null) {
-                _StdOut.putText("Cannot load program, memory full.");
+                //_StdOut.putText("Cannot load program, memory full.");
+                //need to put program on disk
+                if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull) {
+                    _StdOut.putText("Hard drive full, please empty trash or remove some files.");
+                    this.putPrompt();
+                }
                 return;
             }
             if ((boxContent.indexOf("BEEP") == -1 || boxContent.indexOf("BOOP") == -1)) {

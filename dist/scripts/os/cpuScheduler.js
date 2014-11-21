@@ -16,10 +16,43 @@ var TSOS;
             this.counter = counter;
             this.reorder = reorder;
         }
-        cpuScheduler.prototype.loadProgram = function (pcb) {
+        cpuScheduler.prototype.loadProgramMem = function (pcb) {
             this.residentQueue.enqueue(pcb);
             TSOS.Control.updateAllQueueDisplays();
             //update the queue display
+        };
+        cpuScheduler.prototype.loadProgramDisk = function (program, priority) {
+            //create new PCB
+            var currPCB = new TSOS.PCB();
+
+            //add to list of PCBs
+            //because we're starting with just loading 1 program in memory the base will be 0 for now
+            currPCB.base = null;
+
+            //set the pc of the pcb to start at the base
+            currPCB.PC = null;
+
+            //set the limit?
+            currPCB.limit = null;
+
+            //set the pcb state
+            currPCB.state = 0 /* New */;
+
+            //set the location to in memory
+            currPCB.location = 1 /* Disk */;
+
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
+
+            //add to the resident queue
+            this.residentQueue.enqueue(currPCB);
+
+            //update the displays
+            TSOS.Control.updateAllQueueDisplays();
+
+            //write program to disk
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* Write */, SWAP_FILE_START_CHAR + currPCB.pid, program]));
         };
         cpuScheduler.prototype.clearMem = function () {
             debugger;

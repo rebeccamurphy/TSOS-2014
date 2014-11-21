@@ -25,34 +25,32 @@ var TSOS;
             this.nextFreeMem = pcb.base;
         };
         MemoryManager.prototype.loadProgram = function (program, priority) {
-            if (typeof program !== "TSOS.PCB") {
-                //if loading a program directly into memory
-                //create new PCB
-                var currPCB = new TSOS.PCB();
+            //if loading a program directly into memory
+            //create new PCB
+            var currPCB = new TSOS.PCB();
 
-                //add to list of PCBs
-                //because we're starting with just loading 1 program in memory the base will be 0 for now
-                currPCB.base = this.nextFreeMem;
+            //add to list of PCBs
+            //because we're starting with just loading 1 program in memory the base will be 0 for now
+            currPCB.base = this.nextFreeMem;
 
-                //set the pc of the pcb to start at the base
-                currPCB.PC = currPCB.base;
+            //set the pc of the pcb to start at the base
+            currPCB.PC = currPCB.base;
 
-                //set the limit?
-                currPCB.limit = currPCB.base + _ProgramSize - 1;
+            //set the limit?
+            currPCB.limit = currPCB.base + _ProgramSize - 1;
 
-                //set the pcb state
-                currPCB.state = 0 /* New */;
+            //set the pcb state
+            currPCB.state = 0 /* New */;
 
-                //set the location to in memory
-                currPCB.location = 0 /* Memory */;
+            //set the location to in memory
+            currPCB.location = 0 /* Memory */;
 
-                //set the priority
-                if (priority !== undefined)
-                    currPCB.priority = priority;
-            }
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
 
-            //Put the program in the ready queue
-            _Scheduler.loadProgram(currPCB);
+            //Put the program in the resident queue
+            _Scheduler.loadProgramMem(currPCB);
 
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i + currPCB.base] = program[i];

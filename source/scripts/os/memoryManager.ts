@@ -27,7 +27,7 @@ module TSOS {
         }
         public loadProgram(program, priority:number){
 
-            if (typeof program !=="TSOS.PCB"){
+           
             //if loading a program directly into memory   
                 //create new PCB
                 var currPCB = new TSOS.PCB();
@@ -50,9 +50,9 @@ module TSOS {
                 //set the priority
                 if (priority !== undefined)
                     currPCB.priority = priority;
-            }
-            //Put the program in the ready queue
-            _Scheduler.loadProgram(currPCB);
+            
+            //Put the program in the resident queue
+            _Scheduler.loadProgramMem(currPCB);
 
             for (var i=0; i<program.length; i++){
                 this.memory.Data[i+currPCB.base] = program[i];

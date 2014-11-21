@@ -17,9 +17,9 @@ module TSOS {
         private blocks:    number;
         private metaData:  number;
         private dataBytes: number;
-        public  diskFull:  boolean;//data full
-        private fileTFull: boolean;//file track full
-        p
+        public  diskDataFull:  boolean;//data full
+        private diskFileFull: boolean;//file track full
+        
         constructor() {
             // Override the base method pointers.
             this.tracks   =4;
@@ -27,8 +27,8 @@ module TSOS {
             this.blocks   =8;
             this.metaData =4;
             this.dataBytes=60;
-            this.diskFull=false;
-            this.fileTFull = false;
+            this.diskDataFull=false;
+            this.diskFileFull = false;
             super(this.krnFileSystemDriverEntry, this.krnDiskInUse);
             SWAP_FILE_START_CHAR = TSOS.Utils.str2hex('.');
             //001-077 is for file names
@@ -71,6 +71,8 @@ module TSOS {
                 } 
               }
             }
+            this.diskDataFull=false;
+            this.diskFileFull=false;
             return true;
           }
           else{
@@ -174,7 +176,7 @@ module TSOS {
                       var newMBRData = sessionStorage.getItem("000");
                       newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t+""+s+""+b));
                       sessionStorage.setItem("000", newMBRData);
-                      this.diskFull =false;
+                      this.diskDataFull =false;
                       return; 
                   }                  
                  } 
@@ -190,7 +192,7 @@ module TSOS {
                       var newMBRData = sessionStorage.getItem("000");
                       newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t+""+s+""+b));
                       sessionStorage.setItem("000", newMBRData);
-                      this.diskFull=false;
+                      this.diskDataFull=false;
                       return; 
                   }                  
                  } 
@@ -199,11 +201,11 @@ module TSOS {
             }
             if (type ==='data'){
               //if neither prove fruitful make the disk as full
-              this.diskFull = true;
+              this.diskDataFull = true;
             }
             else if (type==='file'){
               //fileNames full
-              this.fileTFull=true;
+              this.diskFileFull=true;
             }
         }
         public fullFormatDisk(){
@@ -287,13 +289,13 @@ module TSOS {
             //delete its data
             this.deleteFileData(tsb);
             //update next available block if disk is full
-            if (this.diskFull){
+            if (this.diskDataFull){
               this.setNextAvailbleTSB('data');
             }
             //return true that creation of file was successfull heh
             return true;
           }
-          else if (!this.fileTFull){
+          else if (!this.diskFileFull){
             var tsb:string = this.getNextAvailbleFileTSB();
             var hexName = TSOS.Utils.str2hex(fileName);
             var newData = "";
@@ -327,7 +329,7 @@ module TSOS {
           //now we start writing the data to disk
           var prevTSB:string = nextTSB;
           for (var i=0; i<dataArray.length; i++){
-            if (!this.diskFull){
+            if (!this.diskDataFull){
               //and make the nextTSB the previous TSB
               prevTSB= nextTSB;
               //update the next availble data block
@@ -404,7 +406,7 @@ module TSOS {
               break;
             }
             case DiskAction.Create:{
-              if (this.fileTFull===false)
+              if (this.diskFileFull===false)
                 success =this.createFile(fileName, false);
               else{
                 _StdOut.putText("File name track full, please empty trash.");
@@ -431,7 +433,7 @@ module TSOS {
             }
             case DiskAction.Write:{
               
-              if (this.fileTFull===false){
+              if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
                   this.createFile(fileName, false);

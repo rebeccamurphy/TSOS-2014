@@ -124,9 +124,10 @@ var TSOS;
                     hex.push(numHex.toUpperCase());
                 }
                 var tempHexStr = hex.join(" ");
-                if (lang === "runnableBB")
-                    _MemoryManager.loadProgram(hex, priority);
-                else
+                if (lang === "runnableBB") {
+                    //TODO
+                    //_MemoryManager.loadProgram(hex, priority);
+                } else
                     //puts hex in text area
                     TSOS.Control.displayUserProgram(tempHexStr);
                 return true;
