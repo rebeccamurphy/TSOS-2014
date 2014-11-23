@@ -315,12 +315,21 @@ module TSOS {
           else
             return false;
         }
-        public writeFile(fileName:string, data:string){
+        public writeFile(fileName:string, data:string, append:boolean){
           
           //convert the data to hex and split the data into 60 char chunks
           var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
           //then we find the file
           var tsbFile:string = this.findFile(fileName, false);
+          
+          if (append){
+            //if where appending we need to start at the last bit of data associated with the file
+            var tempTSB =tsbFile;
+            while (tempTSB!="000"){
+              tsbFile= tempTSB;
+              tempTSB= this.getNextTSB(tempTSB);
+            }
+          }
           //local storage of next available data tsb
           var nextTSB:string =this.getNextAvailbleDataTSB();
           //then we make the meta data point to the next available datablock
@@ -349,7 +358,6 @@ module TSOS {
           //set the last block to not point to anything
           this.setMetaData(prevTSB, "000");
           return true;
-
         }
         public readFile(fileName:string){
           
@@ -370,7 +378,7 @@ module TSOS {
           return true;
         }
         public displayContents(contents:string){
-          debugger;
+          
           if (contents.indexOf('/n')!==-1){
             var contentsArray= contents.split('/n');
             for (var i=0; i< contentsArray.length; i++){
@@ -426,9 +434,20 @@ module TSOS {
               break;
             }
             case DiskAction.DeleteAll:{
+              debugger;
               //TODO
-              _Trash = _FileNames;
-              _FileNames = new Queue();
+              while(!_FileNames.isEmpty()){
+                var tempFile = _FileNames.dequeue();
+                success =this.deleteFile(this.findFile(tempFile, false));
+                if (success){
+                  //if the deleting of the file was successful add it to the trash
+                  _Trash.enqueue(tempFile);
+                }
+                else{
+                  //deleting all files has failed on one file and we just want to return. 
+                  break;
+                }
+              }            
               break;
             }
             case DiskAction.Write:{
@@ -437,11 +456,11 @@ module TSOS {
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
                   this.createFile(fileName, false);
-                  success=this.writeFile(fileName, data);
+                  success=this.writeFile(fileName, data, false);
                 }
                 else{
                   //write to existing file
-                  success =this.writeFile(fileName, data);
+                  success =this.writeFile(fileName, data, false);
                 }
               }
               if (!success){
@@ -450,6 +469,10 @@ module TSOS {
                 _StdOut.advanceLine();
                 
               }
+              break;
+            }
+            case DiskAction.AppendWrite:{
+              success=this.writeFile(fileName, data, true);
               break;
             }
             case DiskAction.Read:{

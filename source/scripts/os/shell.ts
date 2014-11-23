@@ -269,6 +269,7 @@ module TSOS {
 
         // args is an option parameter, ergo the ? which allows TypeScript to understand that
         public execute(fn, args?) {
+            debugger;
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
             // ... call the command function passing in the args...
@@ -763,6 +764,7 @@ module TSOS {
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify a file name.");
+                this.putPrompt();
                 return;   
             }
             else if (fileName ==="*"){
@@ -779,6 +781,7 @@ module TSOS {
             }
             else{
                 _StdOut.putText("Invalid file name. ");
+                this.putPrompt();
             }
 
         }
@@ -797,13 +800,14 @@ module TSOS {
               _StdOut.putText("Write some data or put some data in the next box.");
               return;
             }
-            else if (boxContent!==''){
-              data = boxContent;
-            }
             else if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
-                data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"'){
+                data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"' && data.length!==0){
                   _StdOut.putText("Data must be surrounded by quotes.");
+                  this.putPrompt();
                    return;
+            }
+            else if (boxContent!=='' && data.length===0){
+              data = boxContent;
             }
             else{
               //strip the quotes from the data
@@ -823,9 +827,14 @@ module TSOS {
                 return;
             }
             if (typeOfWrite==='-append'){
-                _StdOut.putText("Appending data to file: " + fileName );
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.AppendWrite, fileName, data]));
-
+                if (_FileNames.inQueue(fileName)){
+                  _StdOut.putText("Appending data to file: " + fileName );
+                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.AppendWrite, fileName, data]));
+                }
+                else{
+                  _StdOut.putText("Cannot append data to a file that does not exist.");
+                  this.putPrompt();
+                }
             }
             else {
                 _StdOut.putText("Writing data to file: " + fileName);

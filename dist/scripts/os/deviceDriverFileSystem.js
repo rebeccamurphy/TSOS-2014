@@ -302,12 +302,21 @@ var TSOS;
             } else
                 return false;
         };
-        DeviceDriverFileSystem.prototype.writeFile = function (fileName, data) {
+        DeviceDriverFileSystem.prototype.writeFile = function (fileName, data, append) {
             //convert the data to hex and split the data into 60 char chunks
             var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
 
             //then we find the file
             var tsbFile = this.findFile(fileName, false);
+
+            if (append) {
+                //if where appending we need to start at the last bit of data associated with the file
+                var tempTSB = tsbFile;
+                while (tempTSB != "000") {
+                    tsbFile = tempTSB;
+                    tempTSB = this.getNextTSB(tempTSB);
+                }
+            }
 
             //local storage of next available data tsb
             var nextTSB = this.getNextAvailbleDataTSB();
@@ -362,7 +371,6 @@ var TSOS;
             return true;
         };
         DeviceDriverFileSystem.prototype.displayContents = function (contents) {
-            debugger;
             if (contents.indexOf('/n') !== -1) {
                 var contentsArray = contents.split('/n');
                 for (var i = 0; i < contentsArray.length; i++) {
@@ -417,9 +425,18 @@ var TSOS;
                     break;
                 }
                 case 6 /* DeleteAll */: {
-                    //TODO
-                    _Trash = _FileNames;
-                    _FileNames = new TSOS.Queue();
+                    debugger;
+
+                    while (!_FileNames.isEmpty()) {
+                        var tempFile = _FileNames.dequeue();
+                        success = this.deleteFile(this.findFile(tempFile, false));
+                        if (success) {
+                            //if the deleting of the file was successful add it to the trash
+                            _Trash.enqueue(tempFile);
+                        } else {
+                            break;
+                        }
+                    }
                     break;
                 }
                 case 3 /* Write */: {
@@ -427,10 +444,10 @@ var TSOS;
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
                             this.createFile(fileName, false);
-                            success = this.writeFile(fileName, data);
+                            success = this.writeFile(fileName, data, false);
                         } else {
                             //write to existing file
-                            success = this.writeFile(fileName, data);
+                            success = this.writeFile(fileName, data, false);
                         }
                     }
                     if (!success) {
@@ -438,6 +455,10 @@ var TSOS;
                         _StdOut.putText("File name track full, please empty trash.");
                         _StdOut.advanceLine();
                     }
+                    break;
+                }
+                case 4 /* AppendWrite */: {
+                    success = this.writeFile(fileName, data, true);
                     break;
                 }
                 case 2 /* Read */: {
