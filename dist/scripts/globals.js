@@ -86,9 +86,11 @@ var DiskAction;
     DiskAction[DiskAction["FullFormat"] = 7] = "FullFormat";
     DiskAction[DiskAction["QuickFormat"] = 8] = "QuickFormat";
     DiskAction[DiskAction["EmptyTrash"] = 9] = "EmptyTrash";
+    DiskAction[DiskAction["Recover"] = 10] = "Recover";
+    DiskAction[DiskAction["RecoverAll"] = 11] = "RecoverAll";
 })(DiskAction || (DiskAction = {}));
 ;
-var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting', 'emptying trash'];
+var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
 var _FileNames = null;
 var _Trash = null;
 

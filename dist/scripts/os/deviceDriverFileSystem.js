@@ -243,6 +243,19 @@ var TSOS;
                 tempTSB = this.getNextTSB(tempTSB);
             }
         };
+        DeviceDriverFileSystem.prototype.recoverFile = function (tsb) {
+            debugger;
+            var tempTSB = this.getNextTSB(tsb);
+
+            //mark the title as in use
+            this.markBlockAsUnAvail(tsb);
+            while (tempTSB !== "000") {
+                //then do all the file data
+                this.markBlockAsUnAvail(tempTSB);
+                tempTSB = this.getNextTSB(tempTSB);
+            }
+            return true;
+        };
         DeviceDriverFileSystem.prototype.clearFile = function (tsb) {
             //clears file name and all data from file system
             var tempTSB1 = tsb;
@@ -279,7 +292,7 @@ var TSOS;
                                 } else if (recover) {
                                     //TODO
                                     //recovering file data
-                                    //  return t+""+s+""+b;
+                                    return t + "" + s + "" + b;
                                 } else {
                                     //deleting file
                                     return t + "" + s + "" + b;
@@ -451,13 +464,33 @@ var TSOS;
                     break;
                 }
                 case 6 /* DeleteAll */: {
-                    debugger;
                     while (!_FileNames.isEmpty()) {
                         var tempFile = _FileNames.dequeue();
                         success = this.deleteFile(this.findFile(tempFile, false));
                         if (success) {
                             //if the deleting of the file was successful add it to the trash
                             _Trash.enqueue(tempFile);
+                        } else {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case 10 /* Recover */: {
+                    success = this.recoverFile(this.findFile(fileName, true));
+                    if (success) {
+                        //if success move the file from the trash to file name
+                        _FileNames.enqueue(_Trash.getAndRemove(fileName));
+                    }
+                    break;
+                }
+                case 11 /* RecoverAll */: {
+                    while (!_Trash.isEmpty()) {
+                        var tempFile = _Trash.dequeue();
+                        success = this.recoverFile(this.findFile(tempFile, true));
+                        if (success) {
+                            //if the recovering of the file was successful add it to the trash
+                            _FileNames.enqueue(tempFile);
                         } else {
                             break;
                         }

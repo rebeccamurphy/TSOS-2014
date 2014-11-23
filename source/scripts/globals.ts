@@ -58,8 +58,8 @@ var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 enum Locations {Memory, Disk};
 var LocationsStr = ["Memory", "Disk"];
 
-enum DiskAction {Create, CreateForce, Read, Write, AppendWrite, Delete, DeleteAll, FullFormat, QuickFormat, EmptyTrash};
-var DiskActions = ['creating','force creating', 'reading', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting', 'emptying trash'];
+enum DiskAction {Create, CreateForce, Read, Write, AppendWrite, Delete, DeleteAll, FullFormat, QuickFormat, EmptyTrash, Recover, RecoverAll};
+var DiskActions = ['creating','force creating', 'reading', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
 var _FileNames=null;
 var _Trash=null;
 //

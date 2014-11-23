@@ -130,12 +130,8 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename, *> - deletes file with filename specified, or use * to delete all files.");
             this.commandList[this.commandList.length] = sc;
 
-            // ls  -lists all files stored on disk
-            sc = new TSOS.ShellCommand(this.shellListFiles, "ls", "- lists all files in current directory.");
-            this.commandList[this.commandList.length] = sc;
-
-            // trash  -displays all files that are deleted but still recoverable
-            sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
+            // recover
+            sc = new TSOS.ShellCommand(this.shellRecoverFile, "recover", "<filename, *> - recovers file with filename specified from trash, or use * to recover all files from trash.");
             this.commandList[this.commandList.length] = sc;
 
             //write - write   the data    inside  the quotes  to  filename    and display a   message denoting    success or  failure.
@@ -144,6 +140,14 @@ var TSOS;
 
             //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
             sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Displays the contents of specified file.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ls  -lists all files stored on disk
+            sc = new TSOS.ShellCommand(this.shellListFiles, "ls", "- lists all files in current directory.");
+            this.commandList[this.commandList.length] = sc;
+
+            // trash  -displays all files that are deleted but still recoverable
+            sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -205,7 +209,7 @@ var TSOS;
 
         // args is an option parameter, ergo the ? which allows TypeScript to understand that
         Shell.prototype.execute = function (fn, args) {
-            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile;
+            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && fn !== this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile && fn !== this.shellRecoverFile;
 
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
@@ -686,6 +690,28 @@ var TSOS;
             }
         };
 
+        Shell.prototype.shellRecoverFile = function (args) {
+            var fileName = args[0];
+            if (fileName === undefined) {
+                _StdOut.putText("Please specify a file name.");
+                _OsShell.putPromptNextLine();
+                return;
+            } else if (fileName === "*") {
+                //delete all files in directory
+                _StdOut.putText("Recovering All Files");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [11 /* RecoverAll */]));
+                return;
+            } else if (_Trash.inQueue(fileName)) {
+                //delete existing file
+                _StdOut.putText("Recovering File: " + fileName);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* Recover */, fileName]));
+                return;
+            } else {
+                _StdOut.putText("Invalid file name. ");
+                _OsShell.putPromptNextLine();
+            }
+        };
+
         Shell.prototype.shellWriteFile = function (args) {
             debugger;
             var fileName = args[0];
@@ -765,12 +791,18 @@ var TSOS;
         };
         Shell.prototype.shellTrashFiles = function (args) {
             if (args[0] === "-empty") {
-                _StdOut.putText("Trash being emptied.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* EmptyTrash */]));
-                return;
+                if (_Trash.isEmpty()) {
+                    _StdOut.putText("No trash to empty.");
+                    _OsShell.putPromptNextLine();
+                } else {
+                    _StdOut.putText("Trash being emptied.");
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* EmptyTrash */]));
+                    return;
+                }
             }
-            if (_Trash.getSize() === 0) {
+            if (_Trash.isEmpty()) {
                 _StdOut.putText("Trash empty.");
+                _OsShell.putPromptNextLine();
                 return;
             }
             _StdOut.putText("Recoverable files in trash are:");
