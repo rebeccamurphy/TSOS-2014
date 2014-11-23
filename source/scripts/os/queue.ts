@@ -43,6 +43,9 @@ module TSOS {
             //gets pcb
             return this.q[i];
         }
+        public getLast(){
+            return this.q[this.q.length-1];
+        }
         public inQueue(pid){
             if (typeof pid ==='number'){
                 for (var i =0; i<this.q.length; i++){

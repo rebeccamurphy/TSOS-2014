@@ -403,7 +403,7 @@ var TSOS;
         };
 
         Shell.prototype.shellLoad = function (args) {
-            //gets the text box content
+            debugger;
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
             var tempPriority = args[0];
@@ -415,7 +415,10 @@ var TSOS;
                     return;
                 } else {
                     tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
-                    _Scheduler.loadProgramDisk(tempProgramString, tempPriority);
+                    _StdOut.putText("Successfully loaded program.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("ProcessID: " + _Scheduler.loadProgramDisk(tempProgramString, tempPriority));
+                    return;
                 }
             }
             if ((boxContent.indexOf("BEEP") == -1 || boxContent.indexOf("BOOP") == -1)) {
@@ -434,7 +437,7 @@ var TSOS;
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX") {
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
-                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString, tempPriority));
+                _StdOut.putText("ProcessID: " + _Scheduler.loadProgramMem(tempProgramString, tempPriority));
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
                 TSOS.Utils.convertProgram("runnableBB", tempProgramString);
                 _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
@@ -596,21 +599,21 @@ var TSOS;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "quick" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* QuickFormat */]));
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -619,13 +622,13 @@ var TSOS;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* QuickFormat */]));
                 return;
             }
             if (firstParam === "full" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -634,7 +637,7 @@ var TSOS;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
                 return;
             }
 
@@ -681,12 +684,12 @@ var TSOS;
             } else if (fileName === "*") {
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* DeleteAll */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* DeleteAll */]));
                 return;
             } else if (_FileNames.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* Delete */, fileName]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* Delete */, fileName]));
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
@@ -703,12 +706,12 @@ var TSOS;
             } else if (fileName === "*") {
                 //delete all files in directory
                 _StdOut.putText("Recovering All Files");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [11 /* RecoverAll */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [12 /* RecoverAll */]));
                 return;
             } else if (_Trash.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Recovering File: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* Recover */, fileName]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [11 /* Recover */, fileName]));
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
@@ -759,7 +762,7 @@ var TSOS;
             if (typeOfWrite === '-append') {
                 if (_FileNames.inQueue(fileName)) {
                     _StdOut.putText("Appending data to file: " + fileName);
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* AppendWrite */, fileName, data]));
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [5 /* AppendWrite */, fileName, data]));
                 } else {
                     _StdOut.putText("Cannot append data to a file that does not exist.");
                     _OsShell.putPromptNextLine();
@@ -769,7 +772,7 @@ var TSOS;
                 _OsShell.putPromptNextLine();
             } else {
                 _StdOut.putText("Writing data to file: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* Write */, fileName, data]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Write */, fileName, data]));
             }
         };
         Shell.prototype.shellReadFile = function (args) {
@@ -802,7 +805,7 @@ var TSOS;
                     _OsShell.putPromptNextLine();
                 } else {
                     _StdOut.putText("Trash being emptied.");
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* EmptyTrash */]));
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* EmptyTrash */]));
                     return;
                 }
             }

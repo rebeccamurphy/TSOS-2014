@@ -25,7 +25,8 @@ var TSOS;
             this.diskDataFull = false;
             this.diskFileFull = false;
             _super.call(this, this.krnFileSystemDriverEntry, this.krnDiskInUse);
-            SWAP_FILE_START_CHAR = TSOS.Utils.str2hex('.');
+            SWAP_FILE_START_CHAR_HEX = TSOS.Utils.str2hex('SWAP_FILE_START_CHAR');
+            //todo switch instances of char to hex
             //001-077 is for file names
             //100-377 is for data
             //swap files begin with .
@@ -387,7 +388,7 @@ var TSOS;
             this.setMetaData(prevTSB, "000");
             return true;
         };
-        DeviceDriverFileSystem.prototype.readFile = function (fileName) {
+        DeviceDriverFileSystem.prototype.readFile = function (fileName, swap) {
             var tsb = this.findFile(fileName, false);
             var contents = "";
             var nextTSB = this.getNextTSB(tsb);
@@ -400,8 +401,10 @@ var TSOS;
                 contents += TSOS.Utils.hex2str(hexContents);
                 nextTSB = this.getNextTSB(nextTSB);
             }
-
-            this.displayContents(contents);
+            if (swap)
+                _ExecutingProgram = contents.match(/.{1,2}/g);
+            else
+                this.displayContents(contents);
             return true;
         };
         DeviceDriverFileSystem.prototype.displayContents = function (contents) {
@@ -425,13 +428,13 @@ var TSOS;
             var success = false;
             DISK_IN_USE = true;
             switch (diskAction) {
-                case 7 /* FullFormat */: {
+                case 8 /* FullFormat */: {
                     success = this.fullFormatDisk();
                     _FileNames = new TSOS.Queue();
                     _Trash = new TSOS.Queue();
                     break;
                 }
-                case 8 /* QuickFormat */: {
+                case 9 /* QuickFormat */: {
                     success = this.quickFormatDisk();
                     _Trash = _FileNames;
                     _FileNames = new TSOS.Queue();
@@ -455,13 +458,13 @@ var TSOS;
                     success = this.createFile(fileName, false);
                     break;
                 }
-                case 5 /* Delete */: {
+                case 6 /* Delete */: {
                     success = this.deleteFile(this.findFile(fileName, false));
                     _Trash.enqueue(fileName);
                     _FileNames.getAndRemove(fileName);
                     break;
                 }
-                case 6 /* DeleteAll */: {
+                case 7 /* DeleteAll */: {
                     while (!_FileNames.isEmpty()) {
                         var tempFile = _FileNames.dequeue();
                         success = this.deleteFile(this.findFile(tempFile, false));
@@ -474,7 +477,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 10 /* Recover */: {
+                case 11 /* Recover */: {
                     success = this.recoverFile(this.findFile(fileName, true));
                     if (success) {
                         //if success move the file from the trash to file name
@@ -482,7 +485,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 11 /* RecoverAll */: {
+                case 12 /* RecoverAll */: {
                     while (!_Trash.isEmpty()) {
                         var tempFile = _Trash.dequeue();
                         success = this.recoverFile(this.findFile(tempFile, true));
@@ -495,7 +498,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 3 /* Write */: {
+                case 4 /* Write */: {
                     if (this.diskFileFull === false) {
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
@@ -516,15 +519,22 @@ var TSOS;
                     }
                     break;
                 }
-                case 4 /* AppendWrite */: {
+                case 5 /* AppendWrite */: {
                     success = this.writeFile(fileName, data, true);
                     break;
                 }
                 case 2 /* Read */: {
-                    success = this.readFile(fileName);
+                    success = this.readFile(fileName, false);
+
                     break;
                 }
-                case 9 /* EmptyTrash */: {
+                case 3 /* ReadSwap */: {
+                    success = this.readFile(fileName, true);
+
+                    //also delete the program from disk
+                    success = this.clearFile(fileName);
+                }
+                case 10 /* EmptyTrash */: {
                     while (!_Trash.isEmpty()) {
                         var tempFile = _Trash.dequeue();
                         success = this.clearFile(this.findFile(tempFile, false));
@@ -537,7 +547,7 @@ var TSOS;
             }
             fileName = (fileName === undefined) ? "" : fileName;
             var msg = (success) ? " was successful." : " failed.";
-            if (SWAP_FILE_START_CHAR !== params[1].charAt(0)) {
+            if (SWAP_FILE_START_CHAR !== fileName.charAt(0)) {
                 //hide creation of swap files from user
                 _StdOut.advanceLine();
                 _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName + msg);

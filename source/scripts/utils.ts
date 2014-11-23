@@ -151,9 +151,10 @@ module TSOS {
         return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
     }
     public static str2hex(name:string){
+        debugger;
         var hexStr ="";
         for(var i =0; i< name.length; i++){
-            var temp = this.dec2hex(name.charCodeAt(i));
+            var temp = TSOS.Utils.dec2hex(name.charCodeAt(i));
             temp = new Array(2-temp.length).join('0')+temp;
             hexStr+=temp;
         }

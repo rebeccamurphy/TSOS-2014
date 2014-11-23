@@ -30,7 +30,8 @@ module TSOS {
             this.diskDataFull=false;
             this.diskFileFull = false;
             super(this.krnFileSystemDriverEntry, this.krnDiskInUse);
-            SWAP_FILE_START_CHAR = TSOS.Utils.str2hex('.');
+            SWAP_FILE_START_CHAR_HEX = TSOS.Utils.str2hex('SWAP_FILE_START_CHAR');
+            //todo switch instances of char to hex
             //001-077 is for file names
             //100-377 is for data
             //swap files begin with .
@@ -391,7 +392,7 @@ module TSOS {
           this.setMetaData(prevTSB, "000");
           return true;
         }
-        public readFile(fileName:string){
+        public readFile(fileName:string, swap:boolean):any{
           
           var tsb = this.findFile(fileName, false);
           var contents ="";
@@ -405,8 +406,10 @@ module TSOS {
             contents+= TSOS.Utils.hex2str(hexContents);
             nextTSB = this.getNextTSB(nextTSB);
           }
-
-          this.displayContents(contents);
+          if (swap)
+            _ExecutingProgram= contents.match(/.{1,2}/g);
+          else
+            this.displayContents(contents);
           return true;
         }
         public displayContents(contents:string){
@@ -537,8 +540,14 @@ module TSOS {
               break;
             }
             case DiskAction.Read:{
-              success= this.readFile(fileName);
+              success= this.readFile(fileName,false);
+
               break;
+            }
+            case DiskAction.ReadSwap:{
+              success = this.readFile(fileName, true);
+              //also delete the program from disk
+              success = this.clearFile(fileName);
             }
             case DiskAction.EmptyTrash:{
               while(!_Trash.isEmpty()){
@@ -556,7 +565,7 @@ module TSOS {
           }
           fileName = (fileName===undefined)? "" : fileName;
           var msg = (success) ? " was successful.": " failed.";
-          if (SWAP_FILE_START_CHAR !== params[1].charAt(0)){
+          if (SWAP_FILE_START_CHAR !== fileName.charAt(0)){
             //hide creation of swap files from user
             _StdOut.advanceLine();
             _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+msg);  

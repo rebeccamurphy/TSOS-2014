@@ -476,6 +476,7 @@ module TSOS {
 
         public shellLoad(args){
             //gets the text box content
+            debugger;
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
             var tempPriority = args[0];
@@ -487,10 +488,11 @@ module TSOS {
                     return;
                   }
                   else {
-
                     tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
-                    _Scheduler.loadProgramDisk(tempProgramString, tempPriority);
-
+                    _StdOut.putText("Successfully loaded program.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("ProcessID: " + _Scheduler.loadProgramDisk(tempProgramString, tempPriority));
+                    return;
                   }
                 }  
             if ((boxContent.indexOf("BEEP")==-1||boxContent.indexOf("BOOP")==-1)){
@@ -511,7 +513,7 @@ module TSOS {
             else if (Utils.checkValidProgram(tempProgramString)==="HEX"){
                 _StdOut.putText("Successfully loaded program.");
                 _StdOut.advanceLine();
-                _StdOut.putText("ProcessID: " + _MemoryManager.loadProgram(tempProgramString, tempPriority));
+                _StdOut.putText("ProcessID: " + _Scheduler.loadProgramMem(tempProgramString, tempPriority));
 
             }
             else if (Utils.checkValidProgram(tempProgramString)==="BB"){
@@ -841,7 +843,8 @@ module TSOS {
             data = data.join(' ');
             if (typeOfWrite ==='' && boxContent===''){
               _StdOut.putText("Write some data or put some data in the next box.");
-              _OsShell.putPromptNextLine();              return;
+              _OsShell.putPromptNextLine();              
+              return;
             }
             else if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
                 data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"' && data.length!==0){
@@ -858,16 +861,19 @@ module TSOS {
             }
             if (data.length===0){
                 _StdOut.putText("Please specify text to write.");
-                _OsShell.putPromptNextLine();                return;
+                _OsShell.putPromptNextLine();                
+                return;
             }
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify the file name you wish to write to.");
-                _OsShell.putPromptNextLine();                return;
+                _OsShell.putPromptNextLine();                
+                return;
             }
             if (data===undefined){
                 _StdOut.putText("Please specify the data you want written to the file.");
-                _OsShell.putPromptNextLine();                return;
+                _OsShell.putPromptNextLine();                
+                return;
             }
             if (typeOfWrite==='-append'){
                 if (_FileNames.inQueue(fileName)){

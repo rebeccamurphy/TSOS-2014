@@ -42,6 +42,7 @@ var SCHEDULE_TYPE :scheduleType= scheduleType.rr;
 var PREVIOUS_MESSAGE:string ="";
 var DISK_IN_USE:boolean = false;
 var SWAP_FILE_START_CHAR = ".";
+var SWAP_FILE_START_CHAR_HEX;
 var PUT_PROMPT = true;
 window.onload = function() {
 	//defines console original dimensions 
@@ -58,8 +59,8 @@ var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 enum Locations {Memory, Disk};
 var LocationsStr = ["Memory", "Disk"];
 
-enum DiskAction {Create, CreateForce, Read, Write, AppendWrite, Delete, DeleteAll, FullFormat, QuickFormat, EmptyTrash, Recover, RecoverAll};
-var DiskActions = ['creating','force creating', 'reading', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
+enum DiskAction {Create, CreateForce, Read, ReadSwap, Write, AppendWrite, Delete, DeleteAll, FullFormat, QuickFormat, EmptyTrash, Recover, RecoverAll};
+var DiskActions = ['creating','force creating', 'reading','reading swap file', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
 var _FileNames=null;
 var _Trash=null;
 //
@@ -79,6 +80,7 @@ var _TerminatedPrograms =[];
 var _CurrPID=0;
 var _ExecutingProgramPID; //pid of excuting program
 var _ExecutingProgramPCB; //pcb of excuting program
+var _ExecutingProgram=null;     //the program data of the executing program
 var _Assembly ="";
 var _OSclock: number = 0;  // Page 23.
 

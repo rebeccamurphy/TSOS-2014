@@ -86,6 +86,16 @@ var TSOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if ((_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) {
+                //clear the interval of the clock pulse
+                if (_ExecutingProgram !== null) {
+                    //load the executing program into memory, which will overwrite the last program
+                    //for disk stuff continuation from cpuScheduler line 177
+                    _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
+
+                    //load it into the cpu
+                    _CPU.loadProgram();
+                    _ExecutingProgram = null;
+                }
                 switch (SCHEDULE_TYPE) {
                     case 0 /* rr */: {
                         if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())

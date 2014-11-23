@@ -42,6 +42,9 @@ var TSOS;
             //gets pcb
             return this.q[i];
         };
+        Queue.prototype.getLast = function () {
+            return this.q[this.q.length - 1];
+        };
         Queue.prototype.inQueue = function (pid) {
             if (typeof pid === 'number') {
                 for (var i = 0; i < this.q.length; i++) {

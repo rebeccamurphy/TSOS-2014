@@ -39,6 +39,7 @@ var SCHEDULE_TYPE = 0 /* rr */;
 var PREVIOUS_MESSAGE = "";
 var DISK_IN_USE = false;
 var SWAP_FILE_START_CHAR = ".";
+var SWAP_FILE_START_CHAR_HEX;
 var PUT_PROMPT = true;
 window.onload = function () {
     //defines console original dimensions
@@ -79,18 +80,19 @@ var DiskAction;
     DiskAction[DiskAction["Create"] = 0] = "Create";
     DiskAction[DiskAction["CreateForce"] = 1] = "CreateForce";
     DiskAction[DiskAction["Read"] = 2] = "Read";
-    DiskAction[DiskAction["Write"] = 3] = "Write";
-    DiskAction[DiskAction["AppendWrite"] = 4] = "AppendWrite";
-    DiskAction[DiskAction["Delete"] = 5] = "Delete";
-    DiskAction[DiskAction["DeleteAll"] = 6] = "DeleteAll";
-    DiskAction[DiskAction["FullFormat"] = 7] = "FullFormat";
-    DiskAction[DiskAction["QuickFormat"] = 8] = "QuickFormat";
-    DiskAction[DiskAction["EmptyTrash"] = 9] = "EmptyTrash";
-    DiskAction[DiskAction["Recover"] = 10] = "Recover";
-    DiskAction[DiskAction["RecoverAll"] = 11] = "RecoverAll";
+    DiskAction[DiskAction["ReadSwap"] = 3] = "ReadSwap";
+    DiskAction[DiskAction["Write"] = 4] = "Write";
+    DiskAction[DiskAction["AppendWrite"] = 5] = "AppendWrite";
+    DiskAction[DiskAction["Delete"] = 6] = "Delete";
+    DiskAction[DiskAction["DeleteAll"] = 7] = "DeleteAll";
+    DiskAction[DiskAction["FullFormat"] = 8] = "FullFormat";
+    DiskAction[DiskAction["QuickFormat"] = 9] = "QuickFormat";
+    DiskAction[DiskAction["EmptyTrash"] = 10] = "EmptyTrash";
+    DiskAction[DiskAction["Recover"] = 11] = "Recover";
+    DiskAction[DiskAction["RecoverAll"] = 12] = "RecoverAll";
 })(DiskAction || (DiskAction = {}));
 ;
-var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
+var DiskActions = ['creating', 'force creating', 'reading', 'reading swap file', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting', 'emptying trash', 'recovering', 'recovering all'];
 var _FileNames = null;
 var _Trash = null;
 
@@ -112,6 +114,7 @@ var _TerminatedPrograms = [];
 var _CurrPID = 0;
 var _ExecutingProgramPID;
 var _ExecutingProgramPCB;
+var _ExecutingProgram = null;
 var _Assembly = "";
 var _OSclock = 0;
 

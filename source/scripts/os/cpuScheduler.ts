@@ -15,13 +15,42 @@ module TSOS {
 
         }
 
-        public loadProgramMem(pcb){
-        	this.residentQueue.enqueue(pcb);
+        public loadProgramMem(program, priority){
+            //if loading a program directly into memory   
+            //create new PCB
+            var currPCB = new TSOS.PCB();
+            //add to list of PCBs 
+            //because we're starting with just loading 1 program in memory the base will be 0 for now
+            currPCB.base = _MemoryManager.nextFreeMem;
+
+            //set the pc of the pcb to start at the base
+            currPCB.PC = currPCB.base;
+            //set the limit?
+            currPCB.limit = currPCB.base + _ProgramSize-1;
+
+            //set the pcb state
+            currPCB.state = State.New;
+
+            //set the priority
+            if (priority !== undefined)
+                currPCB.priority = priority;
+        
+            //Put the program in the resident queue
+        	this.residentQueue.enqueue(currPCB);
+            //put the program in memory
+
             TSOS.Control.updateAllQueueDisplays();
             //update the queue display
 
+            //update memory
+            _MemoryManager.loadProgram(currPCB, program);
+
+            //return program number
+            return (currPCB.pid).toString();
+
         }
-        public loadProgramDisk(program:string, priority){
+        public loadProgramDisk(program, priority){
+            debugger;
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -35,7 +64,7 @@ module TSOS {
 
             //set the pcb state
             currPCB.state = State.New;
-            //set the location to in memory
+            //set the location to in disk
             currPCB.location = Locations.Disk;
             //set the priority
             if (priority !== undefined)
@@ -45,7 +74,10 @@ module TSOS {
             //update the displays
             TSOS.Control.updateAllQueueDisplays();
             //write program to disk
-            _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR+currPCB.pid, program]));
+            _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR+String(currPCB.pid), program.join('')]));
+
+            //return pid
+            return currPCB.pid;
 
         }
         public clearMem(){
@@ -128,14 +160,43 @@ module TSOS {
         	}
         	//reset the counter
         	this.counter =0;
-
+            debugger;
         	//dequeue next program in line
         	_ExecutingProgramPCB = this.readyQueue.dequeue();
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;
-        	//load it into the cpu
-            //TODO make sure the program is loaded into memory 
-        	_CPU.loadProgram();
+            //check if the program is on disk()
+            if (_ExecutingProgramPCB.location === Locations.Disk) {
+                //we need to remove one program from memory and load the executing pcb to memory
+                var lastPCB = this.readyQueue.getAndRemove(this.readyQueue.getSize()-1);
+                var lastProgram=[];
+                //get the last program in the queue from memory
+                lastProgram = _MemoryManager.getProgram(lastPCB);
+                //make an executing program array
+                _krnFileSystemDriver.readFile(_krnFileSystemDriver.findFile(SWAP_FILE_START_CHAR +_ExecutingProgramPID, false));
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.ReadSwap, SWAP_FILE_START_CHAR +_ExecutingProgramPID]));
+                //set the base and limit of the Executing PCB to the lastPCB
+                _ExecutingProgramPCB.base = lastPCB.base;
+                _ExecutingProgramPCB.limit = lastPCB.limit;
+                if (_ExecutingProgramPCB.PC ===null)
+                    _ExecutingProgramPCB.PC =_ExecutingProgramPCB.base;
 
+                //load the executing program into memory, which will overwrite the last program
+                //in kernel clock pulse
+
+                //set the location of the last program to disk
+                lastPCB.location =Locations.Disk;
+
+                //write the last program to disk
+                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR +lastPCB.pid, lastProgram.join('')]));
+                //finally re enqueue the lastpcb
+                this.readyQueue.enqueue(lastPCB);
+
+
+            }
+            else{
+        	   //load it into the cpu
+        	   _CPU.loadProgram();
+            }
         }
         public stopRunning(pid){
             
