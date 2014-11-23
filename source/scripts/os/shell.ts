@@ -484,10 +484,17 @@ module TSOS {
                   //need to put program on disk
                   if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull){
                     _StdOut.putText("Hard drive full, please empty trash or remove some files.");
+                    return;
                   }
-                return;
+                  else {
+
+                    tempProgramString = boxContent.replace( /\n/g, " " ).split( " " );
+                    _Scheduler.loadProgramDisk(tempProgramString, tempPriority);
+
+                  }
                 }  
             if ((boxContent.indexOf("BEEP")==-1||boxContent.indexOf("BOOP")==-1)){
+                //TODO do scheduling beepboop
                 //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
                 tempProgramString= boxContent.replace(/\s+/g, '');
                 tempProgramString = tempProgramString.replace( /\n+/g, '' );
@@ -884,6 +891,8 @@ module TSOS {
             var fileName = args[0];
             if (!_FileNames.inQueue(fileName)){
                 _StdOut.putText("Invalid fileName");
+                _OsShell.putPromptNextLine();    
+                return;
             }
 
             _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Read, fileName]));    

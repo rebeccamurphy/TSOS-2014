@@ -285,7 +285,6 @@ module TSOS {
 
         }
         public findFile(name:string, recover:boolean){
-            debugger;
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
@@ -295,7 +294,7 @@ module TSOS {
                       if (!recover && this.InUse(t+""+s+""+b)){
                         if (tempData.indexOf(SWAP_FILE_START_CHAR) === tempData.indexOf(name)){
                           //scheduler finding a swap file
-                          //TODO
+                          return t+""+s+""+b;
                         }
                         else {
                           //user creating a file
@@ -422,7 +421,6 @@ module TSOS {
           }
           else{
             _StdOut.putText(contents);
-            _StdOut.advanceLine();
             TSOS.Control.setFileData(contents);
           }
         }
@@ -558,10 +556,12 @@ module TSOS {
           }
           fileName = (fileName===undefined)? "" : fileName;
           var msg = (success) ? " was successful.": " failed.";
-
-          _StdOut.advanceLine();
-          _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+msg);  
-          _StdOut.advanceLine();
+          if (SWAP_FILE_START_CHAR !== params[1].charAt(0)){
+            //hide creation of swap files from user
+            _StdOut.advanceLine();
+            _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+msg);  
+            _StdOut.advanceLine();
+          }
           _OsShell.putPrompt();
           DISK_IN_USE =false;
           TSOS.Control.updateFileSystemDisplay(); 
