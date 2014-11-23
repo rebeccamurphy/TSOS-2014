@@ -13,7 +13,7 @@
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var APP_NAME: string    = "MysteriOS Bloop";   
-var APP_VERSION: string = "Uglyier Baby";   
+var APP_VERSION: string = "The Ugliest Baby";   
 
 var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 
@@ -58,8 +58,8 @@ var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 enum Locations {Memory, Disk};
 var LocationsStr = ["Memory", "Disk"];
 
-enum DiskAction {Create, CreateForce, Read, Write, AppendWrite, Delete,DeleteAll, FullFormat, QuickFormat};
-var DiskActions = ['creating','force creating', 'reading', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting'];
+enum DiskAction {Create, CreateForce, Read, Write, AppendWrite, Delete, DeleteAll, FullFormat, QuickFormat, EmptyTrash};
+var DiskActions = ['creating','force creating', 'reading', 'writing','appending', 'deleting','deleting all', 'full formatting', 'quick formatting', 'emptying trash'];
 var _FileNames=null;
 var _Trash=null;
 //

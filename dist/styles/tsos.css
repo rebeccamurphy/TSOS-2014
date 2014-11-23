@@ -1,7 +1,7 @@
 /* TSOS.css */
 
 body {
-  /*background: #909193 url(../images/linen.png) repeat;*/
+  /*background: #909193 uro(../images/linen.png) repeat;*/
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -166,6 +166,10 @@ td {
   color:green;
   padding: 0px 5px;
 }
+#osclock{
+  display: inline-block;
+  color:green;
+}
 .log_msg{
   display: inline-block;
   font-weight: normal!important;
@@ -190,7 +194,7 @@ td {
   width: 335px;
 }
 #FileSystem{
-  float:right;
+  /*float:right;*/
   max-width: 760px;
   padding-left: 0px;
   padding-right: 34px;

@@ -10,7 +10,7 @@ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var APP_NAME = "MysteriOS Bloop";
-var APP_VERSION = "Uglyier Baby";
+var APP_VERSION = "The Ugliest Baby";
 
 var CPU_CLOCK_INTERVAL = 100;
 
@@ -85,9 +85,10 @@ var DiskAction;
     DiskAction[DiskAction["DeleteAll"] = 6] = "DeleteAll";
     DiskAction[DiskAction["FullFormat"] = 7] = "FullFormat";
     DiskAction[DiskAction["QuickFormat"] = 8] = "QuickFormat";
+    DiskAction[DiskAction["EmptyTrash"] = 9] = "EmptyTrash";
 })(DiskAction || (DiskAction = {}));
 ;
-var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting'];
+var DiskActions = ['creating', 'force creating', 'reading', 'writing', 'appending', 'deleting', 'deleting all', 'full formatting', 'quick formatting', 'emptying trash'];
 var _FileNames = null;
 var _Trash = null;
 

@@ -222,6 +222,10 @@ module TSOS {
         public putPrompt() {
             _StdOut.putText(this.promptStr);
         }
+        public putPromptNextLine(){
+            _StdOut.advanceLine();
+            _StdOut.putText(this.promptStr);
+        }
 
         public handleInput(buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
@@ -269,18 +273,18 @@ module TSOS {
 
         // args is an option parameter, ergo the ? which allows TypeScript to understand that
         public execute(fn, args?) {
-            debugger;
+            var nonPrompt:boolean= fn!==this.shellCreateFile &&fn!==this.shellFormatDisk && this.shellTrashFiles
+                && fn !== this.shellReadFile && fn!==this.shellWriteFile && fn!==this.shellDeleteFile;
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
             // ... call the command function passing in the args...
             fn(args);
             // Check to see if we need to advance the line again
-            if (_StdOut.currentXPosition > 0) {
+            if (_StdOut.currentXPosition > 0 && nonPrompt) {
                 _StdOut.advanceLine();
             }
             // ... and finally write the prompt again.
-            if (fn !== this.shellBSOD &&  fn!==this.shellShutdown &&fn!==this.shellCreateFile &&fn!==this.shellFormatDisk
-                && fn !== this.shellReadFile && fn!==this.shellWriteFile && fn!==this.shellDeleteFile) {
+            if (fn !== this.shellBSOD &&  fn!==this.shellShutdown && nonPrompt) {
               //unless we're BS-ing or shutting down, or any disk commands
               this.putPrompt();
             }
@@ -471,7 +475,6 @@ module TSOS {
                   //need to put program on disk
                   if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull){
                     _StdOut.putText("Hard drive full, please empty trash or remove some files.");
-                    this.putPrompt();
                   }
                 return;
                 }  
@@ -764,8 +767,7 @@ module TSOS {
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify a file name.");
-                this.putPrompt();
-                return;   
+                _OsShell.putPromptNextLine();                return;   
             }
             else if (fileName ==="*"){
                 //delete all files in directory
@@ -781,8 +783,7 @@ module TSOS {
             }
             else{
                 _StdOut.putText("Invalid file name. ");
-                this.putPrompt();
-            }
+                _OsShell.putPromptNextLine();            }
 
         }
 
@@ -798,13 +799,13 @@ module TSOS {
             data = data.join(' ');
             if (typeOfWrite ==='' && boxContent===''){
               _StdOut.putText("Write some data or put some data in the next box.");
-              return;
+              _OsShell.putPromptNextLine();              return;
             }
             else if (data.charAt(0)!=="'"&& data.charAt(0)!=='"' && 
                 data.charAt(data.length-1)!=="'" && data.charAt(data.length-1)!=='"' && data.length!==0){
                   _StdOut.putText("Data must be surrounded by quotes.");
-                  this.putPrompt();
-                   return;
+                  _OsShell.putPromptNextLine();                  
+                  return;
             }
             else if (boxContent!=='' && data.length===0){
               data = boxContent;
@@ -815,16 +816,16 @@ module TSOS {
             }
             if (data.length===0){
                 _StdOut.putText("Please specify text to write.");
-                return;
+                _OsShell.putPromptNextLine();                return;
             }
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify the file name you wish to write to.");
-                return;
+                _OsShell.putPromptNextLine();                return;
             }
             if (data===undefined){
                 _StdOut.putText("Please specify the data you want written to the file.");
-                return;
+                _OsShell.putPromptNextLine();                return;
             }
             if (typeOfWrite==='-append'){
                 if (_FileNames.inQueue(fileName)){
@@ -833,9 +834,11 @@ module TSOS {
                 }
                 else{
                   _StdOut.putText("Cannot append data to a file that does not exist.");
-                  this.putPrompt();
-                }
+                  _OsShell.putPromptNextLine();                }
             }
+            else if (_Trash.inQueue(fileName)){
+              _StdOut.putText("File is in trash, it cannot be written to. Recover the file or empty the trash.");  
+              _OsShell.putPromptNextLine();            }
             else {
                 _StdOut.putText("Writing data to file: " + fileName);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, fileName, data]));    
@@ -864,7 +867,12 @@ module TSOS {
                 _StdOut.advanceLine();
             }
         }
-        public shellTrashFiles(){
+        public shellTrashFiles(args){
+            if (args[0] === "-empty"){
+              _StdOut.putText("Trash being emptied.");
+              _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.EmptyTrash]));
+              return;
+            }
             if (_Trash.getSize()===0){
                 _StdOut.putText("Trash empty.");
                 return;

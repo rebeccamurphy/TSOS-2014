@@ -106,6 +106,10 @@ module TSOS {
         public getBlock(tsb:string){
           return sessionStorage.getItem(tsb);
         }
+        public eraseBlock(tsb:string){
+          var blankBlock =new Array(this.dataBytes+this.metaData+1).join('0');
+          sessionStorage.setItem(tsb, blankBlock);
+        }
         
 
         public getMetaData(tsb:string){
@@ -252,9 +256,24 @@ module TSOS {
             tempTSB = this.getNextTSB(tempTSB);
           }
         }
+        public clearFile(tsb:string){
+          //clears file name and all data from file system
+          var tempTSB1 = tsb;
+          var tempTSB2 = tempTSB1;
+          while (tempTSB1!=="000"){
+            //previous block
+            tempTSB2 = tempTSB1;
+            //get next block
+            tempTSB1 = this.getNextTSB(tempTSB2);
+            //erase previous block
+            this.eraseBlock(tempTSB2);
+          }
+
+          return true;
+
+        }
         public findFile(name:string, recover:boolean){
-          
-          var swapFile1Chr = TSOS.Utils.str2hex(".");
+            debugger;
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
@@ -262,7 +281,7 @@ module TSOS {
                     var tempData = this.getFileName(t+""+s+""+b);
                     if (tempData===name){
                       if (!recover && this.InUse(t+""+s+""+b)){
-                        if (tempData.indexOf(swapFile1Chr) === tempData.indexOf(name)){
+                        if (tempData.indexOf(SWAP_FILE_START_CHAR) === tempData.indexOf(name)){
                           //scheduler finding a swap file
                           //TODO
                         }
@@ -271,10 +290,15 @@ module TSOS {
                           return t+""+s+""+b;
                         }
                       }
-                      else {
+                      else if (recover){
                       //TODO
                       //recovering file data
-                      }   
+                      //  return t+""+s+""+b;
+                      } 
+                      else {
+                        //deleting file
+                        return t+""+s+""+b;
+                      }  
                     }
                   }                  
                 }
@@ -303,9 +327,6 @@ module TSOS {
             newData = hexName + new Array(65-hexName.length-this.metaData).join("0");
             //set the tsb in use with new data
             sessionStorage.setItem(tsb, '1'+"000"+newData);
-            //add file name to list
-            _FileNames.enqueue(fileName);
-
             //update next availbale file tsb
             this.setNextAvailbleTSB('file');
 
@@ -421,6 +442,11 @@ module TSOS {
                 _StdOut.advanceLine();
                 success = false;
               }
+              if (success){
+                //add file name to list
+                _FileNames.enqueue(fileName);
+
+              }
               break;
             }
             case DiskAction.CreateForce:{
@@ -435,7 +461,6 @@ module TSOS {
             }
             case DiskAction.DeleteAll:{
               debugger;
-              //TODO
               while(!_FileNames.isEmpty()){
                 var tempFile = _FileNames.dequeue();
                 success =this.deleteFile(this.findFile(tempFile, false));
@@ -467,7 +492,10 @@ module TSOS {
                 this.deleteFile(this.findFile(fileName, false));
                 _StdOut.putText("File name track full, please empty trash.");
                 _StdOut.advanceLine();
-                
+              }
+              else {
+                //add file name to list
+                _FileNames.enqueue(fileName);
               }
               break;
             }
@@ -479,16 +507,25 @@ module TSOS {
               success= this.readFile(fileName);
               break;
             }
+            case DiskAction.EmptyTrash:{
+              while(!_Trash.isEmpty()){
+                var tempFile = _Trash.dequeue();
+                success =this.clearFile(this.findFile(tempFile, false));
+                if (!success){
+                  //emptying trash has failed 
+                  break;
+                }
+              }            
+              break;
+
+            }
 
           }
           fileName = (fileName===undefined)? "" : fileName;
-          if (success){
-            _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+" was successful.");
-          }
-          else {
-            _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) +" " +fileName+" failed."); 
-            
-          }
+          var msg = (success) ? " was successful.": " failed.";
+
+          _StdOut.advanceLine();
+          _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+msg);  
           _StdOut.advanceLine();
           _OsShell.putPrompt();
           DISK_IN_USE =false;

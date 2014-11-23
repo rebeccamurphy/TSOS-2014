@@ -62,12 +62,13 @@ var TSOS;
 
             // Build the log string.
             var str = "";
-            str += "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small id='logtime'>" + now + "</small></div>";
+            str += "<div id ='osclock'>" + _OSclock + "</div>" + "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small id='logtime'>" + now + "</small></div>";
 
             // Update the log console.
             if (PREVIOUS_MESSAGE === "Idle" && msg === "Idle") {
                 //so the host log doesn't have a million idles, just changes the time if the previous messages was also idle
                 document.getElementById("logtime").innerHTML = now;
+                document.getElementById("osclock").innerHTML = "" + _OSclock;
             } else {
                 var taLog = document.getElementById("taHostLog");
                 taLog.innerHTML = "<div class='logmsg'>" + str + "</div>" + taLog.innerHTML;
@@ -386,7 +387,6 @@ var TSOS;
             for (var t = 0; t < _krnFileSystemDriver.tracks; t++) {
                 for (var s = 0; s < _krnFileSystemDriver.sectors; s++) {
                     for (var b = 0; b < _krnFileSystemDriver.blocks; b++) {
-                        debugger;
                         tsbStr = t + "" + s + "" + b;
                         blockStr = _krnFileSystemDriver.getDataBytes(tsbStr);
                         metaStr = _krnFileSystemDriver.getMetaData(tsbStr);
