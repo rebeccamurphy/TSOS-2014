@@ -30,7 +30,7 @@ module TSOS {
             this.diskDataFull=false;
             this.diskFileFull = false;
             super(this.krnFileSystemDriverEntry, this.krnDiskInUse);
-            SWAP_FILE_START_CHAR_HEX = TSOS.Utils.str2hex('SWAP_FILE_START_CHAR');
+            SWAP_FILE_START_CHAR_HEX = TSOS.Utils.str2hex(SWAP_FILE_START_CHAR);
             //todo switch instances of char to hex
             //001-077 is for file names
             //100-377 is for data
@@ -83,7 +83,8 @@ module TSOS {
                 for(var b=0; b<=7;b++){
                   if (""+t+""+s+""+b !== "000"){
                     var tempName = this.getFileName(t+""+s+""+b);
-                    if(tempName!=="" && tempName.indexOf(SWAP_FILE_START_CHAR)===-1 && this.InUse(t+""+s+""+b))
+                    if(tempName!=="" && SWAP_FILE_START_CHAR !== tempName.charAt(0)
+                      && this.InUse(t+""+s+""+b))
                       //makes sure swap files are not added to the file list
                       _FileNames.enqueue(tempName);  
                   } 
@@ -286,6 +287,7 @@ module TSOS {
 
         }
         public findFile(name:string, recover:boolean){
+          debugger;
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
@@ -293,7 +295,7 @@ module TSOS {
                     var tempData = this.getFileName(t+""+s+""+b);
                     if (tempData===name){
                       if (!recover && this.InUse(t+""+s+""+b)){
-                        if (tempData.indexOf(SWAP_FILE_START_CHAR) === tempData.indexOf(name)){
+                        if (SWAP_FILE_START_CHAR === tempData.charAt(0)){
                           //scheduler finding a swap file
                           return t+""+s+""+b;
                         }
@@ -428,12 +430,15 @@ module TSOS {
           }
         }
         public krnDiskInUse(params){
-          debugger;
+          
           var diskAction = params[0];
           var fileName = params[1];
           var data= params[2];
           var success=false;
           DISK_IN_USE = true;
+          fileName = (fileName===undefined)? "" : fileName;
+          var notSwap = fileName.charAt(0)!== SWAP_FILE_START_CHAR;
+          
           switch(diskAction){
             case DiskAction.FullFormat:{
               success =this.fullFormatDisk();
@@ -448,6 +453,7 @@ module TSOS {
               break;
             }
             case DiskAction.Create:{
+
               if (this.diskFileFull===false)
                 success =this.createFile(fileName, false);
               else{
@@ -455,7 +461,7 @@ module TSOS {
                 _StdOut.advanceLine();
                 success = false;
               }
-              if (success){
+              if (success && notSwap){
                 //add file name to list
                 _FileNames.enqueue(fileName);
 
@@ -464,19 +470,26 @@ module TSOS {
             }
             case DiskAction.CreateForce:{
               success=this.createFile(fileName, false);
+              if (success && notSwap){
+                //add file name to list
+                _FileNames.enqueue(fileName);
+
+              }
               break;
             }
             case DiskAction.Delete:{
               success=this.deleteFile(this.findFile(fileName, false));
-              _Trash.enqueue(fileName);
-              _FileNames.getAndRemove(fileName);
+              if (success && notSwap){
+                _Trash.enqueue(fileName);
+                _FileNames.getAndRemove(fileName);
+              }
               break;
             }
             case DiskAction.DeleteAll:{
               while(!_FileNames.isEmpty()){
                 var tempFile = _FileNames.dequeue();
                 success =this.deleteFile(this.findFile(tempFile, false));
-                if (success){
+                if (success&&notSwap){
                   //if the deleting of the file was successful add it to the trash
                   _Trash.enqueue(tempFile);
                 }
@@ -489,7 +502,7 @@ module TSOS {
             }
             case DiskAction.Recover:{
               success = this.recoverFile(this.findFile(fileName, true));
-              if (success){
+              if (success&&notSwap){
                 //if success move the file from the trash to file name
                 _FileNames.enqueue(_Trash.getAndRemove(fileName));
                 
@@ -500,7 +513,7 @@ module TSOS {
               while(!_Trash.isEmpty()){
                 var tempFile = _Trash.dequeue();
                 success =this.recoverFile(this.findFile(tempFile, true));
-                if (success){
+                if (success&&notSwap){
                   //if the recovering of the file was successful add it to the trash
                   _FileNames.enqueue(tempFile);
                 }
@@ -529,7 +542,7 @@ module TSOS {
                 _StdOut.putText("File name track full, please empty trash.");
                 _StdOut.advanceLine();
               }
-              else {
+              else if (notSwap){
                 //add file name to list
                 _FileNames.enqueue(fileName);
               }
@@ -563,15 +576,16 @@ module TSOS {
             }
 
           }
-          fileName = (fileName===undefined)? "" : fileName;
+          
           var msg = (success) ? " was successful.": " failed.";
-          if (SWAP_FILE_START_CHAR !== fileName.charAt(0)){
+          if (notSwap){
             //hide creation of swap files from user
             _StdOut.advanceLine();
             _StdOut.putText(TSOS.Utils.capitaliseFirstLetter(DiskActions[diskAction]) + " " + fileName+msg);  
             _StdOut.advanceLine();
+            _OsShell.putPrompt();
           }
-          _OsShell.putPrompt();
+          
           DISK_IN_USE =false;
           TSOS.Control.updateFileSystemDisplay(); 
         }

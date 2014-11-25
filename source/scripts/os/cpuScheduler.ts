@@ -172,7 +172,7 @@ module TSOS {
                 //get the last program in the queue from memory
                 lastProgram = _MemoryManager.getProgram(lastPCB);
                 //make an executing program array
-                _krnFileSystemDriver.readFile(_krnFileSystemDriver.findFile(SWAP_FILE_START_CHAR +_ExecutingProgramPID, false));
+                _krnFileSystemDriver.readFile(SWAP_FILE_START_CHAR +_ExecutingProgramPID, true);
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.ReadSwap, SWAP_FILE_START_CHAR +_ExecutingProgramPID]));
                 //set the base and limit of the Executing PCB to the lastPCB
                 _ExecutingProgramPCB.base = lastPCB.base;

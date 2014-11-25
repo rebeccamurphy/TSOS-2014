@@ -185,7 +185,7 @@ var TSOS;
                 lastProgram = _MemoryManager.getProgram(lastPCB);
 
                 //make an executing program array
-                _krnFileSystemDriver.readFile(_krnFileSystemDriver.findFile(SWAP_FILE_START_CHAR + _ExecutingProgramPID, false));
+                _krnFileSystemDriver.readFile(SWAP_FILE_START_CHAR + _ExecutingProgramPID, true);
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* ReadSwap */, SWAP_FILE_START_CHAR + _ExecutingProgramPID]));
 
                 //set the base and limit of the Executing PCB to the lastPCB
