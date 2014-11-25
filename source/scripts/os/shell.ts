@@ -476,7 +476,7 @@ module TSOS {
 
         public shellLoad(args){
             //gets the text box content
-            debugger;
+            
             var boxContent  =TSOS.Control.getUserProgram();
             var tempProgramString = null;
             var tempPriority = args[0];
@@ -895,13 +895,15 @@ module TSOS {
         }
         public shellReadFile(args){
             var fileName = args[0];
-            if (!_FileNames.inQueue(fileName)){
+            var sudo = args[1];
+            if (!_FileNames.inQueue(fileName)&&sudo!=="sudo"){
                 _StdOut.putText("Invalid fileName");
                 _OsShell.putPromptNextLine();    
                 return;
             }
-
+            else{
             _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Read, fileName]));    
+          }
         }
 
 

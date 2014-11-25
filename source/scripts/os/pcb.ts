@@ -18,7 +18,8 @@ module TSOS {
                     public limit:number=0,  //max location in the mems. to prevent
                     public state: State =State.New, //new, ready, or running state of program
                     public priority:number = DEFAULT_PRIORITY,
-                    public location:Locations = Locations.Memory //defaults to memory, if written to disk will switch to disk
+                    public location:Locations = Locations.Memory, //defaults to memory, if written to disk will switch to disk
+                    public length:number =0
                     ) {
 
         this.pid = _CurrPID;

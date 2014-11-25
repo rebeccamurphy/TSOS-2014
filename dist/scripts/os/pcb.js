@@ -6,7 +6,7 @@ var TSOS;
     var PCB = (function () {
         function PCB(//process stuff
         PC, Acc, Xreg, Yreg, Zflag, pid, IR, // memory stuff
-        base, limit, state, priority, location) {
+        base, limit, state, priority, location, length) {
             if (typeof PC === "undefined") { PC = 0; }
             if (typeof Acc === "undefined") { Acc = 0; }
             if (typeof Xreg === "undefined") { Xreg = 0; }
@@ -19,6 +19,7 @@ var TSOS;
             if (typeof state === "undefined") { state = 0 /* New */; }
             if (typeof priority === "undefined") { priority = DEFAULT_PRIORITY; }
             if (typeof location === "undefined") { location = 0 /* Memory */; }
+            if (typeof length === "undefined") { length = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -31,6 +32,7 @@ var TSOS;
             this.state = state;
             this.priority = priority;
             this.location = location;
+            this.length = length;
             this.pid = _CurrPID;
             _CurrPID++;
         }

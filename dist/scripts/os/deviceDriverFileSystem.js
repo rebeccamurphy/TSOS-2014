@@ -120,7 +120,6 @@ var TSOS;
         };
 
         DeviceDriverFileSystem.prototype.getNextTSB = function (tsb) {
-            debugger;
             return this.getMetaData(tsb).substring(1, this.metaData);
         };
 
@@ -257,8 +256,9 @@ var TSOS;
             }
             return true;
         };
-        DeviceDriverFileSystem.prototype.clearFile = function (tsb) {
+        DeviceDriverFileSystem.prototype.clearFile = function (fileName) {
             //clears file name and all data from file system
+            var tsb = this.findFile(fileName, false);
             var tempTSB1 = tsb;
             var tempTSB2 = tempTSB1;
             while (tempTSB1 !== "000") {
@@ -275,7 +275,6 @@ var TSOS;
             return true;
         };
         DeviceDriverFileSystem.prototype.findFile = function (name, recover) {
-            debugger;
             for (var t = 0; t <= 0; t++) {
                 for (var s = 0; s <= 7; s++) {
                     for (var b = 0; b <= 7; b++) {
@@ -340,7 +339,10 @@ var TSOS;
         };
         DeviceDriverFileSystem.prototype.writeFile = function (fileName, data, append) {
             //convert the data to hex and split the data into 60 char chunks
-            var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
+            if (fileName.charAt(0) !== SWAP_FILE_START_CHAR) {
+                var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
+            } else
+                var dataArray = data.match(/.{1,60}/g);
 
             //then we find the file
             var tsbFile = this.findFile(fileName, false);
@@ -390,16 +392,24 @@ var TSOS;
             return true;
         };
         DeviceDriverFileSystem.prototype.readFile = function (fileName, swap) {
+            debugger;
             var tsb = this.findFile(fileName, false);
             var contents = "";
             var nextTSB = this.getNextTSB(tsb);
+            var swapSudo = fileName.charAt(0) === SWAP_FILE_START_CHAR;
             while (nextTSB != "000") {
-                var hexContents = this.getDataBytes(nextTSB);
-                hexContents = TSOS.Utils.trimTrailingChars(hexContents, "0");
-                if (hexContents % 2 !== 0) {
-                    hexContents += '0';
+                if (swap || swapSudo) {
+                    //contents already in hex
+                    contents += this.getDataBytes(nextTSB);
+                } else {
+                    var hexContents = this.getDataBytes(nextTSB);
+                    hexContents = TSOS.Utils.trimTrailingChars(hexContents, "0");
+                    if (hexContents % 2 !== 0) {
+                        hexContents += '0';
+                    }
+                    contents += TSOS.Utils.hex2str(hexContents);
                 }
-                contents += TSOS.Utils.hex2str(hexContents);
+
                 nextTSB = this.getNextTSB(nextTSB);
             }
             if (swap)
@@ -415,11 +425,11 @@ var TSOS;
                     _StdOut.putText(contentsArray[i]);
                     _StdOut.advanceLine();
                 }
-                TSOS.Control.setFileData(contents);
             } else {
                 _StdOut.putText(contents);
-                TSOS.Control.setFileData(contents);
             }
+
+            TSOS.Control.setFileData(contents);
         };
         DeviceDriverFileSystem.prototype.krnDiskInUse = function (params) {
             var diskAction = params[0];
@@ -508,6 +518,7 @@ var TSOS;
                     break;
                 }
                 case 4 /* Write */: {
+                    debugger;
                     if (this.diskFileFull === false) {
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
@@ -542,11 +553,18 @@ var TSOS;
 
                     //also delete the program from disk
                     success = this.clearFile(fileName);
+
+                    if (success) {
+                        //enqueue interrupt for kernal to finish loading the program
+                        //last enqueue interrupt to load program into memory after it has been read
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWAPFILE_IRQ));
+                    }
+                    break;
                 }
                 case 10 /* EmptyTrash */: {
                     while (!_Trash.isEmpty()) {
                         var tempFile = _Trash.dequeue();
-                        success = this.clearFile(this.findFile(tempFile, false));
+                        success = this.clearFile(tempFile);
                         if (!success) {
                             break;
                         }

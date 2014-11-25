@@ -151,7 +151,7 @@ module TSOS {
         return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
     }
     public static str2hex(name:string){
-        debugger;
+        
         var hexStr ="";
         for(var i =0; i< name.length; i++){
             var temp = TSOS.Utils.dec2hex(name.charCodeAt(i));

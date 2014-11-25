@@ -403,7 +403,7 @@ var TSOS;
         };
 
         Shell.prototype.shellLoad = function (args) {
-            debugger;
+            //gets the text box content
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
             var tempPriority = args[0];
@@ -777,13 +777,14 @@ var TSOS;
         };
         Shell.prototype.shellReadFile = function (args) {
             var fileName = args[0];
-            if (!_FileNames.inQueue(fileName)) {
+            var sudo = args[1];
+            if (!_FileNames.inQueue(fileName) && sudo !== "sudo") {
                 _StdOut.putText("Invalid fileName");
                 _OsShell.putPromptNextLine();
                 return;
+            } else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [2 /* Read */, fileName]));
             }
-
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [2 /* Read */, fileName]));
         };
 
         Shell.prototype.shellListFiles = function () {

@@ -8,10 +8,12 @@ Look at the push and shift methods, as they are the least obvious here.
 var TSOS;
 (function (TSOS) {
     var Queue = (function () {
-        function Queue(q, ordered) {
+        function Queue(q, leastIndex, ordered) {
             if (typeof q === "undefined") { q = new Array(); }
+            if (typeof leastIndex === "undefined") { leastIndex = null; }
             if (typeof ordered === "undefined") { ordered = false; }
             this.q = q;
+            this.leastIndex = leastIndex;
             this.ordered = ordered;
         }
         Queue.prototype.getSize = function () {
@@ -92,6 +94,22 @@ var TSOS;
             this.q.sort(this.compare);
             this.ordered = true;
         };
+        Queue.prototype.getLeastImportant = function () {
+            var retVal;
+            for (var i = 0; i < this.q.length; i++) {
+                if (this.q[i].location === 0 /* Memory */) {
+                    retVal = this.q[i];
+                    this.leastIndex = i;
+                }
+            }
+
+            this.q.splice(this.leastIndex, 1);
+            return retVal;
+        };
+        Queue.prototype.addLeastImportant = function (pcb) {
+            this.q.splice(this.leastIndex, 0, pcb);
+            this.leastIndex = null;
+        };
         Queue.prototype.compare = function (a, b) {
             if (a.pid < b.pid)
                 return -1;
@@ -106,6 +124,7 @@ var TSOS;
                 return 1;
             return 0;
         };
+
         Queue.prototype.toString = function () {
             var retVal = "";
             for (var i in this.q) {

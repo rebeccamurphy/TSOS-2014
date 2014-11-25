@@ -62,7 +62,7 @@ var TSOS;
         Cpu.prototype.loadProgram = function () {
             _ExecutingProgramPCB.state = 1 /* Running */;
             this.IR = _ExecutingProgramPCB.IR;
-            this.PC = _ExecutingProgramPCB.PC;
+            this.PC = _ExecutingProgramPCB.PC + _ExecutingProgramPCB.base;
             this.Acc = _ExecutingProgramPCB.Acc;
             this.Xreg = _ExecutingProgramPCB.Xreg;
             this.Yreg = _ExecutingProgramPCB.Yreg;
@@ -79,7 +79,7 @@ var TSOS;
         };
         Cpu.prototype.updatePCB = function () {
             //update program pcb
-            _ExecutingProgramPCB.PC = _CPU.PC;
+            _ExecutingProgramPCB.PC = _CPU.PC - _ExecutingProgramPCB.base;
             _ExecutingProgramPCB.IR = _CPU.IR;
             _ExecutingProgramPCB.Acc = _CPU.Acc;
             _ExecutingProgramPCB.Xreg = _CPU.Xreg;

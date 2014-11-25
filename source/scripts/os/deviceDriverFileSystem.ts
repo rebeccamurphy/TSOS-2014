@@ -132,7 +132,7 @@ module TSOS {
         }
 
         public getNextTSB(tsb:string){
-          debugger;
+          
           return this.getMetaData(tsb).substring(1, this.metaData);
         }
 
@@ -270,8 +270,9 @@ module TSOS {
           }
           return true;
         }
-        public clearFile(tsb:string){
+        public clearFile(fileName:string){
           //clears file name and all data from file system
+          var tsb =this.findFile(fileName, false);
           var tempTSB1 = tsb;
           var tempTSB2 = tempTSB1;
           while (tempTSB1!=="000"){
@@ -287,7 +288,7 @@ module TSOS {
 
         }
         public findFile(name:string, recover:boolean){
-          debugger;
+          
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
@@ -353,7 +354,11 @@ module TSOS {
         public writeFile(fileName:string, data:string, append:boolean){
           
           //convert the data to hex and split the data into 60 char chunks
-          var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
+          if (fileName.charAt(0)!==SWAP_FILE_START_CHAR){
+            var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
+          }
+          else 
+            var dataArray = data.match(/.{1,60}/g);
           //then we find the file
           var tsbFile:string = this.findFile(fileName, false);
           
@@ -395,17 +400,26 @@ module TSOS {
           return true;
         }
         public readFile(fileName:string, swap:boolean):any{
-          
+          debugger;
           var tsb = this.findFile(fileName, false);
           var contents ="";
           var nextTSB = this.getNextTSB(tsb);
+          var swapSudo = fileName.charAt(0)===SWAP_FILE_START_CHAR;
           while (nextTSB!="000"){
-            var hexContents = this.getDataBytes(nextTSB);
-            hexContents= Utils.trimTrailingChars(hexContents, "0");
-            if (hexContents%2 !==0){
-              hexContents+='0';
+            if (swap ||swapSudo){
+              //contents already in hex
+              contents += this.getDataBytes(nextTSB);
             }
-            contents+= TSOS.Utils.hex2str(hexContents);
+            else{
+              var hexContents = this.getDataBytes(nextTSB);
+              hexContents= Utils.trimTrailingChars(hexContents, "0");
+              if (hexContents%2 !==0){
+                hexContents+='0';
+              }
+              contents+= TSOS.Utils.hex2str(hexContents);
+              
+            }
+             
             nextTSB = this.getNextTSB(nextTSB);
           }
           if (swap)
@@ -422,12 +436,12 @@ module TSOS {
               _StdOut.putText(contentsArray[i]);
               _StdOut.advanceLine();
             }
-            TSOS.Control.setFileData(contents);
           }
           else{
             _StdOut.putText(contents);
-            TSOS.Control.setFileData(contents);
           }
+
+          TSOS.Control.setFileData(contents);
         }
         public krnDiskInUse(params){
           
@@ -525,7 +539,7 @@ module TSOS {
               break;
             }
             case DiskAction.Write:{
-              
+              debugger;
               if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
@@ -561,11 +575,18 @@ module TSOS {
               success = this.readFile(fileName, true);
               //also delete the program from disk
               success = this.clearFile(fileName);
+
+              if (success){
+                //enqueue interrupt for kernal to finish loading the program
+                 //last enqueue interrupt to load program into memory after it has been read
+                _KernelInterruptQueue.enqueue(new Interrupt(SWAPFILE_IRQ));
+              }
+              break;
             }
             case DiskAction.EmptyTrash:{
               while(!_Trash.isEmpty()){
                 var tempFile = _Trash.dequeue();
-                success =this.clearFile(this.findFile(tempFile, false));
+                success =this.clearFile(tempFile);
                 if (!success){
                   //emptying trash has failed 
                   break;

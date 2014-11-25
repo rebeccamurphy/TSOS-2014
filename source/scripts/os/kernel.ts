@@ -94,15 +94,7 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if ( (_CPU.isExecuting && _SingleStep && _Stepping) || (_CPU.isExecuting && !_SingleStep)) { 
                 //clear the interval of the clock pulse
-                if (_ExecutingProgram !==null){
-                    //load the executing program into memory, which will overwrite the last program
-                    //for disk stuff continuation from cpuScheduler line 177
-                    _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
-
-                    //load it into the cpu
-                    _CPU.loadProgram();
-                    _ExecutingProgram = null;
-                }
+                
                 switch(SCHEDULE_TYPE){
                     case scheduleType.rr:{ 
                         if (_Scheduler.counter < QUANTUM || _Scheduler.emptyReadyQueue())
@@ -165,13 +157,26 @@ module TSOS {
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
-                case FILESYSTEM_IRQ:
+                case FILESYSTEM_IRQ:{
 
                     this.krnTrace("The Disk is " + DiskActions[params[0]] +" "+ params[1]+".");
                     _krnFileSystemDriver.isr(params);
                     this.krnTrace("The Disk is done " + DiskActions[params[0]] +" " +params[1]+".");
                     
                     break;
+                }
+                case SWAPFILE_IRQ:{
+                    //finishing loading program into memory after reading the disk file
+                    debugger;
+                    this.krnTrace("Loading swap program into memory.");
+                    _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
+                    _ExecutingProgramPCB.location= Locations.Memory;
+                    //load it into the cpu
+                    _CPU.loadProgram();
+                    _ExecutingProgram = null;
+                    break;
+                }
+
                 case RUN_PROGRAM_IRQ:{
                     //start the program
                     //since where just running the first program in mem, just setting isexecuting true
@@ -295,6 +300,7 @@ module TSOS {
 
                     break;
                 }
+
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

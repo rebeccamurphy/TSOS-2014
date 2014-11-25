@@ -11,6 +11,7 @@
 module TSOS {
     export class Queue {
         constructor(public q = new Array(),
+                    private leastIndex:number=null,
                     private ordered = false) {
             
         }
@@ -96,6 +97,24 @@ module TSOS {
             this.q.sort(this.compare);
             this.ordered = true;
         }
+        public getLeastImportant(){
+            var retVal;
+            for (var i =0; i<this.q.length; i++){
+                if (this.q[i].location === Locations.Memory){
+                    retVal = this.q[i];
+                    this.leastIndex =i;
+                }
+            }
+
+            this.q.splice(this.leastIndex, 1);
+            return retVal;
+
+        }
+        public addLeastImportant(pcb){
+            this.q.splice(this.leastIndex, 0, pcb);
+            this.leastIndex = null;
+
+        }
         private compare(a,b) {
             if (a.pid < b.pid)
                 return -1;
@@ -110,6 +129,7 @@ module TSOS {
                 return 1;
             return 0;
         }
+
         public toString() {
             var retVal = "";
             for (var i in this.q) {
