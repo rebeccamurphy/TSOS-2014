@@ -15,9 +15,17 @@ var TSOS;
         };
 
         MemoryManager.prototype.findNextFreeBlock = function () {
-            for (var i = 0; i < _ProgramSize * _NumPrograms; i += 256) {
-                if (this.memory.Data[i] === "00")
-                    return i;
+            for (var j = 0; j < _NumPrograms; j++) {
+                var blockEmpty = true;
+                var base = 255 * j;
+                for (var i = 0; i < _ProgramSize; i++) {
+                    if (this.memory.Data[base + i] !== "00") {
+                        blockEmpty = false;
+                        break;
+                    }
+                }
+                if (blockEmpty)
+                    return j * (_ProgramSize);
             }
             return null;
         };
@@ -42,8 +50,9 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay();
         };
         MemoryManager.prototype.getProgram = function (pcb) {
+            debugger;
             var program = [];
-            for (var i = pcb.base; i <= pcb.length; i++) {
+            for (var i = pcb.base; i <= pcb.length + pcb.base; i++) {
                 program.push(this.memory.Data[i]);
             }
             return program;
