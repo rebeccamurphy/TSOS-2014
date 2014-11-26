@@ -38,9 +38,6 @@ var TSOS;
             if (priority !== undefined)
                 currPCB.priority = priority;
 
-            //set the length for disk storage
-            currPCB.length = program.length;
-
             //Put the program in the resident queue
             this.residentQueue.enqueue(currPCB);
 
@@ -55,8 +52,6 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         cpuScheduler.prototype.loadProgramDisk = function (program, priority) {
-            ;
-
             //create new PCB
             var currPCB = new TSOS.PCB();
 
@@ -80,9 +75,6 @@ var TSOS;
             if (priority !== undefined)
                 currPCB.priority = priority;
 
-            //set the length for disk storage
-            currPCB.length = program.length;
-
             //add to the resident queue
             this.residentQueue.enqueue(currPCB);
 
@@ -96,7 +88,7 @@ var TSOS;
             return currPCB.pid;
         };
         cpuScheduler.prototype.clearMem = function () {
-            ;
+            //clear current executing program
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB = null;
             _ExecutingProgramPID = null;
@@ -182,6 +174,8 @@ var TSOS;
 
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === 1 /* Disk */) {
+                debugger;
+
                 //enqueue an interupt to read swap from disk to so there is more room
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* ReadSwap */, SWAP_FILE_START_CHAR + _ExecutingProgramPID]));
 
@@ -195,8 +189,9 @@ var TSOS;
                     var lastPCB = this.readyQueue.getLeastImportant();
                     var lastProgram = [];
 
-                    //get the last program in the queue from memory TODO strip extra 0s
+                    //get the last program in the queue from memory
                     lastProgram = _MemoryManager.getProgram(lastPCB);
+                    var lastProgramStr = lastProgram.join('');
 
                     //set the base and limit of the Executing PCB to the lastPCB
                     _ExecutingProgramPCB.base = lastPCB.base;
@@ -206,7 +201,7 @@ var TSOS;
                     lastPCB.location = 1 /* Disk */;
 
                     //write the last program to disk
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Write */, SWAP_FILE_START_CHAR + lastPCB.pid, lastProgram.join('')]));
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Write */, SWAP_FILE_START_CHAR + lastPCB.pid, lastProgramStr]));
 
                     //finally splicein  the lastpcb
                     this.readyQueue.addLeastImportant(lastPCB);

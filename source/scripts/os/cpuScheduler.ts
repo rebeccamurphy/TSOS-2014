@@ -34,8 +34,7 @@ module TSOS {
             //set the priority
             if (priority !== undefined)
                 currPCB.priority = priority;
-            //set the length for disk storage
-            currPCB.length = program.length;
+            
             //Put the program in the resident queue
         	this.residentQueue.enqueue(currPCB);
             //put the program in memory
@@ -51,7 +50,7 @@ module TSOS {
 
         }
         public loadProgramDisk(program, priority){
-             ;
+             
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -70,10 +69,6 @@ module TSOS {
             //set the priority
             if (priority !== undefined)
                 currPCB.priority = priority;
-
-
-            //set the length for disk storage
-            currPCB.length = program.length;
             
             //add to the resident queue
             this.residentQueue.enqueue(currPCB);
@@ -88,7 +83,7 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-             ;
+             
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB =null;
             _ExecutingProgramPID =null;
@@ -171,6 +166,7 @@ module TSOS {
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === Locations.Disk) {
+                debugger;
                 //enqueue an interupt to read swap from disk to so there is more room
                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.ReadSwap, SWAP_FILE_START_CHAR +_ExecutingProgramPID]));
                 
@@ -185,8 +181,9 @@ module TSOS {
                     //we need to remove one program from memory and load the executing pcb to memory
                     var lastPCB = this.readyQueue.getLeastImportant();
                     var lastProgram=[];
-                    //get the last program in the queue from memory TODO strip extra 0s
+                    //get the last program in the queue from memory 
                     lastProgram = _MemoryManager.getProgram(lastPCB);
+                    var lastProgramStr =lastProgram.join('')
                     //set the base and limit of the Executing PCB to the lastPCB
                     _ExecutingProgramPCB.base = lastPCB.base;
                     _ExecutingProgramPCB.limit = lastPCB.limit;
@@ -194,7 +191,7 @@ module TSOS {
                     lastPCB.location =Locations.Disk;
 
                     //write the last program to disk
-                    _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR +lastPCB.pid, lastProgram.join('')]));
+                    _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR +lastPCB.pid, lastProgramStr]));
                     //finally splicein  the lastpcb
                     this.readyQueue.addLeastImportant(lastPCB);
                 

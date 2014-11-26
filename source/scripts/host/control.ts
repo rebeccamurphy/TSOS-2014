@@ -181,7 +181,7 @@ module TSOS {
             }
         }
 
-        public static hostBtnStep_click(btn):void{
+        public static hostBtnStep_click(btn?):void{
             //probably need to update the kernal here too
 
                 //clear the interval of the clock pulse

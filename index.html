@@ -43,6 +43,15 @@
 
    <!-- Uncomment this line below to enable Glados testing -->
    <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
+   <script>
+    window.onkeyup = function(e) {
+   var key = e.keyCode ? e.keyCode : e.which;
+
+       if (key == 39) {
+           TSOS.Control.hostBtnStep_click();
+       }
+    }
+   </script>
 </head>
 <audio id ="c" src="http://clyp.it/44lqmgqn.ogg"></audio>
 <audio id ="startUpNoise" src="http://upload.wikimedia.org/wikipedia/commons/b/b6/Bloop_real.ogg"></audio>

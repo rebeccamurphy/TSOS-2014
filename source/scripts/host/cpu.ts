@@ -76,6 +76,7 @@ export class Cpu {
     }
     public updatePCB(){
         //update program pcb
+        
         _ExecutingProgramPCB.PC = _CPU.PC - _ExecutingProgramPCB.base;
         _ExecutingProgramPCB.IR = _CPU.IR;
         _ExecutingProgramPCB.Acc = _CPU.Acc;

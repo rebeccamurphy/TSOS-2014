@@ -45,7 +45,7 @@ module TSOS {
         }
         public loadProgram(currPCB, program){
             //set the location to in memory
-             ;
+            debugger;
             currPCB.location = Locations.Memory;
             
             for (var i=0; i<program.length; i++){
@@ -63,9 +63,9 @@ module TSOS {
             TSOS.Control.updateMemoryDisplay();
         }
         public getProgram(pcb){
-             ;
+            debugger;
             var program = [];
-            for (var i=pcb.base; i<=pcb.length+pcb.base; i++){
+            for (var i=pcb.base; i<=pcb.limit; i++){
                 program.push(this.memory.Data[i]);
             }
             return program;

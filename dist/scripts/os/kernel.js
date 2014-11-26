@@ -143,6 +143,7 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case FILESYSTEM_IRQ: {
+                    var fileName = params[1] === undefined ? "" : params[1];
                     this.krnTrace("The Disk is " + DiskActions[params[0]] + " " + params[1] + ".");
                     _krnFileSystemDriver.isr(params);
                     this.krnTrace("The Disk is done " + DiskActions[params[0]] + " " + params[1] + ".");
@@ -150,7 +151,7 @@ var TSOS;
                     break;
                 }
                 case SWAPFILE_IRQ: {
-                    ;
+                    debugger;
                     this.krnTrace("Loading swap program into memory.");
                     _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
                     _ExecutingProgramPCB.location = 0 /* Memory */;

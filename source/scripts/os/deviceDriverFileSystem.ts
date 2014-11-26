@@ -157,7 +157,7 @@ module TSOS {
             sessionStorage.setItem(tsb, "1"+ sessionStorage.getItem(tsb).substring(1));
         }
         public setNextAvailbleTSB(type:string){
-          debugger;
+          
           if (type==="file"){
             var startTSB = this.getNextAvailbleFileTSB();
             var tmax = 0;
@@ -444,12 +444,9 @@ module TSOS {
             nextTSB = this.getNextTSB(nextTSB);
           }
           if (swap){
-            //strip extra 0s
-            var contentsCopy = [];
             var contentsArr = contents.match(/.{1,2}/g);
-            for (var i =0; i<_ExecutingProgramPCB.length; i++)
-              contentsCopy.push(contentsArr[i]);
-            _ExecutingProgram= contentsCopy;
+            //need to slice off extra program 0s
+            _ExecutingProgram= contentsArr.slice(0, _ProgramSize);
           }
         
           else
@@ -567,7 +564,7 @@ module TSOS {
               break;
             }
             case DiskAction.Write:{
-               ;
+               debugger;
               if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
