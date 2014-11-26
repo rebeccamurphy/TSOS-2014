@@ -150,9 +150,10 @@ td {
   /*border:1px solid;
   border-color: #ddd;*/
 }
-#ReadyQueueWrapper{
-  /*border: 1px solid;
-  border-color: rgb(169,169,169);*/
+#ReadyQueueWrapper, #ResidentListWrapper, #TerminatedListWrapper{
+  height:300px;
+  overflow-y:auto;
+  display: inline-block; 
 }
 #taHostLog{
   width:360px;

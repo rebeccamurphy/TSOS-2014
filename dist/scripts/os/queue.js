@@ -96,10 +96,20 @@ var TSOS;
         };
         Queue.prototype.getLeastImportant = function () {
             var retVal;
+            var leastPriority = 0;
             for (var i = 0; i < this.q.length; i++) {
-                if (this.q[i].location === 0 /* Memory */) {
-                    retVal = this.q[i];
-                    this.leastIndex = i;
+                if (SCHEDULE_TYPE === 2 /* priority */) {
+                    //gets last program in memory with highest priority
+                    if (this.q[i].location === 0 /* Memory */ && this.q[i].priority >= leastPriority) {
+                        retVal = this.q[i];
+                        this.leastIndex = i;
+                        leastPriority = retVal.priority;
+                    }
+                } else {
+                    if (this.q[i].location === 0 /* Memory */) {
+                        retVal = this.q[i];
+                        this.leastIndex = i;
+                    }
                 }
             }
 

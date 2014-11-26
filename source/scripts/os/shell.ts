@@ -685,7 +685,7 @@ module TSOS {
 
         }
         public shellFormatDisk(args):void{
-            debugger;
+             ;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -750,7 +750,7 @@ module TSOS {
         public shellCreateFile(args):void{
             var firstParam = args[0];
             var secondParam = args[1];
-            debugger;
+             ;
             if (firstParam===undefined){
                 _StdOut.putText("Please specify a file name.");
                 return;
@@ -832,7 +832,7 @@ module TSOS {
         }
 
         public shellWriteFile(args){
-            debugger;
+             ;
             var fileName = args[0];
             var typeOfWrite = args[1];
             var boxContent  =TSOS.Control.getFileData();

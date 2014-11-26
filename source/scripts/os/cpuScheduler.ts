@@ -51,7 +51,7 @@ module TSOS {
 
         }
         public loadProgramDisk(program, priority){
-            debugger;
+             ;
             //create new PCB
             var currPCB = new TSOS.PCB();
             //add to list of PCBs 
@@ -88,7 +88,7 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-            debugger;
+             ;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB =null;
             _ExecutingProgramPID =null;
@@ -166,7 +166,6 @@ module TSOS {
         	}
         	//reset the counter
         	this.counter =0;
-            debugger;
         	//dequeue next program in line
         	_ExecutingProgramPCB = this.readyQueue.dequeue();
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;

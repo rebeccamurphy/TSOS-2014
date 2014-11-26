@@ -53,7 +53,7 @@ var TSOS;
                         for (var b = 0; b < this.blocks; b++) {
                             if ("" + t + "" + s + "" + b !== "000") {
                                 try  {
-                                    //debugger;
+                                    // ;
                                     var blankBlock = new Array(this.dataBytes + this.metaData + 1).join('0');
                                     sessionStorage.setItem(t + "" + s + "" + b, blankBlock);
                                 } catch (e) {
@@ -144,16 +144,25 @@ var TSOS;
             sessionStorage.setItem(tsb, "1" + sessionStorage.getItem(tsb).substring(1));
         };
         DeviceDriverFileSystem.prototype.setNextAvailbleTSB = function (type) {
+            debugger;
             if (type === "file") {
                 var startTSB = this.getNextAvailbleFileTSB();
                 var tmax = 0;
                 var smax = 7;
                 var bmax = 7;
+
+                var tmin = 0;
+                var smin = 0;
+                var bmin = 0;
             } else if (type === "data") {
                 var startTSB = this.getNextAvailbleDataTSB();
                 var tmax = 3;
                 var smax = 7;
                 var bmax = 7;
+
+                var tmin = 1;
+                var smin = 0;
+                var bmin = 0;
             }
 
             //parse the current availbe tsb
@@ -161,14 +170,19 @@ var TSOS;
             var currs = parseInt(startTSB.charAt(1));
             var currb = parseInt(startTSB.charAt(2));
 
-            for (var t = currt; t < tmax + 1; t++) {
-                for (var s = currs; s < smax + 1; s++) {
-                    for (var b = currb; b < bmax + 1; b++) {
+            for (var t = tmin; t < tmax + 1; t++) {
+                for (var s = smin; s < smax + 1; s++) {
+                    for (var b = bmin; b < bmax + 1; b++) {
                         if ("" + t + "" + s + "" + b !== "000") {
-                            if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
-                                var newMBRData = sessionStorage.getItem("000");
-                                newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
-                                sessionStorage.setItem("000", newMBRData);
+                            if (!this.InUse(t + "" + s + "" + b)) {
+                                var newMBRData = this.getDataBytes('000');
+                                var newTSB = TSOS.Utils.str2hex(t + "" + s + "" + b);
+                                if (type === 'file') {
+                                    newMBRData = newTSB + newMBRData.substring(6);
+                                } else if (type === 'data') {
+                                    newMBRData = newMBRData.substring(0, 6) + newTSB + newMBRData.substring(12);
+                                }
+                                sessionStorage.setItem("000", this.getMetaData('000') + newMBRData);
                                 this.diskDataFull = false;
                                 return;
                             }
@@ -177,21 +191,23 @@ var TSOS;
                 }
             }
 
-            for (var t = 0; t < currt; t++) {
-                for (var s = 0; s < currs; s++) {
-                    for (var b = 0; b < currb; b++) {
-                        if ("" + t + "" + s + "" + b !== "000") {
-                            if (!this.InUse(t + "" + s + "" + b) && (t + "" + s + "" + b !== currt + "" + currs + "" + currb)) {
-                                var newMBRData = sessionStorage.getItem("000");
-                                newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t + "" + s + "" + b));
-                                sessionStorage.setItem("000", newMBRData);
-                                this.diskDataFull = false;
-                                return;
-                            }
-                        }
-                    }
-                }
+            /*
+            //now we try going up
+            for (var t = 0;t<currt; t++){
+            for (var s = 0;s<currs;s++){
+            for(var b=0;b<currb;b++){
+            if (""+t+""+s+""+b !== "000"){
+            if (!this.InUse(t+""+s+""+b)&&(t+""+s+""+b!==currt+""+currs+""+currb)){
+            var newMBRData = sessionStorage.getItem("000");
+            newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t+""+s+""+b));
+            sessionStorage.setItem("000", newMBRData);
+            this.diskDataFull=false;
+            return;
             }
+            }
+            }
+            }
+            }*/
             if (type === 'data') {
                 //if neither prove fruitful make the disk as full
                 this.diskDataFull = true;
@@ -244,7 +260,7 @@ var TSOS;
             }
         };
         DeviceDriverFileSystem.prototype.recoverFile = function (tsb) {
-            debugger;
+            ;
             var tempTSB = this.getNextTSB(tsb);
 
             //mark the title as in use
@@ -272,6 +288,9 @@ var TSOS;
                 this.eraseBlock(tempTSB2);
             }
 
+            //set find next available data block
+            this.setNextAvailbleTSB('data');
+            this.setNextAvailbleTSB('file');
             return true;
         };
         DeviceDriverFileSystem.prototype.findFile = function (name, recover) {
@@ -338,6 +357,8 @@ var TSOS;
                 return false;
         };
         DeviceDriverFileSystem.prototype.writeFile = function (fileName, data, append) {
+            debugger;
+
             //convert the data to hex and split the data into 60 char chunks
             if (fileName.charAt(0) !== SWAP_FILE_START_CHAR) {
                 var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
@@ -369,14 +390,14 @@ var TSOS;
                     //and make the nextTSB the previous TSB
                     prevTSB = nextTSB;
 
+                    //and mark that data block as in use
+                    this.markBlockAsUnAvail(prevTSB);
+
                     //update the next availble data block
                     this.setNextAvailbleTSB('data');
 
                     //local storage of next available data tsb
                     var nextTSB = this.getNextAvailbleDataTSB();
-
-                    //and mark that data block as in use
-                    this.markBlockAsUnAvail(prevTSB);
 
                     //then we make the meta data point to the next available datablock
                     this.setMetaData(prevTSB, nextTSB);
@@ -389,10 +410,12 @@ var TSOS;
 
             //set the last block to not point to anything
             this.setMetaData(prevTSB, "000");
+
+            //set find next available data block
+            //this.setNextAvailbleTSB('data');
             return true;
         };
         DeviceDriverFileSystem.prototype.readFile = function (fileName, swap) {
-            debugger;
             var tsb = this.findFile(fileName, false);
             var contents = "";
             var nextTSB = this.getNextTSB(tsb);
@@ -412,9 +435,14 @@ var TSOS;
 
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            if (swap)
-                _ExecutingProgram = contents.match(/.{1,2}/g);
-            else
+            if (swap) {
+                //strip extra 0s
+                var contentsCopy = [];
+                var contentsArr = contents.match(/.{1,2}/g);
+                for (var i = 0; i < _ExecutingProgramPCB.length; i++)
+                    contentsCopy.push(contentsArr[i]);
+                _ExecutingProgram = contentsCopy;
+            } else
                 this.displayContents(contents);
             return true;
         };
@@ -518,7 +546,7 @@ var TSOS;
                     break;
                 }
                 case 4 /* Write */: {
-                    debugger;
+                    ;
                     if (this.diskFileFull === false) {
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it

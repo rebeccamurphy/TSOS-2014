@@ -55,7 +55,7 @@ var TSOS;
             return (currPCB.pid).toString();
         };
         cpuScheduler.prototype.loadProgramDisk = function (program, priority) {
-            debugger;
+            ;
 
             //create new PCB
             var currPCB = new TSOS.PCB();
@@ -96,7 +96,7 @@ var TSOS;
             return currPCB.pid;
         };
         cpuScheduler.prototype.clearMem = function () {
-            debugger;
+            ;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB = null;
             _ExecutingProgramPID = null;
@@ -175,7 +175,6 @@ var TSOS;
 
             //reset the counter
             this.counter = 0;
-            debugger;
 
             //dequeue next program in line
             _ExecutingProgramPCB = this.readyQueue.dequeue();

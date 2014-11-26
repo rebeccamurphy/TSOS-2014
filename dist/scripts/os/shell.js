@@ -587,7 +587,7 @@ var TSOS;
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         Shell.prototype.shellFormatDisk = function (args) {
-            debugger;
+            ;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -647,7 +647,7 @@ var TSOS;
         Shell.prototype.shellCreateFile = function (args) {
             var firstParam = args[0];
             var secondParam = args[1];
-            debugger;
+            ;
             if (firstParam === undefined) {
                 _StdOut.putText("Please specify a file name.");
                 return;
@@ -720,7 +720,7 @@ var TSOS;
         };
 
         Shell.prototype.shellWriteFile = function (args) {
-            debugger;
+            ;
             var fileName = args[0];
             var typeOfWrite = args[1];
             var boxContent = TSOS.Control.getFileData();

@@ -99,10 +99,21 @@ module TSOS {
         }
         public getLeastImportant(){
             var retVal;
+            var leastPriority =0;
             for (var i =0; i<this.q.length; i++){
-                if (this.q[i].location === Locations.Memory){
-                    retVal = this.q[i];
-                    this.leastIndex =i;
+                if (SCHEDULE_TYPE === scheduleType.priority){
+                    //gets last program in memory with highest priority
+                    if (this.q[i].location === Locations.Memory && this.q[i].priority >= leastPriority){
+                        retVal = this.q[i];
+                        this.leastIndex =i;
+                        leastPriority = retVal.priority;
+                    }
+                }
+                else{
+                    if (this.q[i].location === Locations.Memory){
+                        retVal = this.q[i];
+                        this.leastIndex =i;
+                    }
                 }
             }
 

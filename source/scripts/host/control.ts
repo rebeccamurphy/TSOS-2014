@@ -411,15 +411,15 @@ module TSOS {
                     metaStr =_krnFileSystemDriver.getMetaData(tsbStr);
 
                     output+="<tr><td>"+t+":"+s+":"+b+"</td>";
-                    if (metaStr.charAt(0)==="1"){
+                    //if (metaStr.charAt(0)==="1"){
                         output+="<td>"+ "<b>"+metaStr.charAt(0)+ "</b>" + metaStr.substring(1, 4) +"</td>";
                         output+="<td>"+ blockStr +"</td></tr>";
-                    }
-                    else{
+                    //}
+                    /*else{
                         //trick the user into think they're data is deleted
                         output+="<td>"+ "<b>"+metaStr.charAt(0)+ "</b>" + "000" +"</td>";
                         output+="<td>"+ new Array(61).join('0') +"</td></tr>";   
-                    }
+                    }*/
 
                 } 
               }
