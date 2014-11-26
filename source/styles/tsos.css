@@ -151,7 +151,7 @@ td {
   border-color: #ddd;*/
 }
 #ReadyQueueWrapper, #ResidentListWrapper, #TerminatedListWrapper{
-  height:300px;
+  height:187px;
   overflow-y:auto;
   display: inline-block; 
 }

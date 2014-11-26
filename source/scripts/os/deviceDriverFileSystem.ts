@@ -222,10 +222,12 @@ module TSOS {
               }
             }*/
             if (type ==='data'){
+              debugger;
               //if neither prove fruitful make the disk as full
               this.diskDataFull = true;
             }
             else if (type==='file'){
+              debugger;
               //fileNames full
               this.diskFileFull=true;
             }
@@ -371,7 +373,7 @@ module TSOS {
             return false;
         }
         public writeFile(fileName:string, data:string, append:boolean){
-          debugger;
+           
           //convert the data to hex and split the data into 60 char chunks
           if (fileName.charAt(0)!==SWAP_FILE_START_CHAR){
             var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
@@ -564,7 +566,7 @@ module TSOS {
               break;
             }
             case DiskAction.Write:{
-               debugger;
+                
               if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
@@ -577,7 +579,7 @@ module TSOS {
                 }
               }
               if (!success){
-                this.deleteFile(this.findFile(fileName, false));
+                this.clearFile(fileName);
                 _StdOut.putText("File name track full, please empty trash.");
                 _StdOut.advanceLine();
               }

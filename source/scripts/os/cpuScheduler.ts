@@ -166,7 +166,7 @@ module TSOS {
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === Locations.Disk) {
-                debugger;
+                 ;
                 //enqueue an interupt to read swap from disk to so there is more room
                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.ReadSwap, SWAP_FILE_START_CHAR +_ExecutingProgramPID]));
                 

@@ -841,6 +841,11 @@ module TSOS {
             else
                 var data = args.slice(1);
             data = data.join(' ');
+            if (fileName.length >30){
+              _StdOut.putText("File names must be less than 30 characters and not contains spaces or " +SWAP_FILE_START_CHAR);
+              _OsShell.putPromptNextLine();              
+              return;
+            }
             if (typeOfWrite ==='' && boxContent===''){
               _StdOut.putText("Write some data or put some data in the next box.");
               _OsShell.putPromptNextLine();              

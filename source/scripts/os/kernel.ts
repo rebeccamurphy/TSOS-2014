@@ -167,7 +167,7 @@ module TSOS {
                 }
                 case SWAPFILE_IRQ:{
                     //finishing loading program into memory after reading the disk file
-                    debugger;
+                     
                     this.krnTrace("Loading swap program into memory.");
                     _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
                     _ExecutingProgramPCB.location= Locations.Memory;

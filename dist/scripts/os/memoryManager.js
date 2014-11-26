@@ -33,7 +33,7 @@ var TSOS;
             this.nextFreeMem = pcb.base;
         };
         MemoryManager.prototype.loadProgram = function (currPCB, program) {
-            debugger;
+            //set the location to in memory
             currPCB.location = 0 /* Memory */;
 
             for (var i = 0; i < program.length; i++) {
@@ -50,7 +50,6 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay();
         };
         MemoryManager.prototype.getProgram = function (pcb) {
-            debugger;
             var program = [];
             for (var i = pcb.base; i <= pcb.limit; i++) {
                 program.push(this.memory.Data[i]);

@@ -208,9 +208,13 @@ var TSOS;
             }
             }*/
             if (type === 'data') {
+                debugger;
+
                 //if neither prove fruitful make the disk as full
                 this.diskDataFull = true;
             } else if (type === 'file') {
+                debugger;
+
                 //fileNames full
                 this.diskFileFull = true;
             }
@@ -356,8 +360,6 @@ var TSOS;
                 return false;
         };
         DeviceDriverFileSystem.prototype.writeFile = function (fileName, data, append) {
-            debugger;
-
             //convert the data to hex and split the data into 60 char chunks
             if (fileName.charAt(0) !== SWAP_FILE_START_CHAR) {
                 var dataArray = TSOS.Utils.str2hex(data).match(/.{1,60}/g);
@@ -543,7 +545,6 @@ var TSOS;
                     break;
                 }
                 case 4 /* Write */: {
-                    debugger;
                     if (this.diskFileFull === false) {
                         if (this.findFile(fileName, false) === null) {
                             //first create the file then write to it
@@ -555,7 +556,7 @@ var TSOS;
                         }
                     }
                     if (!success) {
-                        this.deleteFile(this.findFile(fileName, false));
+                        this.clearFile(fileName);
                         _StdOut.putText("File name track full, please empty trash.");
                         _StdOut.advanceLine();
                     } else if (notSwap) {

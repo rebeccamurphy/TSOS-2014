@@ -151,7 +151,7 @@ var TSOS;
                     break;
                 }
                 case SWAPFILE_IRQ: {
-                    debugger;
+                    //finishing loading program into memory after reading the disk file
                     this.krnTrace("Loading swap program into memory.");
                     _MemoryManager.loadProgram(_ExecutingProgramPCB, _ExecutingProgram);
                     _ExecutingProgramPCB.location = 0 /* Memory */;

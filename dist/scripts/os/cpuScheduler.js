@@ -174,7 +174,7 @@ var TSOS;
 
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === 1 /* Disk */) {
-                debugger;
+                ;
 
                 //enqueue an interupt to read swap from disk to so there is more room
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* ReadSwap */, SWAP_FILE_START_CHAR + _ExecutingProgramPID]));
