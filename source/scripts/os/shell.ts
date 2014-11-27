@@ -690,7 +690,7 @@ module TSOS {
 
         }
         public shellFormatDisk(args):void{
-             ;
+             
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -806,7 +806,8 @@ module TSOS {
             }
             else{
                 _StdOut.putText("Invalid file name. ");
-                _OsShell.putPromptNextLine();            }
+                _OsShell.putPromptNextLine();            
+              }
 
         }
 
@@ -907,7 +908,7 @@ module TSOS {
             var fileName = args[0];
             var sudo = args[1];
             if (!_FileNames.inQueue(fileName)&&sudo!=="sudo"){
-                _StdOut.putText("Invalid fileName");
+                _StdOut.putText("Invalid file name");
                 _OsShell.putPromptNextLine();    
                 return;
             }

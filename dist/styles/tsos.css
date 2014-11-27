@@ -103,12 +103,14 @@ font-weight: normal !important;
   margin-top: 1px;
 }
 #memory{
+  overflow-y:auto;
+  max-height:180px;
 }
 #memoryWrapper{
   border-bottom: 1px solid; 
   border-color: #ddd;
-  overflow-y:auto;
-  max-height:406px;
+  /*overflow-y:auto;
+  max-height:406px;*/
   height: 228px;
   width:368px;
 }

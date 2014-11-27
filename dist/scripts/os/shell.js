@@ -591,7 +591,6 @@ var TSOS;
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
         };
         Shell.prototype.shellFormatDisk = function (args) {
-            ;
             var firstParam = args[0];
             var secondParam = args[1];
             var thirdParam = args[2];
@@ -788,7 +787,7 @@ var TSOS;
             var fileName = args[0];
             var sudo = args[1];
             if (!_FileNames.inQueue(fileName) && sudo !== "sudo") {
-                _StdOut.putText("Invalid fileName");
+                _StdOut.putText("Invalid file name");
                 _OsShell.putPromptNextLine();
                 return;
             } else {

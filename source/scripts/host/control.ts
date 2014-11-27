@@ -233,21 +233,32 @@ module TSOS {
         }
 
         public static updateMemoryDisplay(){
-
-            var output = "<tr>";
             
+            var output = "<tr id='rowID0'>";
+            var currentrowID ="";
+            var rowID="rowID0"
             for (var i=0; i<_MemoryManager.memory.byteSize; i++){
                 if (i % 8 ===0){
-                    output += "</tr><tr><td> <b>" + Utils.createHexIndex(i) + " </td>";
+                    rowID="rowID"+(i/8);
+                    output += "</tr><tr id="+rowID+"><td> <b>" + Utils.createHexIndex(i) + " </td>";
                 }
-                if (_CPU.PC===i&&_CPU.isExecuting)
+                if (_CPU.PC===i&&_CPU.isExecuting){
                     output += "<td id='dataID" + i + "'><b>" + _MemoryManager.memory.Data[i] + '</b></td>';
+                    currentrowID = rowID;
+                }
                 else
                     output += "<td id='dataID" + i + "'>" + _MemoryManager.memory.Data[i] + '</td>';
             }
             output += "</tr>"
             document.getElementById("memDisplay").innerHTML = output;
-
+            debugger;
+            var mem =document.getElementById("memory");
+            var row =document.getElementById(currentrowID);
+            if (currentrowID!==''){
+                //setTimeout(function() {
+                mem.scrollTop = row.offsetTop;
+                //}, 10);
+            }
 
         }
         public static updateCpuDisplay(){
