@@ -49,7 +49,7 @@ module TSOS {
         }
 
         public init(format:boolean){
-          if ( (sessionStorage.length===1&&!format)||format) {
+          if ( (sessionStorage.getItem('000')===null&&!format)||format) {
             //set the master boot record
             //first 3 spots of data is next available file name
             //next 3 spots are for the next available datablock 
