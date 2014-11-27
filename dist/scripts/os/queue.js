@@ -134,6 +134,11 @@ var TSOS;
                 return 1;
             return 0;
         };
+        Queue.prototype.copy = function () {
+            var retVal = new Queue();
+            retVal.q = this.q.splice(0);
+            return retVal;
+        };
 
         Queue.prototype.toString = function () {
             var retVal = "";

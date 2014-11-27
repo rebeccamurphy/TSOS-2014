@@ -83,17 +83,17 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-             
+             debugger;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB =null;
             _ExecutingProgramPID =null;
 
             _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
-            var tempReadyQueue = this.readyQueue;
-            var tempResidentQueue = this.residentQueue;
+            var sizeRQ = this.readyQueue.getSize();
+            var sizeRL = this.residentQueue.getSize();
             //clear programs in memory from ready queue
-            while (! tempReadyQueue.isEmpty() ){
-                tempProgramPCB = tempReadyQueue.dequeue();
+            for (var i=0; i<sizeRQ; i++){
+                tempProgramPCB = this.readyQueue.dequeue();
                 //check if the program is in memory 
                 if (tempProgramPCB.location === Locations.Memory){
                     //remove program from the ready queue
@@ -101,14 +101,18 @@ module TSOS {
                     //and kill program if so
                     _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
                 }
+                else
+                    this.readyQueue.enqueue(tempProgramPCB);
             }
             //clear programs in memory from resident list.
-            while (!tempResidentQueue.isEmpty()){
-                tempProgramPCB = tempResidentQueue.dequeue();
+            for (var i=0; i<sizeRL; i++){
+                tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === Locations.Memory){
                     this.residentQueue.getAndRemove(tempProgramPCB.pid);
                     _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
                 }
+                else
+                    this.residentQueue.enqueue(tempProgramPCB);
             }
         }
         public emptyReadyQueue() :boolean {

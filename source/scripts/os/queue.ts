@@ -140,6 +140,11 @@ module TSOS {
                 return 1;
             return 0;
         }
+        public copy(){
+            var retVal  = new Queue();
+            retVal.q = this.q.splice(0);
+            return retVal;
+        }
 
         public toString() {
             var retVal = "";
