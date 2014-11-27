@@ -103,6 +103,7 @@ var _Trash = null;
 var _CPU;
 var _SingleStep = false;
 var _Stepping = false;
+var _StartUp = true;
 
 //Memory Vars
 var _MemoryManager;

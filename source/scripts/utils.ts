@@ -196,5 +196,17 @@ module TSOS {
     public static capitaliseFirstLetter(string){
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+    public static setStartScreen(){
+        if (sessionStorage.getItem('startUp') ===null){
+            sessionStorage.setItem('startUp','true');
+            _StartUp=true;
+        }
+        else if (sessionStorage.getItem('startUp')==='false'){
+            _StartUp = false;
+        }
+        else{
+            _StartUp = true;
+        }
+    }
 }
 }

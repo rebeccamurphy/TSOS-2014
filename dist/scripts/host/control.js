@@ -90,6 +90,8 @@ var TSOS;
 
             //window onload added to prevent resource loading error
             ///window.onload =function(){
+            //check for startup preference
+            TSOS.Utils.setStartScreen();
             if (!TSOS.Utils.supports_html5_storage()) {
                 _StdOut.putText("OS File Storage not supported. Shutting down.");
                 this.hostBtnHaltOS_click();
@@ -103,6 +105,9 @@ var TSOS;
 
                     // .. set focus on the OS console display ...
                     document.getElementById("display").focus();
+
+                    if (_StartUp)
+                        TSOS.Control.startUp(true);
 
                     // ... Create and initialize the CPU (because it's part of the hardware)  ...
                     _CPU = new TSOS.Cpu();
@@ -121,11 +126,6 @@ var TSOS;
                     _Kernel = new TSOS.Kernel();
                     _Kernel.krnBootstrap();
 
-                    //play start up screen
-                    /*TODO
-                    _Console.startUp();
-                    setTimeout(function() {_Console.init() }, 10000);
-                    */
                     TSOS.Control.updateFileSystemDisplay();
 
                     //set a listener to update file system display anytime its changed
@@ -180,6 +180,19 @@ var TSOS;
             _Stepping = true;
             _Kernel.krnOnCPUClockPulse();
             _Stepping = false;
+        };
+        Control.startUp = function (start) {
+            debugger;
+            if (start) {
+                $("#startScreen").fadeIn();
+                $('#startScreen').attr('src', 'http://i.imgur.com/o72Gvss.gif');
+            } else {
+                //fade out and remove gif
+                $("#startScreen").fadeOut(300, function () {
+                    $(this).remove();
+                });
+                $("#display").fadeIn();
+            }
         };
         Control.getUserProgram = function () {
             return document.getElementById("taProgramInput").value.trim();

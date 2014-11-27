@@ -15,6 +15,7 @@ var TSOS;
         //
         Kernel.prototype.krnBootstrap = function () {
             TSOS.Control.hostLog("bootstrap", "host"); // Use hostLog because we ALWAYS want this, even if _Trace is off.
+            debugger;
 
             // Initialize our global queues.
             _KernelInterruptQueue = new TSOS.Queue(); // A (currently) non-priority queue for interrupt requests (IRQs).
@@ -23,7 +24,8 @@ var TSOS;
             _Console = new TSOS.Console(); // The command line interface / console I/O device.
 
             // Initialize the console.
-            _Console.init();
+            if (!_StartUp)
+                _Console.init();
 
             // Initialize standard input and output to the _Console.
             _StdIn = _Console;
@@ -49,9 +51,29 @@ var TSOS;
             this.krnEnableInterrupts();
 
             // Launch the shell.
-            this.krnTrace("Creating and Launching the shell.");
-            _OsShell = new TSOS.Shell();
-            _OsShell.init();
+            //play start up screen
+            if (_StartUp) {
+                TSOS.Control.playStartUpNoise();
+                var this2 = this;
+                setTimeout(function () {
+                    TSOS.Control.startUp();
+                    _Console.init();
+
+                    // Launch the shell.
+                    this2.krnTrace("Creating and Launching the shell.");
+                    _OsShell = new TSOS.Shell();
+                    _OsShell.init();
+                }, 10000);
+            } else {
+                TSOS.Control.startUp();
+            }
+
+            if (!_StartUp) {
+                // Launch the shell.
+                this.krnTrace("Creating and Launching the shell.");
+                _OsShell = new TSOS.Shell();
+                _OsShell.init();
+            }
 
             // Finally, initiate testing.
             if (_GLaDOS) {

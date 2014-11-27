@@ -94,7 +94,8 @@ module TSOS {
             btn.disabled = true;
             //window onload added to prevent resource loading error
             ///window.onload =function(){
-
+            //check for startup preference
+            TSOS.Utils.setStartScreen();
             if (!TSOS.Utils.supports_html5_storage()){
                 _StdOut.putText("OS File Storage not supported. Shutting down.");
                 this.hostBtnHaltOS_click();
@@ -112,6 +113,8 @@ module TSOS {
                     // .. set focus on the OS console display ...
                     document.getElementById("display").focus();
 
+                    if (_StartUp)
+                        TSOS.Control.startUp(true);
                     // ... Create and initialize the CPU (because it's part of the hardware)  ...
                     _CPU = new Cpu();
                     _CPU.init();
@@ -128,11 +131,6 @@ module TSOS {
                     _Kernel = new Kernel();
                     _Kernel.krnBootstrap();
 
-                    //play start up screen
-                    /*TODO
-                    _Console.startUp();
-                    setTimeout(function() {_Console.init() }, 10000);
-                    */
                     TSOS.Control.updateFileSystemDisplay();   
                     //set a listener to update file system display anytime its changed
                     /*window.addEventListener('storage', storageEventHandler, false);
@@ -189,6 +187,19 @@ module TSOS {
             _Stepping=true;
             _Kernel.krnOnCPUClockPulse();
             _Stepping=false;
+        }
+        public static startUp(start?:boolean){
+            debugger;
+            if (start){
+                $("#startScreen").fadeIn();
+                $('#startScreen').attr('src', 'http://i.imgur.com/o72Gvss.gif');
+                
+            }
+            else{
+                //fade out and remove gif
+                $("#startScreen").fadeOut(300, function() { $(this).remove(); });
+                $("#display").fadeIn();
+            }
         }
         public static getUserProgram() :string {
             return (<HTMLInputElement>document.getElementById("taProgramInput")).value.trim();

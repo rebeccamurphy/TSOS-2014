@@ -150,6 +150,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
+            // startup  -displays all files that are deleted but still recoverable
+            sc = new TSOS.ShellCommand(this.shellStartUp, "startup", "<on/off>- displays/set start up option.");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -826,6 +830,18 @@ var TSOS;
                 _StdOut.putText(_Trash.get(i));
                 _StdOut.advanceLine();
             }
+        };
+        Shell.prototype.shellStartUp = function (args) {
+            var option = args[0];
+            if (option === 'on') {
+                sessionStorage.setItem('startUp', 'true');
+                _StartUp = true;
+            } else if (option === 'off') {
+                sessionStorage.setItem('startUp', 'false');
+                _StartUp = false;
+            }
+            var strOption = (_StartUp) ? 'on' : 'off';
+            _StdOut.putText('Start up screen is currently ' + strOption + '.');
         };
         return Shell;
     })();

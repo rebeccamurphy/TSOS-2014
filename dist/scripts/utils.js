@@ -188,6 +188,16 @@ var TSOS;
         Utils.capitaliseFirstLetter = function (string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         };
+        Utils.setStartScreen = function () {
+            if (sessionStorage.getItem('startUp') === null) {
+                sessionStorage.setItem('startUp', 'true');
+                _StartUp = true;
+            } else if (sessionStorage.getItem('startUp') === 'false') {
+                _StartUp = false;
+            } else {
+                _StartUp = true;
+            }
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;
