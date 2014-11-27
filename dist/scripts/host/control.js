@@ -91,13 +91,14 @@ var TSOS;
             //window onload added to prevent resource loading error
             ///window.onload =function(){
             //check for startup preference
-            TSOS.Utils.setStartScreen();
             if (!TSOS.Utils.supports_html5_storage()) {
                 _StdOut.putText("OS File Storage not supported. Shutting down.");
                 this.hostBtnHaltOS_click();
             }
             var readyStateCheckInterval = setInterval(function () {
                 if (document.readyState === "complete") {
+                    TSOS.Utils.setStartScreen();
+
                     // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
@@ -128,12 +129,6 @@ var TSOS;
 
                     TSOS.Control.updateFileSystemDisplay();
 
-                    //set a listener to update file system display anytime its changed
-                    /*window.addEventListener('storage', storageEventHandler, false);
-                    function storageEventHandler(event) {
-                    TSOS.Control.updateFileSystemDisplay();
-                    }
-                    */
                     clearInterval(readyStateCheckInterval);
                 }
             }, 10);
