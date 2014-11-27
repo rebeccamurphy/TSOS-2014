@@ -221,6 +221,15 @@ module TSOS {
                 } 
               }
             }*/
+            var newMBRData = this.getDataBytes('000');
+            var newTSB = TSOS.Utils.str2hex('000');
+            if (type === 'file'){
+              newMBRData = newTSB+newMBRData.substring(6);
+            }
+            else if(type==='data'){
+              newMBRData = newMBRData.substring(0,6) + newTSB + newMBRData.substring(12);
+            }
+            sessionStorage.setItem("000", this.getMetaData('000')+ newMBRData);
             if (type ==='data'){
               debugger;
               //if neither prove fruitful make the disk as full
@@ -467,7 +476,7 @@ module TSOS {
           else{
             _StdOut.putText(contents);
           }
-
+          _StdOut.advanceLine();
           TSOS.Control.setFileData(contents);
         }
         public krnDiskInUse(params){
@@ -579,9 +588,9 @@ module TSOS {
                 }
               }
               if (!success){
+                _StdOut.advanceLine();
                 this.clearFile(fileName);
                 _StdOut.putText("File name track full, please empty trash.");
-                _StdOut.advanceLine();
               }
               else if (notSwap){
                 //add file name to list
@@ -591,6 +600,11 @@ module TSOS {
             }
             case DiskAction.AppendWrite:{
               success=this.writeFile(fileName, data, true);
+              if (!success){
+                _StdOut.advanceLine();
+                this.clearFile(fileName);
+                _StdOut.putText("File name track full, please empty trash.");
+              }
               break;
             }
             case DiskAction.Read:{
