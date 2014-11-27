@@ -13,7 +13,7 @@ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, IR, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, IR, isExecuting, displayPC) {
             if (typeof PC === "undefined") { PC = 0; }
             if (typeof Acc === "undefined") { Acc = 0; }
             if (typeof Xreg === "undefined") { Xreg = 0; }
@@ -21,6 +21,7 @@ var TSOS;
             if (typeof Zflag === "undefined") { Zflag = 0; }
             if (typeof IR === "undefined") { IR = ""; }
             if (typeof isExecuting === "undefined") { isExecuting = false; }
+            if (typeof displayPC === "undefined") { displayPC = 0; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -28,6 +29,7 @@ var TSOS;
             this.Zflag = Zflag;
             this.IR = IR;
             this.isExecuting = isExecuting;
+            this.displayPC = displayPC;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -44,6 +46,8 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             //execute current instruction
+            TSOS.Control.updateMemoryDisplay();
+            this.displayPC = this.PC;
             this.execute(this.fetch());
 
             //update pcb
@@ -75,7 +79,6 @@ var TSOS;
             //update the CPU display
             TSOS.Control.updateCpuDisplay();
             TSOS.Control.updateAllQueueDisplays();
-            TSOS.Control.updateMemoryDisplay();
         };
         Cpu.prototype.updatePCB = function () {
             //update program pcb

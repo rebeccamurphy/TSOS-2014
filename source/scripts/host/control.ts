@@ -233,10 +233,9 @@ module TSOS {
         }
 
         public static updateMemoryDisplay(){
-            
-            var output = "<tr id='rowID0'>";
+            var output = "<tr>";
             var currentrowID ="";
-            var rowID="rowID0"
+            var rowID="";
             for (var i=0; i<_MemoryManager.memory.byteSize; i++){
                 if (i % 8 ===0){
                     rowID="rowID"+(i/8);
@@ -251,7 +250,7 @@ module TSOS {
             }
             output += "</tr>"
             document.getElementById("memDisplay").innerHTML = output;
-            debugger;
+            
             var mem =document.getElementById("memory");
             var row =document.getElementById(currentrowID);
             if (currentrowID!==''){
@@ -262,7 +261,7 @@ module TSOS {
 
         }
         public static updateCpuDisplay(){
-            document.getElementById("pcDisplay").innerHTML = String(_CPU.PC);
+            document.getElementById("pcDisplay").innerHTML = String(_CPU.displayPC);
             document.getElementById("irDisplay").innerHTML = String(_CPU.IR);
             document.getElementById("accDisplay").innerHTML = String(_CPU.Acc);
             document.getElementById("xDisplay").innerHTML = String(_CPU.Xreg);
