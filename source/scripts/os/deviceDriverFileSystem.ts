@@ -399,6 +399,32 @@ module TSOS {
               tsbFile= tempTSB;
               tempTSB= this.getNextTSB(tempTSB);
             }
+            //see if there's room to add more data to the last 
+            var lastBlock = this.getDataBytes(tsbFile);
+            //trim trailing zeros
+            lastBlock = TSOS.Utils.trimTrailingChars(lastBlock, '0');
+            //make sure didn't remove 0 from hex char
+            lastBlock = (lastBlock.length%2===0)? lastBlock: lastBlock+'0';
+            var writtenIndex =0; 
+            for (var i=0; i<data.length; i++){
+              if (lastBlock.length <60){
+                lastBlock+= TSOS.Utils.str2hex(data.charAt(i));
+                writtenIndex++;
+              }
+              else 
+                break;
+              if (i===data.length-1){
+                //set the new data
+                this.setDataBytes(tsbFile, lastBlock);
+                //return true if the data is done being written
+                return true;
+              }
+            }
+            //set the new data
+            this.setDataBytes(tsbFile, lastBlock);
+            //remove already written data
+            data = data.substring(writtenIndex);  
+            dataArray = data.match(/.{1,60}/g);
           }
           //local storage of next available data tsb
           var nextTSB:string =this.getNextAvailbleDataTSB();
@@ -465,7 +491,7 @@ module TSOS {
           return true;
         }
         public displayContents(contents:string){
-          
+          _StdOut.advanceLine();
           if (contents.indexOf('/n')!==-1){
             var contentsArray= contents.split('/n');
             for (var i=0; i< contentsArray.length; i++){
@@ -575,7 +601,7 @@ module TSOS {
               break;
             }
             case DiskAction.Write:{
-                
+              debugger;
               if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it
@@ -584,7 +610,10 @@ module TSOS {
                 }
                 else{
                   //write to existing file
+                  this.clearFile(fileName);
+                  this.createFile(fileName, false);
                   success =this.writeFile(fileName, data, false);
+                  var overwrite = true;
                 }
               }
               if (!success){
@@ -592,7 +621,7 @@ module TSOS {
                 this.clearFile(fileName);
                 _StdOut.putText("File name track full, please empty trash.");
               }
-              else if (notSwap){
+              else if (notSwap&&!overwrite){
                 //add file name to list
                 _FileNames.enqueue(fileName);
               }
