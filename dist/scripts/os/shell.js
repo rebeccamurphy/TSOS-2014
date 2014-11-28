@@ -411,20 +411,7 @@ var TSOS;
             var boxContent = TSOS.Control.getUserProgram();
             var tempProgramString = null;
             var tempPriority = args[0];
-            if (_MemoryManager.nextFreeMem === null) {
-                //_StdOut.putText("Cannot load program, memory full.");
-                //need to put program on disk
-                if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull) {
-                    _StdOut.putText("Hard drive full, please empty trash or remove some files.");
-                    return;
-                } else {
-                    tempProgramString = boxContent.replace(/\n/g, " ").split(" ");
-                    _StdOut.putText("Successfully loaded program.");
-                    _StdOut.advanceLine();
-                    _StdOut.putText("ProcessID: " + _Scheduler.loadProgramDisk(tempProgramString, tempPriority));
-                    return;
-                }
-            }
+
             if ((boxContent.indexOf("BEEP") == -1 || boxContent.indexOf("BOOP") == -1)) {
                 //TODO do scheduling beepboop
                 //inserts spaces into spaceless hex code because i assumed programs would have spaces. BB still needs spaces
@@ -439,12 +426,42 @@ var TSOS;
                 else
                     _StdOut.putText("Enter something in the textarea first.");
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "HEX") {
-                _StdOut.putText("Successfully loaded program.");
-                _StdOut.advanceLine();
-                _StdOut.putText("ProcessID: " + _Scheduler.loadProgramMem(tempProgramString, tempPriority));
+                if (_MemoryManager.nextFreeMem === null) {
+                    //_StdOut.putText("Cannot load program, memory full.");
+                    //need to put program on disk
+                    if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull) {
+                        _StdOut.putText("Hard drive full, please empty trash, remove some files, or run programs on disk.");
+                        return;
+                    } else {
+                        _StdOut.putText("Successfully loaded program.");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("ProcessID: " + _Scheduler.loadProgramDisk(tempProgramString, tempPriority));
+                        return;
+                    }
+                } else {
+                    _StdOut.putText("Successfully loaded program.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("ProcessID: " + _Scheduler.loadProgramMem(tempProgramString, tempPriority));
+                }
             } else if (TSOS.Utils.checkValidProgram(tempProgramString) === "BB") {
-                TSOS.Utils.convertProgram("runnableBB", tempProgramString);
-                _StdOut.putText("ProcessID: " + (_CurrPID - 1).toString());
+                tempProgramString = TSOS.Utils.convertProgram("runnableBB", tempProgramString);
+                if (_MemoryManager.nextFreeMem === null) {
+                    //_StdOut.putText("Cannot load program, memory full.");
+                    //need to put program on disk
+                    if (_krnFileSystemDriver.diskDataFull || _krnFileSystemDriver.diskFileFull) {
+                        _StdOut.putText("Hard drive full, please empty trash, remove some files, or run programs on disk.");
+                        return;
+                    } else {
+                        _StdOut.putText("Successfully loaded program.");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("ProcessID: " + _Scheduler.loadProgramDisk(tempProgramString, tempPriority));
+                        return;
+                    }
+                } else {
+                    _StdOut.putText("Successfully loaded program.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("ProcessID: " + _Scheduler.loadProgramMem(tempProgramString, tempPriority));
+                }
             } else {
                 if (_SarcasticMode)
                     _StdOut.putText("Invalid Format. " + TSOS.Utils.rot13("Shpxvat") + " poopbutt.");

@@ -125,8 +125,7 @@ var TSOS;
                 }
                 var tempHexStr = hex.join(" ");
                 if (lang === "runnableBB") {
-                    //TODO
-                    //_MemoryManager.loadProgram(hex, priority);
+                    return hex;
                 } else
                     //puts hex in text area
                     TSOS.Control.displayUserProgram(tempHexStr);
