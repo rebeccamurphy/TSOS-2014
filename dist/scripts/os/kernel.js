@@ -63,7 +63,7 @@ var TSOS;
                     this2.krnTrace("Creating and Launching the shell.");
                     _OsShell = new TSOS.Shell();
                     _OsShell.init();
-                }, 10000);
+                }, 8000);
             } else {
                 TSOS.Control.startUp();
             }

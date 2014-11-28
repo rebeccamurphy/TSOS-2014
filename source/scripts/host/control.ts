@@ -233,6 +233,14 @@ module TSOS {
         }
 
         public static updateMemoryDisplay(){
+            debugger;
+            var numData =0;
+            if (_CPU.IR==='A9'||_CPU.IR==='A2'||_CPU.IR==='A0'||_CPU.IR==='D0')
+                numData =1
+            else if (_CPU.IR==='00'||_CPU.IR==='FF'||_CPU.IR==='EA')
+                numData =0;
+            else if (_CPU.IR=='AD'||_CPU.IR=='8D'||_CPU.IR=='6D'||_CPU.IR=='AE'||_CPU.IR=='AC'||_CPU.IR=='EC'||_CPU.IR=='EE')
+                numData= 2;
             var output = "<tr>";
             var currentrowID ="";
             var rowID="";
@@ -241,9 +249,13 @@ module TSOS {
                     rowID="rowID"+(i/8);
                     output += "</tr><tr id="+rowID+"><td> <b>" + Utils.createHexIndex(i) + " </td>";
                 }
-                if (_CPU.PC===i&&_CPU.isExecuting){
-                    output += "<td id='dataID" + i + "'><b>" + _MemoryManager.memory.Data[i] + '</b></td>';
-                    currentrowID = rowID;
+                if (_CPU.displayPC===i&&_CPU.isExecuting){
+                    output += "<td id='dataID" + i + "'class='instruct'>" + _MemoryManager.memory.Data[i] + '</td>';
+                    currentrowID = rowID; 
+                }
+                else if (numData!==0 &&i>_CPU.displayPC ){
+                    output += "<td id='dataID" + i + "' class='instructData'>" + _MemoryManager.memory.Data[i] + '</td>';
+                    numData--;        
                 }
                 else
                     output += "<td id='dataID" + i + "'>" + _MemoryManager.memory.Data[i] + '</td>';

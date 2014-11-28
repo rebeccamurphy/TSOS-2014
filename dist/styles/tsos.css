@@ -102,19 +102,25 @@ font-weight: normal !important;
 #memDisplayBox{
   margin-top: 1px;
 }
-#memory{
+#memory, #programList{
   overflow-y:auto;
   max-height:180px;
 }
 #memoryWrapper{
   border-bottom: 1px solid; 
   border-color: #ddd;
-  /*overflow-y:auto;
-  max-height:406px;*/
+  
+  max-height:406px;
   height: 228px;
   width:368px;
 }
-
+.instruct{
+  font-weight: bold;
+}
+.instructData{
+  color: green;
+  font-weight: bold;
+}
 #instructID{
   display:inline-block;
   float:right;
