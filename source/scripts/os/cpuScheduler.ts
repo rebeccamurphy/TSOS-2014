@@ -130,10 +130,16 @@ module TSOS {
 
         	//check if the CPU is not executing, thus we need to set the executing program
         	if(!_CPU.isExecuting){
-        		_ExecutingProgramPCB = this.readyQueue.dequeue();
-        		_ExecutingProgramPID = _ExecutingProgramPCB.pid;
-                //load it into the cpu
-                _CPU.loadProgram();
+                if (tempProgramPCB.location ===Locations.Memory){
+                    _ExecutingProgramPCB = this.readyQueue.dequeue();
+                    _ExecutingProgramPID = _ExecutingProgramPCB.pid;
+                  //load it into the cpu
+                  _CPU.loadProgram();
+                }
+                else if (tempProgramPCB.location === Locations.Disk) {
+                    _ExecutingProgramPCB = null;
+                    this.contextSwitch();        
+                }
         	}
             if (SCHEDULE_TYPE === scheduleType.priority){
                 this.reorder = true;
@@ -170,7 +176,7 @@ module TSOS {
         	_ExecutingProgramPID = _ExecutingProgramPCB.pid;
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === Locations.Disk) {
-                 ;
+                
                 //enqueue an interupt to read swap from disk to so there is more room
                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.ReadSwap, SWAP_FILE_START_CHAR +_ExecutingProgramPID]));
                 
@@ -183,7 +189,11 @@ module TSOS {
                 }
                 else{
                     //we need to remove one program from memory and load the executing pcb to memory
-                    var lastPCB = this.readyQueue.getLeastImportant();
+                    var lastPCB = this.residentQueue.getLeastImportant();
+                    //if no programs in readyqueue in memory try resident list
+                    var useReady=lastPCB===null;
+                    if (useReady)
+                        lastPCB = this.readyQueue.getLeastImportant();
                     var lastProgram=[];
                     //get the last program in the queue from memory 
                     lastProgram = _MemoryManager.getProgram(lastPCB);
@@ -193,13 +203,13 @@ module TSOS {
                     _ExecutingProgramPCB.limit = lastPCB.limit;
                     //set the location of the last program to disk
                     lastPCB.location =Locations.Disk;
-
                     //write the last program to disk
                     _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Write, SWAP_FILE_START_CHAR +lastPCB.pid, lastProgramStr]));
                     //finally splicein  the lastpcb
-                    this.readyQueue.addLeastImportant(lastPCB);
-                
-                    
+                    if (useReady)
+                        this.readyQueue.addLeastImportant(lastPCB);
+                    else
+                        this.residentQueue.addLeastImportant(lastPCB);
                 }
                
                

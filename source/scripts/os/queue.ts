@@ -98,7 +98,7 @@ module TSOS {
             this.ordered = true;
         }
         public getLeastImportant(){
-            var retVal;
+            var retVal =null;
             var leastPriority =0;
             for (var i =0; i<this.q.length; i++){
                 if (SCHEDULE_TYPE === scheduleType.priority){

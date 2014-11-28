@@ -135,11 +135,16 @@ var TSOS;
 
             //check if the CPU is not executing, thus we need to set the executing program
             if (!_CPU.isExecuting) {
-                _ExecutingProgramPCB = this.readyQueue.dequeue();
-                _ExecutingProgramPID = _ExecutingProgramPCB.pid;
+                if (tempProgramPCB.location === 0 /* Memory */) {
+                    _ExecutingProgramPCB = this.readyQueue.dequeue();
+                    _ExecutingProgramPID = _ExecutingProgramPCB.pid;
 
-                //load it into the cpu
-                _CPU.loadProgram();
+                    //load it into the cpu
+                    _CPU.loadProgram();
+                } else if (tempProgramPCB.location === 1 /* Disk */) {
+                    _ExecutingProgramPCB = null;
+                    this.contextSwitch();
+                }
             }
             if (SCHEDULE_TYPE === 2 /* priority */) {
                 this.reorder = true;
@@ -176,8 +181,6 @@ var TSOS;
 
             //check if the program is on disk()
             if (_ExecutingProgramPCB.location === 1 /* Disk */) {
-                ;
-
                 //enqueue an interupt to read swap from disk to so there is more room
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [3 /* ReadSwap */, SWAP_FILE_START_CHAR + _ExecutingProgramPID]));
 
@@ -188,7 +191,12 @@ var TSOS;
                     _ExecutingProgramPCB.limit = _ExecutingProgramPCB.base + _ProgramSize - 1;
                 } else {
                     //we need to remove one program from memory and load the executing pcb to memory
-                    var lastPCB = this.readyQueue.getLeastImportant();
+                    var lastPCB = this.residentQueue.getLeastImportant();
+
+                    //if no programs in readyqueue in memory try resident list
+                    var useReady = lastPCB === null;
+                    if (useReady)
+                        lastPCB = this.readyQueue.getLeastImportant();
                     var lastProgram = [];
 
                     //get the last program in the queue from memory
@@ -206,7 +214,10 @@ var TSOS;
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [4 /* Write */, SWAP_FILE_START_CHAR + lastPCB.pid, lastProgramStr]));
 
                     //finally splicein  the lastpcb
-                    this.readyQueue.addLeastImportant(lastPCB);
+                    if (useReady)
+                        this.readyQueue.addLeastImportant(lastPCB);
+                    else
+                        this.residentQueue.addLeastImportant(lastPCB);
                 }
             } else {
                 //load it into the cpu

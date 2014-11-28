@@ -95,7 +95,7 @@ var TSOS;
             this.ordered = true;
         };
         Queue.prototype.getLeastImportant = function () {
-            var retVal;
+            var retVal = null;
             var leastPriority = 0;
             for (var i = 0; i < this.q.length; i++) {
                 if (SCHEDULE_TYPE === 2 /* priority */) {

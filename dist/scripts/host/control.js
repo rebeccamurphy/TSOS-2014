@@ -403,9 +403,13 @@ var TSOS;
 
             document.getElementById("taProgramInput").value = output;
             document.getElementById("upi").setAttribute("class", "active");
+            document.getElementById("pi").setAttribute("class", "active");
             document.getElementById("upl").setAttribute("class", "");
+            document.getElementById("di").setAttribute("class", "");
             document.getElementById("programList").setAttribute("class", "tab-pane");
+            document.getElementById("dataInput").setAttribute("class", "tab-pane");
             document.getElementById("memory").className += " active";
+            document.getElementById("programInput").className += " active";
         };
 
         Control.updateFileSystemDisplay = function () {
@@ -422,16 +426,14 @@ var TSOS;
                         metaStr = _krnFileSystemDriver.getMetaData(tsbStr);
 
                         output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
-
-                        //if (metaStr.charAt(0)==="1"){
-                        output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
-                        output += "<td>" + blockStr + "</td></tr>";
-                        //}
-                        /*else{
-                        //trick the user into think they're data is deleted
-                        output+="<td>"+ "<b>"+metaStr.charAt(0)+ "</b>" + "000" +"</td>";
-                        output+="<td>"+ new Array(61).join('0') +"</td></tr>";
-                        }*/
+                        if (metaStr.charAt(0) === "1") {
+                            output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
+                            output += "<td>" + blockStr + "</td></tr>";
+                        } else {
+                            //trick the user into think they're data is deleted
+                            output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + "000" + "</td>";
+                            output += "<td>" + new Array(61).join('0') + "</td></tr>";
+                        }
                     }
                 }
             }
