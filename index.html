@@ -110,11 +110,14 @@
 </div>
 <h2 class="col-md-4" style="text-align:center"> MysteriOS Bloop </h2>
 
-      <div style="display: inline-block;float: right;width: 300px;">
-        <div id="clockDisplay"></div> <div id="statusDisplay"></div>
-      </div>
+<div class="col-md-4">
+  <div id="clockDisplay"></div> <div id="statusDisplay"></div>
 </div>
-<div id="divConsole" style="margin:4px; width:515px; height:654px; float:left;" class="col-md-6">
+
+</div>
+
+<div class="col-md-6">
+<div id="divConsole" style="margin:4px; width:515px; height:654px; float:right;" class="col-md-6">
 <img id="startScreen" src="http://i.imgur.com/xw1DLov.png"> </img>
   <canvas id="display"
           width="500"
@@ -122,8 +125,9 @@
           tabindex="3"
           style="display:none">
   </canvas>
-
 </div>
+</div>
+<div class="col-md-6" style="">
    <div id="divLog" class="col-md-4">
         <label>
            Host Log
@@ -164,7 +168,7 @@
       </label>
    </div>
 
-   <div id="divMemory" class="col-md-3" >
+   <div id="divMemory" class="col-md-5" >
          
          <div id="memoryWrapper">
             <ul class="nav nav-tabs" role="tablist" style="border-bottom:none">
@@ -233,8 +237,7 @@
         </div>
    </div>
    
-   
-</div>
+
 
 
 <div id= "FileSystem"class="col-md-7" >
@@ -267,7 +270,7 @@
               </li>
             </ul>
   <div class ="tab-content">
-  <div style="font-weight:700"><div id="SchedulingType">Round Robin</div></div>
+  <div style="font-weight:700;width:714px"><div id="SchedulingType">Round Robin</div></div>
   <div id= "ReadyQueue" class="tab-pane active">
            <div id="ReadyQueueWrapper">
               <table id = "ReadyQueueDisplayBox" class="table table-bordered">
@@ -395,6 +398,7 @@
             </div>
     </div>
     </div>
+</div>
 </div>
 <p class="footerText" style="clear:both;">
    <br>
