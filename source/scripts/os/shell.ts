@@ -768,7 +768,7 @@ module TSOS {
                 return;    
             }
 
-            _StdOut.putText("Invalid parameter.");
+            _StdOut.putPrompt("Invalid parameter.");
         }  
 
         public shellCreateFile(args):void{

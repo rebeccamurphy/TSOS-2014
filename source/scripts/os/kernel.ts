@@ -180,10 +180,10 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case FILESYSTEM_IRQ:{
-                    var fileName = params[1]===undefined? "":params[1];
-                    this.krnTrace("The Disk is " + DiskActions[params[0]] +" "+ fileName+".");
+                    var fileName = params[1]===undefined? "": " "+params[1];
+                    this.krnTrace("The Disk is " + DiskActions[params[0]] + fileName+".");
                     _krnFileSystemDriver.isr(params);
-                    this.krnTrace("The Disk is done " + DiskActions[params[0]] +" " +fileName+".");
+                    this.krnTrace("The Disk is done " + DiskActions[params[0]]  +fileName+".");
                     
                     break;
                 }
@@ -259,7 +259,7 @@ module TSOS {
                 case MEMORY_ACCESS_VIOLATION_IRQ:{
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + 
-                        " Attempted to access " + (parseInt(params)+_ExecutingProgramPCB.base));
+                        " Attempted to access " + parseInt(params));
                     _Scheduler.stopRunning(_ExecutingProgramPID);
                     
                     break;

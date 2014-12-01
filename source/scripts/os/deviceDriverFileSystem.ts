@@ -84,9 +84,15 @@ module TSOS {
                   if (""+t+""+s+""+b !== "000"){
                     var tempName = this.getFileName(t+""+s+""+b);
                     if(tempName!=="" && SWAP_FILE_START_CHAR !== tempName.charAt(0)
-                      && this.InUse(t+""+s+""+b))
+                      && this.InUse(t+""+s+""+b)){
                       //makes sure swap files are not added to the file list
                       _FileNames.enqueue(tempName);  
+                    }
+                    else if (tempName!=="" && SWAP_FILE_START_CHAR === tempName.charAt(0)
+                      && this.InUse(t+""+s+""+b))){
+                      //clear programs left on disk as if they were in memory
+                      this.clearFile(t+""+s+""+b);
+                    }
                   } 
                 }
               }
