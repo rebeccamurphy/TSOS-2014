@@ -43,7 +43,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // trace <on | off>
-            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
+            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<'on | off'> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
@@ -147,11 +147,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // trash  -displays all files that are deleted but still recoverable
-            sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "- displays all deleted files that are still recoverable.");
+            sc = new TSOS.ShellCommand(this.shellTrashFiles, "trash", "<-empty> - displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
             // startup  -displays all files that are deleted but still recoverable
-            sc = new TSOS.ShellCommand(this.shellStartUp, "startup", "<on | off> - displays/set start up option.");
+            sc = new TSOS.ShellCommand(this.shellStartUp, "startup", "<'on | off'> - displays/set start up option.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.

@@ -60,7 +60,7 @@ module TSOS {
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
                                   "trace",
-                                  "<on | off> - Turns the OS trace on or off.");
+                                  "<'on | off'> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
@@ -219,13 +219,13 @@ module TSOS {
             // trash  -displays all files that are deleted but still recoverable
             sc = new ShellCommand(this.shellTrashFiles,
                                   "trash",
-                                  "- displays all deleted files that are still recoverable.");
+                                  "<-empty> - displays all deleted files that are still recoverable.");
             this.commandList[this.commandList.length] = sc;
 
             // startup  -displays all files that are deleted but still recoverable
             sc = new ShellCommand(this.shellStartUp,
                                   "startup",
-                                  "<on | off> - displays/set start up option.");
+                                  "<'on | off'> - displays/set start up option.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
