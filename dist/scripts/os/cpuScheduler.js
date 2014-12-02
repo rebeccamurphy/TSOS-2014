@@ -274,7 +274,7 @@ var TSOS;
             _CPU.updateDisplay();
 
             //finally enqueue an interrupt
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            return tempProgramPCB;
         };
         cpuScheduler.prototype.switchScheduling = function () {
             switch (SCHEDULE_TYPE) {

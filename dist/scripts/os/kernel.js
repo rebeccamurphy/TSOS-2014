@@ -137,7 +137,7 @@ var TSOS;
                         break;
                     }
                 }
-            } else if (!_SingleStep) {
+            } else {
                 this.krnTrace("Idle");
             }
         };
@@ -206,7 +206,7 @@ var TSOS;
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC - 1));
 
                     //then stop the program from executing
-                    _Scheduler.stopRunning(_ExecutingProgramPCB);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
                     break;
                 }
                 case SYS_OPCODE_IRQ: {
@@ -251,29 +251,41 @@ var TSOS;
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + parseInt(params));
-                    _Scheduler.stopRunning(_ExecutingProgramPID);
+
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
 
                     break;
                 }
                 case PROCESS_KILLED_IRQ: {
-                    //set the state of the program to killed
-                    params.state = 4 /* Killed */;
+                    if (params === -1) {
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
+                        for (var i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
+                            var tempPCB = _Scheduler.readyQueue.dequeue();
+                            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempPCB.pid));
+                            _Scheduler.readyQueue.enqueue(tempPCB);
+                        }
+                    } else {
+                        params = _Scheduler.stopRunning(params);
 
-                    //add program to terminated queue
-                    _Scheduler.terminatedQueue.enqueue(params);
+                        //set the state of the program to killed
+                        params.state = 4 /* Killed */;
 
-                    //log event
-                    this.krnTrace("PID: " + params.pid + " has been killed.");
+                        //add program to terminated queue
+                        _Scheduler.terminatedQueue.enqueue(params);
 
-                    //check if the ready queue is empty, if not continue executing
-                    if (_Scheduler.readyQueue.isEmpty() && _ExecutingProgramPID === null) {
-                        _CPU.isExecuting = false; //stop the cpu from executing
-                        this.krnTrace("CPU had stopped executing.");
-                    } else if (_ExecutingProgramPID === null) {
-                        //only perform a context switch if the running process was killed
-                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
+                        //log event
+                        this.krnTrace("PID: " + params.pid + " has been killed.");
+
+                        //check if the ready queue is empty, if not continue executing
+                        if (_Scheduler.readyQueue.isEmpty() && _ExecutingProgramPID === null) {
+                            _CPU.isExecuting = false; //stop the cpu from executing
+                            this.krnTrace("CPU had stopped executing.");
+                        } else if (_ExecutingProgramPID === null) {
+                            //only perform a context switch if the running process was killed
+                            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
+                        }
+                        TSOS.Control.updateAllQueueDisplays();
                     }
-                    TSOS.Control.updateAllQueueDisplays();
                     break;
                 }
                 case CLEAR_MEMORY_IRQ: {

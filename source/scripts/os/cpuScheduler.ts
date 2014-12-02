@@ -270,7 +270,7 @@ module TSOS {
             //update the cpu display
             _CPU.updateDisplay();
         	//finally enqueue an interrupt
-        	_KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            return tempProgramPCB;
         }
         public switchScheduling(){
             switch(SCHEDULE_TYPE){

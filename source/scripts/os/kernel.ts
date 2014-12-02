@@ -145,7 +145,7 @@ module TSOS {
                     }
                 }
 
-            } else if (!_SingleStep){// If there are no interrupts and there is nothing being executed then just be idle. {
+            } else {// If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
         }
@@ -218,7 +218,7 @@ module TSOS {
                     //first log the error
                     this.krnTrace("Unknown opcode: " + _MemoryManager.getMemory(_CPU.PC-1));
                     //then stop the program from executing
-                    _Scheduler.stopRunning(_ExecutingProgramPCB);
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
                     break;
                 }
                 case SYS_OPCODE_IRQ:{
@@ -264,30 +264,42 @@ module TSOS {
                     //log the error
                     this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + 
                         " Attempted to access " + parseInt(params));
-                    _Scheduler.stopRunning(_ExecutingProgramPID);
+                    
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
                     
                     break;
                 }
                 case PROCESS_KILLED_IRQ:{
-                    //set the state of the program to killed
-                    params.state = State.Killed;
-
-                    //add program to terminated queue
-                    _Scheduler.terminatedQueue.enqueue(params);
-
-                    //log event
-                    this.krnTrace("PID: "+ params.pid +" has been killed.");
-                    
-                    //check if the ready queue is empty, if not continue executing
-                    if (_Scheduler.readyQueue.isEmpty()&&_ExecutingProgramPID===null){
-                        _CPU.isExecuting = false; //stop the cpu from executing
-                        this.krnTrace("CPU had stopped executing.");
+                    if (params===-1){
+                        _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, _ExecutingProgramPID));
+                        for (var i=0; i< _Scheduler.readyQueue.getSize(); i++){
+                            var tempPCB = _Scheduler.readyQueue.dequeue();
+                            _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempPCB.pid));
+                            _Scheduler.readyQueue.enqueue(tempPCB);
+                        }
                     }
-                    else if (_ExecutingProgramPID===null){
-                        //only perform a context switch if the running process was killed
-                        _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
+                    else {
+                        params = _Scheduler.stopRunning(params);
+                        //set the state of the program to killed
+                        params.state = State.Killed;
+
+                        //add program to terminated queue
+                        _Scheduler.terminatedQueue.enqueue(params);
+
+                        //log event
+                        this.krnTrace("PID: "+ params.pid +" has been killed.");
+                        
+                        //check if the ready queue is empty, if not continue executing
+                        if (_Scheduler.readyQueue.isEmpty()&&_ExecutingProgramPID===null){
+                            _CPU.isExecuting = false; //stop the cpu from executing
+                            this.krnTrace("CPU had stopped executing.");
+                        }
+                        else if (_ExecutingProgramPID===null){
+                            //only perform a context switch if the running process was killed
+                            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, params.pid));
+                        }
+                        TSOS.Control.updateAllQueueDisplays();
                     }
-                    TSOS.Control.updateAllQueueDisplays();
                     break;
                 }
                 case CLEAR_MEMORY_IRQ:{  

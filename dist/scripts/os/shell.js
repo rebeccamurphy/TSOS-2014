@@ -115,7 +115,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
-            sc = new TSOS.ShellCommand(this.shellKillProcess, "kill", "<int> - Kill the specified process if it is running.");
+            sc = new TSOS.ShellCommand(this.shellKillProcess, "kill", "<int,*> - Kill the specified process if it is running. * kills all.");
             this.commandList[this.commandList.length] = sc;
 
             // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.
@@ -594,15 +594,17 @@ var TSOS;
             }
         };
         Shell.prototype.shellKillProcess = function (args) {
-            var program = parseInt(args[0]);
-            if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program)) {
+            var program = (args[0] !== "*") ? parseInt(args[0]) : -1;
+            if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program) && args[0] !== '*') {
                 if (_SarcasticMode)
                     _StdOut.putText("I cannot kill what which has no life.");
                 else
                     _StdOut.putText("Process cannot be killed because process is not running.");
+            } else if (program === -1) {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, -1));
             } else {
-                _Scheduler.stopRunning(program);
-                _StdOut.putText("PID " + args[0] + " is running.");
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, program));
+                _StdOut.putText("PID " + args[0] + " is dead.");
             }
         };
         Shell.prototype.shellSetScheduling = function (args) {
