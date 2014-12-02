@@ -77,7 +77,7 @@ module TSOS {
             return true;
           }
           else{
-            ;
+            
             //add the file names to file name global
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7;s++){
@@ -89,6 +89,10 @@ module TSOS {
                       //makes sure swap files are not added to the file list
                       _FileNames.enqueue(tempName);  
                       }
+                    else if (tempName!=="" && SWAP_FILE_START_CHAR !== tempName.charAt(0)){
+                      //added deleted files to trash
+                      _Trash.enqueue(tempName);
+                    }
                     else if (tempName!=="" && SWAP_FILE_START_CHAR === tempName.charAt(0)
                       && this.InUse(t+""+s+""+b)){
                       //clear programs left on disk as if they were in memory

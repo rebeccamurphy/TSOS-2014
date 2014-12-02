@@ -812,7 +812,7 @@ var TSOS;
             var fileName = args[0];
             var sudo = args[1];
             if (!_FileNames.inQueue(fileName) && sudo !== "sudo") {
-                _StdOut.putText("Invalid file name");
+                _StdOut.putText("Invalid file name.");
                 _OsShell.putPromptNextLine();
                 return;
             } else {
@@ -853,7 +853,7 @@ var TSOS;
             _StdOut.advanceLine();
             for (var i = 0; i < _Trash.getSize(); i++) {
                 _StdOut.putText(_Trash.get(i));
-                _StdOut.advanceLine();
+                _OsShell.putPromptNextLine();
             }
         };
         Shell.prototype.shellStartUp = function (args) {

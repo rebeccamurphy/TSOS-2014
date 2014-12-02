@@ -68,8 +68,6 @@ var TSOS;
                 this.diskFileFull = false;
                 return true;
             } else {
-                ;
-
                 for (var t = 0; t <= 0; t++) {
                     for (var s = 0; s <= 7; s++) {
                         for (var b = 0; b <= 7; b++) {
@@ -78,6 +76,9 @@ var TSOS;
                                 if (tempName !== "" && SWAP_FILE_START_CHAR !== tempName.charAt(0) && this.InUse(t + "" + s + "" + b)) {
                                     //makes sure swap files are not added to the file list
                                     _FileNames.enqueue(tempName);
+                                } else if (tempName !== "" && SWAP_FILE_START_CHAR !== tempName.charAt(0)) {
+                                    //added deleted files to trash
+                                    _Trash.enqueue(tempName);
                                 } else if (tempName !== "" && SWAP_FILE_START_CHAR === tempName.charAt(0) && this.InUse(t + "" + s + "" + b)) {
                                     //clear programs left on disk as if they were in memory
                                     this.clearFile(tempName);
