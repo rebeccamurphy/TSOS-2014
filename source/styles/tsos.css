@@ -162,6 +162,7 @@ td {
   height:187px;
   overflow-y:auto;
   display: inline-block; 
+  width: 745px;
 }
 #taHostLog{
   width:360px;
@@ -213,7 +214,7 @@ td {
   border: 1px solid;
   border-color: #ddd;
   overflow-y: auto;
-  min-width: 745px;
+  width: 745px;
 }
 #Queues{
   padding-top: 5px;
