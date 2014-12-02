@@ -186,7 +186,7 @@ module TSOS {
             // delete       Remove  filename    from    storage and display a   message denoting    success or  failure
             sc = new ShellCommand(this.shellDeleteFile,
                                   "delete",
-                                  "<filename, *> - deletes file with filename specified, or use * to delete all files.");
+                                  "<filename, *>, <-force> - deletes file with filename specified, or use * to delete all files. -force makes the file unrecoverable.");
             this.commandList[this.commandList.length] = sc;    
             
             // recover
@@ -797,6 +797,10 @@ module TSOS {
                 _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and no periods.");
                 return;
             }
+            if (_Trash.inQueue(firstParam)){
+              _OsShell.putPrompt("File name in trash, empty trash first before overwriting.")
+              return;
+            }
 
             if (!_FileNames.inQueue(firstParam)){
                 //create the file
@@ -815,12 +819,18 @@ module TSOS {
         }
         public shellDeleteFile(args){
             var fileName = args[0];
+            var force = args[1]==="-force";
 
             if (fileName===undefined){
                 _StdOut.putText("Please specify a file name.");
-                _OsShell.putPromptNextLine();                return;   
+                _OsShell.putPromptNextLine();                
+                return;   
             }
             else if (fileName ==="*"){
+                if (force){
+                  _StdOut.putPrompt("Cannot force delete all files. Format the disk instead.");
+                  return;
+                }
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
                 _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.DeleteAll]));
@@ -829,7 +839,11 @@ module TSOS {
             else if (_FileNames.inQueue(fileName)){
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
-                _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Delete, fileName]));
+                if (force){
+                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.DeleteForce, fileName]));
+                }
+                else 
+                  _KernelInterruptQueue.enqueue(new Interrupt(FILESYSTEM_IRQ, [DiskAction.Delete, fileName]));
                 return;
             }
             else{
@@ -866,7 +880,7 @@ module TSOS {
         }
 
         public shellWriteFile(args){
-             ;
+            
             var fileName = args[0];
             var typeOfWrite = args[1];
             var boxContent  =TSOS.Control.getFileData();
@@ -875,6 +889,10 @@ module TSOS {
             else
                 var data = args.slice(1);
             data = data.join(' ');
+            if (_Trash.inQueue(fileName)){
+              _OsShell.putPrompt("File name in trash, empty trash first before overwriting.")
+              return;
+            }
             if (fileName===undefined||fileName.length >30 ){
               _StdOut.putText("File names must be less than 30 characters and not contains spaces or " +SWAP_FILE_START_CHAR);
               _OsShell.putPromptNextLine();              

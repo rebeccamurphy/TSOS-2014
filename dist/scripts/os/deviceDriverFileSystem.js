@@ -499,13 +499,13 @@ var TSOS;
             var notSwap = fileName.charAt(0) !== SWAP_FILE_START_CHAR;
 
             switch (diskAction) {
-                case 8 /* FullFormat */: {
+                case 9 /* FullFormat */: {
                     success = this.fullFormatDisk();
                     _FileNames = new TSOS.Queue();
                     _Trash = new TSOS.Queue();
                     break;
                 }
-                case 9 /* QuickFormat */: {
+                case 10 /* QuickFormat */: {
                     success = this.quickFormatDisk();
                     _Trash = _FileNames;
                     _FileNames = new TSOS.Queue();
@@ -541,7 +541,14 @@ var TSOS;
                     }
                     break;
                 }
-                case 7 /* DeleteAll */: {
+                case 7 /* DeleteForce */: {
+                    success = this.clearFile(fileName);
+                    if (success && notSwap) {
+                        _FileNames.getAndRemove(fileName);
+                    }
+                    break;
+                }
+                case 8 /* DeleteAll */: {
                     while (!_FileNames.isEmpty()) {
                         var tempFile = _FileNames.dequeue();
                         success = this.deleteFile(this.findFile(tempFile, false));
@@ -554,7 +561,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 11 /* Recover */: {
+                case 12 /* Recover */: {
                     success = this.recoverFile(this.findFile(fileName, true));
                     if (success && notSwap) {
                         //if success move the file from the trash to file name
@@ -562,7 +569,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 12 /* RecoverAll */: {
+                case 13 /* RecoverAll */: {
                     while (!_Trash.isEmpty()) {
                         var tempFile = _Trash.dequeue();
                         success = this.recoverFile(this.findFile(tempFile, true));
@@ -627,7 +634,7 @@ var TSOS;
                     }
                     break;
                 }
-                case 10 /* EmptyTrash */: {
+                case 11 /* EmptyTrash */: {
                     while (!_Trash.isEmpty()) {
                         var tempFile = _Trash.dequeue();
                         success = this.clearFile(tempFile);

@@ -557,6 +557,13 @@ module TSOS {
               }
               break;
             }
+            case DiskAction.DeleteForce:{
+              success=this.clearFile(fileName);
+              if (success && notSwap){
+                _FileNames.getAndRemove(fileName);
+              }
+              break;
+            }
             case DiskAction.DeleteAll:{
               while(!_FileNames.isEmpty()){
                 var tempFile = _FileNames.dequeue();
@@ -644,7 +651,7 @@ module TSOS {
 
               if (success){
                 //enqueue interrupt for kernal to finish loading the program
-                 //last enqueue interrupt to load program into memory after it has been read
+                //last enqueue interrupt to load program into memory after it has been read
                 _KernelInterruptQueue.enqueue(new Interrupt(SWAPFILE_IRQ));
               }
               break;

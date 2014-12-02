@@ -127,7 +127,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // delete       Remove  filename    from    storage and display a   message denoting    success or  failure
-            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename, *> - deletes file with filename specified, or use * to delete all files.");
+            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename, *>, <-force> - deletes file with filename specified, or use * to delete all files. -force makes the file unrecoverable.");
             this.commandList[this.commandList.length] = sc;
 
             // recover
@@ -626,21 +626,21 @@ var TSOS;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
                 return;
             }
 
             if (firstParam === "quick" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* QuickFormat */]));
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -650,13 +650,13 @@ var TSOS;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* QuickFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* QuickFormat */]));
                 return;
             }
             if (firstParam === "full" && !DISK_IN_USE) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
@@ -665,7 +665,7 @@ var TSOS;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* FullFormat */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
                 return;
             }
 
@@ -688,6 +688,10 @@ var TSOS;
                 _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and no periods.");
                 return;
             }
+            if (_Trash.inQueue(firstParam)) {
+                _OsShell.putPrompt("File name in trash, empty trash first before overwriting.");
+                return;
+            }
 
             if (!_FileNames.inQueue(firstParam)) {
                 //create the file
@@ -704,20 +708,29 @@ var TSOS;
         };
         Shell.prototype.shellDeleteFile = function (args) {
             var fileName = args[0];
+            var force = args[1] === "-force";
 
             if (fileName === undefined) {
                 _StdOut.putText("Please specify a file name.");
                 _OsShell.putPromptNextLine();
                 return;
             } else if (fileName === "*") {
+                if (force) {
+                    _StdOut.putPrompt("Cannot force delete all files. Format the disk instead.");
+                    return;
+                }
+
                 //delete all files in directory
                 _StdOut.putText("Deleting All Files");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* DeleteAll */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [8 /* DeleteAll */]));
                 return;
             } else if (_FileNames.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Deleting File: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* Delete */, fileName]));
+                if (force) {
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [7 /* DeleteForce */, fileName]));
+                } else
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [6 /* Delete */, fileName]));
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
@@ -734,12 +747,12 @@ var TSOS;
             } else if (fileName === "*") {
                 //delete all files in directory
                 _StdOut.putText("Recovering All Files");
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [12 /* RecoverAll */]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [13 /* RecoverAll */]));
                 return;
             } else if (_Trash.inQueue(fileName)) {
                 //delete existing file
                 _StdOut.putText("Recovering File: " + fileName);
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [11 /* Recover */, fileName]));
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [12 /* Recover */, fileName]));
                 return;
             } else {
                 _StdOut.putText("Invalid file name. ");
@@ -748,7 +761,6 @@ var TSOS;
         };
 
         Shell.prototype.shellWriteFile = function (args) {
-            ;
             var fileName = args[0];
             var typeOfWrite = args[1];
             var boxContent = TSOS.Control.getFileData();
@@ -757,6 +769,10 @@ var TSOS;
             else
                 var data = args.slice(1);
             data = data.join(' ');
+            if (_Trash.inQueue(fileName)) {
+                _OsShell.putPrompt("File name in trash, empty trash first before overwriting.");
+                return;
+            }
             if (fileName === undefined || fileName.length > 30) {
                 _StdOut.putText("File names must be less than 30 characters and not contains spaces or " + SWAP_FILE_START_CHAR);
                 _OsShell.putPromptNextLine();
@@ -840,7 +856,7 @@ var TSOS;
                     return;
                 } else {
                     _StdOut.putText("Trash being emptied.");
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* EmptyTrash */]));
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [11 /* EmptyTrash */]));
                     return;
                 }
             }
