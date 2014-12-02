@@ -88,7 +88,7 @@ var TSOS;
             return currPCB.pid;
         };
         cpuScheduler.prototype.clearMem = function () {
-            debugger;
+            ;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB = null;
             _ExecutingProgramPID = null;

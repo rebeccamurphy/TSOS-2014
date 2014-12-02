@@ -221,3 +221,13 @@ td {
 #memDisplay>tr>td{
   padding:5px!important;
 }
+.modal:nth-of-type(even) {
+    z-index: 1042 !important;
+}
+.modal-backdrop.in:nth-of-type(even) {
+    z-index: 1041 !important;
+}
+.help{
+  font-size: 14px;
+  margin-bottom: 5px;
+}

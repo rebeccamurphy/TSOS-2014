@@ -17,7 +17,7 @@ module TSOS {
         //
         public krnBootstrap() {      // Page 8. {
             Control.hostLog("bootstrap", "host");  // Use hostLog because we ALWAYS want this, even if _Trace is off.
-            debugger;
+            ;
             // Initialize our global queues.
             _KernelInterruptQueue = new Queue();  // A (currently) non-priority queue for interrupt requests (IRQs).
             _KernelBuffers = new Array();         // Buffers... for the kernel.
@@ -68,6 +68,8 @@ module TSOS {
                 this2.krnTrace("Creating and Launching the shell.");
                 _OsShell = new Shell();
                 _OsShell.init();
+                //update help
+                TSOS.Control.updateHelp();
                 }, 8000);
             }
             else{
@@ -79,6 +81,8 @@ module TSOS {
                 this.krnTrace("Creating and Launching the shell.");
                 _OsShell = new Shell();
                 _OsShell.init();
+                //update help
+                TSOS.Control.updateHelp();
             }
             // Finally, initiate testing.
             if (_GLaDOS) {

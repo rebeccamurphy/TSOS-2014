@@ -48,14 +48,36 @@
    var key = e.keyCode ? e.keyCode : e.which;
 
        if (key == 39) {
+          //right arrow
            TSOS.Control.hostBtnStep_click();
        }
+       if (key == 27 ){
+          //escape
+          $('#myModal').modal({show:true});
+       }
     }
+    
    </script>
 </head>
 <audio id ="c" src="http://clyp.it/44lqmgqn.ogg"></audio>
 <audio id ="startUpNoise" src="http://upload.wikimedia.org/wikipedia/commons/b/b6/Bloop_real.ogg"></audio>
 <body onload="onDocumentLoad();">
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title" style="color:rgb(66, 139, 202);font-weight:700;">Command List</h4>
+        </div><div class="container"></div>
+        <div class="modal-body" id="helpHTML">
+          Command list will be initialized on start up. 
+        </div>
+        <div class="modal-footer">
+          <a href="#" data-dismiss="modal" class="btn btn-primary">Close</a>
+        </div>
+      </div>
+    </div>
+</div>
 <div id="titleBar" style="height:46px">
 <div id="divButtonBar" class="col-md-4">
       <button type="button"

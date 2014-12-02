@@ -77,7 +77,7 @@ module TSOS {
             return true;
           }
           else{
-            debugger;
+            ;
             //add the file names to file name global
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7;s++){
@@ -222,12 +222,12 @@ module TSOS {
             }
             sessionStorage.setItem("000", this.getMetaData('000')+ newMBRData);
             if (type ==='data'){
-              debugger;
+              ;
               //if neither prove fruitful make the disk as full
               this.diskDataFull = true;
             }
             else if (type==='file'){
-              debugger;
+              ;
               //fileNames full
               this.diskFileFull=true;
             }
@@ -290,7 +290,7 @@ module TSOS {
         }
         public clearFile(fileName:string){
           //clears file name and all data from file system
-          debugger;
+          ;
           var tsb =this.findFile(fileName, false);
           var tempTSB1 = tsb;
           var tempTSB2 = tempTSB1;
@@ -310,7 +310,7 @@ module TSOS {
 
         }
         public findFile(name:string, recover:boolean){
-          debugger;
+          ;
             for (var t=0; t<=0; t++){
               for (var s=0; s<=7; s++){
                 for(var b=0; b<=7; b++){
@@ -593,7 +593,7 @@ module TSOS {
               break;
             }
             case DiskAction.Write:{
-              debugger;
+              ;
               if (this.diskFileFull===false){
                 if (this.findFile(fileName, false)===null){
                   //first create the file then write to it

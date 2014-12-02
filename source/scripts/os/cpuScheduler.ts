@@ -83,7 +83,7 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-             debugger;
+             ;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB =null;
             _ExecutingProgramPID =null;

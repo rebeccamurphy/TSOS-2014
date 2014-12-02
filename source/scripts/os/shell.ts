@@ -54,7 +54,7 @@ module TSOS {
             // man <topic>
             sc = new ShellCommand(this.shellMan,
                                   "man",
-                                  "<topic> - Displays the MANual page for <topic>.");
+                                  "<'topic'> - Displays the MANual page for <'topic'>.");
             this.commandList[this.commandList.length] = sc;
 
             // trace <on | off>
@@ -66,13 +66,13 @@ module TSOS {
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
                                   "rot13",
-                                  "<string> - Does rot13 obfuscation on <string>.");
+                                  "<'string'> - Does rot13 obfuscation on <'string'>.");
             this.commandList[this.commandList.length] = sc;
 
             // prompt <string>
             sc = new ShellCommand(this.shellPrompt,
                                   "prompt",
-                                  "<string> - Sets the prompt.");
+                                  "<'string'> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
             // date
@@ -90,19 +90,19 @@ module TSOS {
             // load
             sc = new ShellCommand(this.shellLoad,
                                   "load",
-                                  "<number>- Loads user program from User Program Input with the given priority if specified.");
+                                  "<'number'> - Loads user program from User Program Input with the given priority if specified.");
             this.commandList[this.commandList.length] = sc;
             
             // clearmem
             sc = new ShellCommand(this.shellClearMem,
                                   "clearmem",
-                                  "<string>- clears memory of all loaded programs if none are executing, add -force to force memory to clear running programs.");
+                                  "<-force> - clears memory of all loaded programs if none are executing, add -force to force memory to clear running programs.");
             this.commandList[this.commandList.length] = sc;
 
             //run
             sc = new ShellCommand(this.shellRun,
                                   "run",
-                                  "<number> - Runs program with id of <number> if the program is in memory.");
+                                  "<'number'> - Runs program with id of <'number'> if the program is in memory.");
             this.commandList[this.commandList.length] = sc;
 
             //run all
@@ -114,13 +114,13 @@ module TSOS {
             //set quantum
             sc = new ShellCommand(this.shellSetQuantum,
                                  "quantum",
-                                 "<number> - Sets the quantum to the specified number.");
+                                 "<'number'> - Sets the quantum to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set default priority
             sc = new ShellCommand(this.shellSetDefaultPriority,
                                  "setdefaultpriority",
-                                 "<number> - Sets the default to the specified number.");
+                                 "<'number'> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
@@ -132,7 +132,7 @@ module TSOS {
             //set scheduling type
             sc = new ShellCommand(this.shellGetScheduling,
                                  "getschedule",
-                                 "Returns the currently scheduling type.");
+                                 "- Returns the currently scheduling type.");
             this.commandList[this.commandList.length] = sc;
 
             // BSOD
@@ -144,31 +144,31 @@ module TSOS {
             // status <string>
             sc = new ShellCommand(this.shellStatus,
                                   "status",
-                                  "<string> - Display's users entered status in host display.");
+                                  "<'string'> - Display's users entered status in host display.");
             this.commandList[this.commandList.length] = sc; // status
 
             //beepboop
             sc = new ShellCommand(this.shellBB,
                                   "beepboop",
-                                  "Converts hex program in ta to beepboop");
+                                  "- Converts hex program in ta to beepboop");
             this.commandList[this.commandList.length] = sc;
 
             //unbeepboop
             sc = new ShellCommand(this.shellUnBB,
                                   "unbeepboop",
-                                  "Converts beepboop program in ta to hex.");
+                                  "- Converts beepboop program in ta to hex.");
             this.commandList[this.commandList.length] = sc;
 
             // processes - list the running processes and their IDs
             sc = new ShellCommand(this.shellDisplayActiveProcesses,
                                   "ps",
-                                  "List the running processes and their IDs");
+                                  "- List the running processes and their IDs");
             this.commandList[this.commandList.length] = sc;            
             
             // kill <id> - kills the specified process id.
             sc = new ShellCommand(this.shellKillProcess,
                                   "kill",
-                                  "<int> - Kill the specified process if it is running.");
+                                  "<'int'> - Kill the specified process if it is running.");
             this.commandList[this.commandList.length] = sc;    
 
             // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.    
@@ -199,14 +199,14 @@ module TSOS {
             //write - write   the data    inside  the quotes  to  filename    and display a   message denoting    success or  failure.    
             sc = new ShellCommand(this.shellWriteFile,
                                   "write",
-                                  "<filename>,<-append, -overwrite>, 'data'  - writes to data to specified file name. Defaults to"
+                                  "<'filename'>, <-append, -overwrite>, 'data' - writes to data to specified file name. Defaults to"
                                    +"overwrite if not specified. Use /n for newlines in your data. If you have a lot of data you can paste it into the file data input.");
             this.commandList[this.commandList.length] = sc;
 
             //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
             sc = new ShellCommand(this.shellReadFile,
                                   "read",
-                                  "<filename> - Displays the contents of specified file.");
+                                  "<'filename'> - Displays the contents of specified file.");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -225,7 +225,7 @@ module TSOS {
             // startup  -displays all files that are deleted but still recoverable
             sc = new ShellCommand(this.shellStartUp,
                                   "startup",
-                                  "<on/off>- displays/set start up option.");
+                                  "<on | off> - displays/set start up option.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -391,6 +391,8 @@ module TSOS {
                     _StdOut.advanceLine();
                     _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
                 }
+                _StdOut.advanceLine();
+                _StdOut.putText("For extended help press escape.");
             }
         }
 

@@ -133,6 +133,7 @@ module TSOS {
 
                     TSOS.Control.updateFileSystemDisplay();   
                     
+                    
                     clearInterval(readyStateCheckInterval);
                     
                 }
@@ -184,7 +185,7 @@ module TSOS {
             _Stepping=false;
         }
         public static startUp(start?:boolean){
-            debugger;
+            ;
             if (start){
                 $("#startScreen").fadeIn();
                 $('#startScreen').attr('src', 'http://i.imgur.com/o72Gvss.gif');
@@ -233,7 +234,7 @@ module TSOS {
         }
 
         public static updateMemoryDisplay(){
-            debugger;
+            ;
             var numData =0;
             if (_CPU.IR==='A9'||_CPU.IR==='A2'||_CPU.IR==='A0'||_CPU.IR==='D0')
                 numData =1
@@ -457,9 +458,14 @@ module TSOS {
               }
             }
             document.getElementById("FileSystemDisplay").innerHTML = output;
-           
-
-
+        }
+        public static updateHelp(){
+            var output="<div id='helpWrapper'>";
+            for (var i in _OsShell.commandList) {
+                    output+="<div class='help'>" +"<b>"+ _OsShell.commandList[i].command + "</b> " + _OsShell.commandList[i].description +"</div>";
+                }
+                output+="</div>";
+                document.getElementById("helpHTML").innerHTML = output;
         }
     }
 }
