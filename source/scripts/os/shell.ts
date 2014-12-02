@@ -119,7 +119,7 @@ module TSOS {
 
             //set default priority
             sc = new ShellCommand(this.shellSetDefaultPriority,
-                                 "setDefaultPriority",
+                                 "setdefaultpriority",
                                  "<number> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
@@ -232,8 +232,14 @@ module TSOS {
             this.putPrompt();
         }
 
-        public putPrompt() {
-            _StdOut.putText(this.promptStr);
+        public putPrompt(msg?) {
+            if (msg===undefined)
+              _StdOut.putText(this.promptStr);
+            else{
+              _StdOut.putText(msg);
+              _StdOut.advanceLine();
+              _StdOut.putText(this.promptStr);
+            }
         }
         public putPromptNextLine(){
             _StdOut.advanceLine();
@@ -288,7 +294,7 @@ module TSOS {
         public execute(fn, args?) {
             var nonPrompt:boolean= fn!==this.shellCreateFile &&fn!==this.shellFormatDisk && fn!==this.shellTrashFiles
                 && fn !== this.shellReadFile && fn!==this.shellWriteFile && fn!==this.shellDeleteFile
-                && fn!==this.shellRecoverFile;
+                && fn!==this.shellRecoverFile && fn!=this.shellSetScheduling;
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
             // ... call the command function passing in the args...
@@ -701,7 +707,7 @@ module TSOS {
             var type = args[0];
             _KernelInterruptQueue.enqueue(new Interrupt(SET_SCHEDULE_TYPE_IRQ, type))
             //print message to console
-            _StdOut.putText("Scheduling type changed successfully.");
+
 
         }
         public shellGetScheduling():void{
@@ -716,7 +722,8 @@ module TSOS {
 
             if (firstParam===undefined && DISK_IN_USE ){
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _StdOut.putText("Disk in use please use -force.");
+                _OsShell.putPromptNextLine();
                 return;
             }
             else if (firstParam ===undefined &&!DISK_IN_USE){
@@ -741,7 +748,8 @@ module TSOS {
             }
             else if (firstParam==="quick"&& secondParam===undefined &&DISK_IN_USE ){
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _StdOut.putText("Disk in use please use -force.");
+                _OsShell.putPromptNextLine();
                 return;
             }
             else if (firstParam==="quick" && secondParam==="-force"){
@@ -758,7 +766,7 @@ module TSOS {
             }
             else if (firstParam==="full"&& secondParam===undefined &&DISK_IN_USE ){
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _OsShell.putPrompt("Disk in use please use -force.");
                 return;
             }
             else if (firstParam==="full" && secondParam==="-force"){
@@ -768,7 +776,7 @@ module TSOS {
                 return;    
             }
 
-            _StdOut.putPrompt("Invalid parameter.");
+            _OsShell.putPrompt("Invalid parameter.");
         }  
 
         public shellCreateFile(args):void{
@@ -776,16 +784,15 @@ module TSOS {
             var secondParam = args[1];
              ;
             if (firstParam===undefined){
-                _StdOut.putText("Please specify a file name.");
+                _OsShell.putPrompt("Please specify a file name.");
                 return;
             }
             if (firstParam==="-force"){
-                _StdOut.putText("You can't name a file -force you butt.");
+                _OsShell.putPrompt("You can't name a file -force you butt.");
                 return;
             }
             if (TSOS.Utils.InvalidFileName(firstParam)){
-
-                _StdOut.putText("Invalid file name. File names are limited to 60 characters, no spaces, and no periods.");
+                _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and no periods.");
                 return;
             }
 
@@ -866,7 +873,7 @@ module TSOS {
             else
                 var data = args.slice(1);
             data = data.join(' ');
-            if (fileName.length >30){
+            if (fileName===undefined||fileName.length >30 ){
               _StdOut.putText("File names must be less than 30 characters and not contains spaces or " +SWAP_FILE_START_CHAR);
               _OsShell.putPromptNextLine();              
               return;
@@ -954,6 +961,7 @@ module TSOS {
               if (_Trash.isEmpty()){
                 _StdOut.putText("No trash to empty."); 
                 _OsShell.putPromptNextLine();    
+                return;
               }
               else{
                 _StdOut.putText("Trash being emptied.");

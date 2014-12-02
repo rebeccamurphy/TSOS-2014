@@ -73,9 +73,13 @@ var TSOS;
                         for (var b = 0; b <= 7; b++) {
                             if ("" + t + "" + s + "" + b !== "000") {
                                 var tempName = this.getFileName(t + "" + s + "" + b);
-                                if (tempName !== "" && SWAP_FILE_START_CHAR !== tempName.charAt(0) && this.InUse(t + "" + s + "" + b))
+                                if (tempName !== "" && SWAP_FILE_START_CHAR !== tempName.charAt(0) && this.InUse(t + "" + s + "" + b)) {
                                     //makes sure swap files are not added to the file list
                                     _FileNames.enqueue(tempName);
+                                } else if (tempName !== "" && SWAP_FILE_START_CHAR === tempName.charAt(0) && this.InUse(t + "" + s + "" + b)) {
+                                    //clear programs left on disk as if they were in memory
+                                    this.clearFile(t + "" + s + "" + b);
+                                }
                             }
                         }
                     }
@@ -190,23 +194,6 @@ var TSOS;
                 }
             }
 
-            /*
-            //now we try going up
-            for (var t = 0;t<currt; t++){
-            for (var s = 0;s<currs;s++){
-            for(var b=0;b<currb;b++){
-            if (""+t+""+s+""+b !== "000"){
-            if (!this.InUse(t+""+s+""+b)&&(t+""+s+""+b!==currt+""+currs+""+currb)){
-            var newMBRData = sessionStorage.getItem("000");
-            newMBRData = newMBRData.replace(TSOS.Utils.str2hex(startTSB), TSOS.Utils.str2hex(t+""+s+""+b));
-            sessionStorage.setItem("000", newMBRData);
-            this.diskDataFull=false;
-            return;
-            }
-            }
-            }
-            }
-            }*/
             var newMBRData = this.getDataBytes('000');
             var newTSB = TSOS.Utils.str2hex('000');
             if (type === 'file') {

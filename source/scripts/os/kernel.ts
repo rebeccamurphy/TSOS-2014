@@ -312,14 +312,18 @@ module TSOS {
                             break;
                         }
                         default: {
-                            _StdOut.putText("Invalid type of scheduling. ");
+                            _StdOut.putText("Invalid type of scheduling.");
+                            _OsShell.putPromptNextLine();
+                            return;
                         }
                     }
+
                     this.krnTrace("Switching scheduling from " +previous +" to "+ scheduleTypes[SCHEDULE_TYPE]);
                     _Scheduler.switchScheduling();
                     //update to display the correct type 
                     TSOS.Control.updateScheduleType();
-
+                    _StdOut.putText("Scheduling type changed successfully.");
+                    _OsShell.putPromptNextLine();
                     break;
                 }
 

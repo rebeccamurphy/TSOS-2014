@@ -203,16 +203,17 @@ td {
   width: 335px;
 }
 #FileSystem{
-  /*float:right;*/
+  /*float:right;
   max-width: 760px;
   padding-left: 0px;
-  padding-right: 34px;
+  padding-right: 34px;*/
 }
 #FileSystemWrapper{
   height: 134px;
   border: 1px solid;
   border-color: #ddd;
   overflow-y: auto;
+  min-width: 745px;
 }
 #Queues{
   padding-top: 5px;

@@ -83,7 +83,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             //set default priority
-            sc = new TSOS.ShellCommand(this.shellSetDefaultPriority, "setDefaultPriority", "<number> - Sets the default to the specified number.");
+            sc = new TSOS.ShellCommand(this.shellSetDefaultPriority, "setdefaultpriority", "<number> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
@@ -158,8 +158,14 @@ var TSOS;
             this.putPrompt();
         };
 
-        Shell.prototype.putPrompt = function () {
-            _StdOut.putText(this.promptStr);
+        Shell.prototype.putPrompt = function (msg) {
+            if (msg === undefined)
+                _StdOut.putText(this.promptStr);
+            else {
+                _StdOut.putText(msg);
+                _StdOut.advanceLine();
+                _StdOut.putText(this.promptStr);
+            }
         };
         Shell.prototype.putPromptNextLine = function () {
             _StdOut.advanceLine();
@@ -213,7 +219,7 @@ var TSOS;
 
         // args is an option parameter, ergo the ? which allows TypeScript to understand that
         Shell.prototype.execute = function (fn, args) {
-            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && fn !== this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile && fn !== this.shellRecoverFile;
+            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && fn !== this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile && fn !== this.shellRecoverFile && fn != this.shellSetScheduling;
 
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
@@ -600,9 +606,7 @@ var TSOS;
         Shell.prototype.shellSetScheduling = function (args) {
             var type = args[0];
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SET_SCHEDULE_TYPE_IRQ, type));
-
             //print message to console
-            _StdOut.putText("Scheduling type changed successfully.");
         };
         Shell.prototype.shellGetScheduling = function () {
             _StdOut.putText("Scheduling type is currently " + scheduleTypes[SCHEDULE_TYPE] + ".");
@@ -614,7 +618,8 @@ var TSOS;
 
             if (firstParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _StdOut.putText("Disk in use please use -force.");
+                _OsShell.putPromptNextLine();
                 return;
             } else if (firstParam === undefined && !DISK_IN_USE) {
                 //disk not inuse and full formatting
@@ -637,7 +642,8 @@ var TSOS;
                 return;
             } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _StdOut.putText("Disk in use please use -force.");
+                _OsShell.putPromptNextLine();
                 return;
             } else if (firstParam === "quick" && secondParam === "-force") {
                 //forcing file system to be formatted
@@ -652,7 +658,7 @@ var TSOS;
                 return;
             } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
                 //disk in use and force not specified
-                _StdOut.putPrompt("Disk in use please use -force.");
+                _OsShell.putPrompt("Disk in use please use -force.");
                 return;
             } else if (firstParam === "full" && secondParam === "-force") {
                 //forcing file system to be formatted
@@ -661,7 +667,7 @@ var TSOS;
                 return;
             }
 
-            _StdOut.putText("Invalid parameter.");
+            _OsShell.putPrompt("Invalid parameter.");
         };
 
         Shell.prototype.shellCreateFile = function (args) {
@@ -669,15 +675,15 @@ var TSOS;
             var secondParam = args[1];
             ;
             if (firstParam === undefined) {
-                _StdOut.putText("Please specify a file name.");
+                _OsShell.putPrompt("Please specify a file name.");
                 return;
             }
             if (firstParam === "-force") {
-                _StdOut.putText("You can't name a file -force you butt.");
+                _OsShell.putPrompt("You can't name a file -force you butt.");
                 return;
             }
             if (TSOS.Utils.InvalidFileName(firstParam)) {
-                _StdOut.putText("Invalid file name. File names are limited to 60 characters, no spaces, and no periods.");
+                _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and no periods.");
                 return;
             }
 
@@ -749,7 +755,7 @@ var TSOS;
             else
                 var data = args.slice(1);
             data = data.join(' ');
-            if (fileName.length > 30) {
+            if (fileName === undefined || fileName.length > 30) {
                 _StdOut.putText("File names must be less than 30 characters and not contains spaces or " + SWAP_FILE_START_CHAR);
                 _OsShell.putPromptNextLine();
                 return;
@@ -829,6 +835,7 @@ var TSOS;
                 if (_Trash.isEmpty()) {
                     _StdOut.putText("No trash to empty.");
                     _OsShell.putPromptNextLine();
+                    return;
                 } else {
                     _StdOut.putText("Trash being emptied.");
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* EmptyTrash */]));

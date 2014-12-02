@@ -165,10 +165,10 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case FILESYSTEM_IRQ: {
-                    var fileName = params[1] === undefined ? "" : params[1];
-                    this.krnTrace("The Disk is " + DiskActions[params[0]] + " " + fileName + ".");
+                    var fileName = params[1] === undefined ? "" : " " + params[1];
+                    this.krnTrace("The Disk is " + DiskActions[params[0]] + fileName + ".");
                     _krnFileSystemDriver.isr(params);
-                    this.krnTrace("The Disk is done " + DiskActions[params[0]] + " " + fileName + ".");
+                    this.krnTrace("The Disk is done " + DiskActions[params[0]] + fileName + ".");
 
                     break;
                 }
@@ -244,7 +244,7 @@ var TSOS;
                 }
                 case MEMORY_ACCESS_VIOLATION_IRQ: {
                     //log the error
-                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + (parseInt(params) + _ExecutingProgramPCB.base));
+                    this.krnTrace("Memory access violation in program PID: " + _ExecutingProgramPID + " Attempted to access " + parseInt(params));
                     _Scheduler.stopRunning(_ExecutingProgramPID);
 
                     break;
@@ -298,15 +298,19 @@ var TSOS;
                             break;
                         }
                         default: {
-                            _StdOut.putText("Invalid type of scheduling. ");
+                            _StdOut.putText("Invalid type of scheduling.");
+                            _OsShell.putPromptNextLine();
+                            return;
                         }
                     }
+
                     this.krnTrace("Switching scheduling from " + previous + " to " + scheduleTypes[SCHEDULE_TYPE]);
                     _Scheduler.switchScheduling();
 
                     //update to display the correct type
                     TSOS.Control.updateScheduleType();
-
+                    _StdOut.putText("Scheduling type changed successfully.");
+                    _OsShell.putPromptNextLine();
                     break;
                 }
 
