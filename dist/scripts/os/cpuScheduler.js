@@ -88,7 +88,7 @@ var TSOS;
             return currPCB.pid;
         };
         cpuScheduler.prototype.clearMem = function () {
-            ;
+            //clear current executing program
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB = null;
             _ExecutingProgramPID = null;
@@ -114,6 +114,34 @@ var TSOS;
             for (var i = 0; i < sizeRL; i++) {
                 tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === 0 /* Memory */) {
+                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                } else
+                    this.residentQueue.enqueue(tempProgramPCB);
+            }
+        };
+        cpuScheduler.prototype.clearDisk = function () {
+            var tempProgramPCB;
+            var sizeRQ = this.readyQueue.getSize();
+            var sizeRL = this.residentQueue.getSize();
+
+            for (var i = 0; i < sizeRQ; i++) {
+                tempProgramPCB = this.readyQueue.dequeue();
+
+                //check if the program is in memory
+                if (tempProgramPCB.location === 1 /* Disk */) {
+                    //remove program from the ready queue
+                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
+
+                    //and kill program if so
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                } else
+                    this.readyQueue.enqueue(tempProgramPCB);
+            }
+
+            for (var i = 0; i < sizeRL; i++) {
+                tempProgramPCB = this.residentQueue.dequeue();
+                if (tempProgramPCB.location === 1 /* Disk */) {
                     this.residentQueue.getAndRemove(tempProgramPCB.pid);
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
                 } else

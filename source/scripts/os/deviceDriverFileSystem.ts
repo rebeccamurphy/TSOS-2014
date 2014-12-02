@@ -507,21 +507,32 @@ module TSOS {
           var fileName = params[1];
           var data= params[2];
           var success=false;
-          DISK_IN_USE = true;
           fileName = (fileName===undefined)? "" : fileName;
           var notSwap = fileName.charAt(0)!== SWAP_FILE_START_CHAR;
           
           switch(diskAction){
             case DiskAction.FullFormat:{
               success =this.fullFormatDisk();
-              _FileNames= new Queue();
-              _Trash = new Queue();
+              if (success){
+                _FileNames= new Queue();
+                _Trash = new Queue();
+                if (_CPU.isExecuting){
+                  //clear programs on disk 
+                  _Scheduler.clearDisk();   
+                }
+              }
               break;
             }
             case DiskAction.QuickFormat:{
               success =this.quickFormatDisk();
-              _Trash = _FileNames;
-              _FileNames= new Queue();
+              if (success){
+                _Trash = _FileNames;
+                _FileNames= new Queue();
+                if (_CPU.isExecuting){
+                  //clear programs on disk 
+                  _Scheduler.clearDisk();   
+                }
+              }
               break;
             }
             case DiskAction.Create:{
@@ -680,7 +691,6 @@ module TSOS {
             _OsShell.putPrompt();
           }
           
-          DISK_IN_USE =false;
           TSOS.Control.updateFileSystemDisplay(); 
         }
     }

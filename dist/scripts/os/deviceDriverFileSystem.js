@@ -494,21 +494,32 @@ var TSOS;
             var fileName = params[1];
             var data = params[2];
             var success = false;
-            DISK_IN_USE = true;
             fileName = (fileName === undefined) ? "" : fileName;
             var notSwap = fileName.charAt(0) !== SWAP_FILE_START_CHAR;
 
             switch (diskAction) {
                 case 9 /* FullFormat */: {
                     success = this.fullFormatDisk();
-                    _FileNames = new TSOS.Queue();
-                    _Trash = new TSOS.Queue();
+                    if (success) {
+                        _FileNames = new TSOS.Queue();
+                        _Trash = new TSOS.Queue();
+                        if (_CPU.isExecuting) {
+                            //clear programs on disk
+                            _Scheduler.clearDisk();
+                        }
+                    }
                     break;
                 }
                 case 10 /* QuickFormat */: {
                     success = this.quickFormatDisk();
-                    _Trash = _FileNames;
-                    _FileNames = new TSOS.Queue();
+                    if (success) {
+                        _Trash = _FileNames;
+                        _FileNames = new TSOS.Queue();
+                        if (_CPU.isExecuting) {
+                            //clear programs on disk
+                            _Scheduler.clearDisk();
+                        }
+                    }
                     break;
                 }
                 case 0 /* Create */: {
@@ -655,7 +666,6 @@ var TSOS;
                 _OsShell.putPrompt();
             }
 
-            DISK_IN_USE = false;
             TSOS.Control.updateFileSystemDisplay();
         };
         return DeviceDriverFileSystem;

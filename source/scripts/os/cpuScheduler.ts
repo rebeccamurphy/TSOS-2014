@@ -83,7 +83,6 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-             ;
             var tempProgramPCB = _ExecutingProgramPCB;
             _ExecutingProgramPCB =null;
             _ExecutingProgramPID =null;
@@ -114,6 +113,35 @@ module TSOS {
                 else
                     this.residentQueue.enqueue(tempProgramPCB);
             }
+        }
+        public clearDisk(){
+
+            var tempProgramPCB;
+            var sizeRQ = this.readyQueue.getSize();
+            var sizeRL = this.residentQueue.getSize();
+            //clear programs in memory from ready queue
+            for (var i=0; i<sizeRQ; i++){
+                tempProgramPCB = this.readyQueue.dequeue();
+                //check if the program is in memory 
+                if (tempProgramPCB.location === Locations.Disk){
+                    //remove program from the ready queue
+                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
+                    //and kill program if so
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
+                else
+                    this.readyQueue.enqueue(tempProgramPCB);
+            }
+            //clear programs in memory from resident list.
+            for (var i=0; i<sizeRL; i++){
+                tempProgramPCB = this.residentQueue.dequeue();
+                if (tempProgramPCB.location === Locations.Disk){
+                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                }
+                else
+                    this.residentQueue.enqueue(tempProgramPCB);
+            }   
         }
         public emptyReadyQueue() :boolean {
             if (this.readyQueue.getSize()===0){

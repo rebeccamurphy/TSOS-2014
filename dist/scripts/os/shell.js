@@ -39,19 +39,19 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // man <topic>
-            sc = new TSOS.ShellCommand(this.shellMan, "man", "<'topic'> - Displays the MANual page for <'topic'>.");
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
 
             // trace <on | off>
-            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<'on | off'> - Turns the OS trace on or off.");
+            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
-            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<'string'> - Does rot13 obfuscation on <'string'>.");
+            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
 
             // prompt <string>
-            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<'string'> - Sets the prompt.");
+            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
             // date
@@ -63,7 +63,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<'number'> - Loads user program from User Program Input with the given priority if specified.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "<number> - Loads user program from User Program Input with the given priority if specified.");
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
@@ -71,7 +71,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             //run
-            sc = new TSOS.ShellCommand(this.shellRun, "run", "<'number'> - Runs program with id of <'number'> if the program is in memory.");
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<number> - Runs program with id of <number> if the program is in memory.");
             this.commandList[this.commandList.length] = sc;
 
             //run all
@@ -79,11 +79,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             //set quantum
-            sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", "<'number'> - Sets the quantum to the specified number.");
+            sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", "<number> - Sets the quantum to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set default priority
-            sc = new TSOS.ShellCommand(this.shellSetDefaultPriority, "setdefaultpriority", "<'number'> - Sets the default to the specified number.");
+            sc = new TSOS.ShellCommand(this.shellSetDefaultPriority, "setdefaultpriority", "<number> - Sets the default to the specified number.");
             this.commandList[this.commandList.length] = sc;
 
             //set scheduling type
@@ -99,7 +99,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<'string'> - Display's users entered status in host display.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Display's users entered status in host display.");
             this.commandList[this.commandList.length] = sc; // status
 
             //beepboop
@@ -115,11 +115,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
-            sc = new TSOS.ShellCommand(this.shellKillProcess, "kill", "<'int'> - Kill the specified process if it is running.");
+            sc = new TSOS.ShellCommand(this.shellKillProcess, "kill", "<int> - Kill the specified process if it is running.");
             this.commandList[this.commandList.length] = sc;
 
             // format  -Initialize  all blocks  in  all sectors in  all tracks and display a  message denoting    success or  failure.
-            sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<quick, full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
+            sc = new TSOS.ShellCommand(this.shellFormatDisk, "format", "<-quick, -full, -force> - formats disk, defaults to full, quick allows data to be recovered, optional parameter of -force to force format even if program is running.");
             this.commandList[this.commandList.length] = sc;
 
             // create   Create  the File    filename    and display a   message denoting    success or  failure.
@@ -135,11 +135,11 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             //write - write   the data    inside  the quotes  to  filename    and display a   message denoting    success or  failure.
-            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<'filename'>, <-append, -overwrite>, 'data' - writes to data to specified file name. Defaults to" + "overwrite if not specified. Use /n for newlines in your data. If you have a lot of data you can paste it into the file data input.");
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<filename>, <-append, -overwrite>, 'data' - writes to data to specified file name. Defaults to" + "overwrite if not specified. Use /n for newlines in your data. If you have a lot of data you can paste it into the file data input.");
             this.commandList[this.commandList.length] = sc;
 
             //read -Read    and display the contents    of  filename    or  display an  error   if  something   went    wrong
-            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<'filename'> - Displays the contents of specified file.");
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Displays the contents of specified file.");
             this.commandList[this.commandList.length] = sc;
 
             // ls  -lists all files stored on disk
@@ -151,7 +151,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
 
             // startup  -displays all files that are deleted but still recoverable
-            sc = new TSOS.ShellCommand(this.shellStartUp, "startup", "<'on | off'> - displays/set start up option.");
+            sc = new TSOS.ShellCommand(this.shellStartUp, "startup", "<on | off> - displays/set start up option.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -618,12 +618,12 @@ var TSOS;
             var secondParam = args[1];
             var thirdParam = args[2];
 
-            if (firstParam === undefined && DISK_IN_USE) {
+            if (firstParam === undefined && _CPU.isExecuting) {
                 //disk in use and force not specified
                 _StdOut.putText("Disk in use please use -force.");
                 _OsShell.putPromptNextLine();
                 return;
-            } else if (firstParam === undefined && !DISK_IN_USE) {
+            } else if (firstParam === undefined && !_CPU.isExecuting) {
                 //disk not inuse and full formatting
                 _StdOut.putText("Disk full format starting.");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
@@ -637,32 +637,32 @@ var TSOS;
                 return;
             }
 
-            if (firstParam === "quick" && !DISK_IN_USE) {
+            if (firstParam === "-quick" && !_CPU.isExecuting) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk quick format starting.");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* QuickFormat */]));
                 return;
-            } else if (firstParam === "quick" && secondParam === undefined && DISK_IN_USE) {
+            } else if (firstParam === "-quick" && secondParam === undefined && _CPU.isExecuting) {
                 //disk in use and force not specified
                 _StdOut.putText("Disk in use please use -force.");
                 _OsShell.putPromptNextLine();
                 return;
-            } else if (firstParam === "quick" && secondParam === "-force") {
+            } else if (firstParam === "-quick" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk quick format starting.");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [10 /* QuickFormat */]));
                 return;
             }
-            if (firstParam === "full" && !DISK_IN_USE) {
+            if (firstParam === "-full" && !_CPU.isExecuting) {
                 //file system to be quick formatted
                 _StdOut.putText("Disk full format starting.");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));
                 return;
-            } else if (firstParam === "full" && secondParam === undefined && DISK_IN_USE) {
+            } else if (firstParam === "-full" && secondParam !== "-force") {
                 //disk in use and force not specified
                 _OsShell.putPrompt("Disk in use please use -force.");
                 return;
-            } else if (firstParam === "full" && secondParam === "-force") {
+            } else if (firstParam === "-full" && secondParam === "-force") {
                 //forcing file system to be formatted
                 _StdOut.putText("Disk full format starting.");
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [9 /* FullFormat */]));

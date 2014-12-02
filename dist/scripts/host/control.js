@@ -442,7 +442,10 @@ var TSOS;
         Control.updateHelp = function () {
             var output = "<div id='helpWrapper'>";
             for (var i in _OsShell.commandList) {
-                output += "<div class='help'>" + "<b>" + _OsShell.commandList[i].command + "</b> " + _OsShell.commandList[i].description + "</div>";
+                var descrip = _OsShell.commandList[i].description;
+                descrip = descrip.replace('<', '&lt;');
+                descrip = descrip.replace('>', '&gt;');
+                output += "<div class='help'>" + "<b>" + _OsShell.commandList[i].command + "</b> " + descrip + "</div>";
             }
             output += "</div>";
             document.getElementById("helpHTML").innerHTML = output;
