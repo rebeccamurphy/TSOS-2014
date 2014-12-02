@@ -68,6 +68,8 @@ var TSOS;
                 this.diskFileFull = false;
                 return true;
             } else {
+                debugger;
+
                 for (var t = 0; t <= 0; t++) {
                     for (var s = 0; s <= 7; s++) {
                         for (var b = 0; b <= 7; b++) {
@@ -78,7 +80,7 @@ var TSOS;
                                     _FileNames.enqueue(tempName);
                                 } else if (tempName !== "" && SWAP_FILE_START_CHAR === tempName.charAt(0) && this.InUse(t + "" + s + "" + b)) {
                                     //clear programs left on disk as if they were in memory
-                                    this.clearFile(t + "" + s + "" + b);
+                                    this.clearFile(tempName);
                                 }
                             }
                         }
@@ -271,7 +273,7 @@ var TSOS;
             return true;
         };
         DeviceDriverFileSystem.prototype.clearFile = function (fileName) {
-            //clears file name and all data from file system
+            debugger;
             var tsb = this.findFile(fileName, false);
             var tempTSB1 = tsb;
             var tempTSB2 = tempTSB1;
@@ -292,6 +294,7 @@ var TSOS;
             return true;
         };
         DeviceDriverFileSystem.prototype.findFile = function (name, recover) {
+            debugger;
             for (var t = 0; t <= 0; t++) {
                 for (var s = 0; s <= 7; s++) {
                     for (var b = 0; b <= 7; b++) {
