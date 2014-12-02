@@ -13,7 +13,8 @@
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var APP_NAME: string    = "MysteriOS Bloop";   
-var APP_VERSION: string = "The Ugliest Baby";   
+var APP_VERSION: string = "The Ugliest Baby";
+declare var $;   
 
 var CPU_CLOCK_INTERVAL: number = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 

@@ -221,7 +221,7 @@ module TSOS {
             var date = new Date();
             var strSecs = String(date.getSeconds());
             var numHour = date.getHours();
-            var strHours = (numHour===0 ? "12": "0"+String(numHour%12));
+            var strHours = (numHour==00||numHour==12) ? "12": "0"+String(numHour%12);
             var strSecs = Array(2-(String(date.getSeconds()).length-1)).join("0") +String(date.getSeconds());
             var strMins = Array(2-(String(date.getMinutes()).length-1)).join("0") +String(date.getMinutes());
             
