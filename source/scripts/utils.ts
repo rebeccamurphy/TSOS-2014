@@ -183,7 +183,7 @@ module TSOS {
     }
 
     public static InvalidFileName(fileName:string){
-        return fileName.indexOf(' ') !==-1 || fileName.indexOf('.')!==-1 || fileName.length>60;
+        return fileName.indexOf(' ') !==-1 || fileName.charAt(0)==='.' || fileName.length>30;
     }
 
     public static trimTrailingChars(s, charToTrim){

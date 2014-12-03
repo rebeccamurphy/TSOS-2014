@@ -699,19 +699,12 @@ module TSOS {
               _OsShell.putPromptNextLine();
             }
             else if (program==="me"){
-              _StdOut.putText("0_0");
-              _StdOut.advanceLine();
-              _StdOut.putText("-_-");
-              _StdOut.advanceLine();
-              _StdOut.putText("0_0");
-              _StdOut.advanceLine();
               _StdOut.putText("If you insist.");
               _StdOut.advanceLine();
-
-              for (var i=0;i<25;i++){
-                _StdOut.putText("x-x");
-                _StdOut.advanceLine();
-              }
+              _StdOut.putText('"I can do whatever the fuck I want."');
+              _StdOut.advanceLine();
+              _StdOut.putText('~Alan Labouseur, 2015');
+              _OsShell.putPromptNextLine();
             }
             else if (program==="yourself"){
               if (_SarcasticMode){
@@ -826,7 +819,7 @@ module TSOS {
                 return;
             }
             if (TSOS.Utils.InvalidFileName(firstParam)){
-                _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and no periods.");
+                _OsShell.putPrompt("Invalid file name. File names are limited to 30 characters, no spaces, and not start with " +SWAP_FILE_START_CHAR);
                 return;
             }
             if (_Trash.inQueue(firstParam)){
@@ -912,7 +905,6 @@ module TSOS {
         }
 
         public shellWriteFile(args){
-            
             var fileName = args[0];
             var typeOfWrite = args[1];
             var boxContent  =TSOS.Control.getFileData();
@@ -925,8 +917,8 @@ module TSOS {
               _OsShell.putPrompt("File name in trash, empty trash first before overwriting.")
               return;
             }
-            if (fileName===undefined||fileName.length >30 ){
-              _StdOut.putText("File names must be less than 30 characters and not contains spaces or " +SWAP_FILE_START_CHAR);
+            if (fileName===undefined || TSOS.Utils.InvalidFileName(fileName)){
+              _StdOut.putText("File names must be less than 30 characters and not contains spaces or start with " +SWAP_FILE_START_CHAR);
               _OsShell.putPromptNextLine();              
               return;
             }

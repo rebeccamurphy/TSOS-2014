@@ -175,7 +175,7 @@ var TSOS;
         };
 
         Utils.InvalidFileName = function (fileName) {
-            return fileName.indexOf(' ') !== -1 || fileName.indexOf('.') !== -1 || fileName.length > 60;
+            return fileName.indexOf(' ') !== -1 || fileName.charAt(0) === '.' || fileName.length > 30;
         };
 
         Utils.trimTrailingChars = function (s, charToTrim) {
