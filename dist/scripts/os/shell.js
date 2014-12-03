@@ -219,7 +219,7 @@ var TSOS;
 
         // args is an option parameter, ergo the ? which allows TypeScript to understand that
         Shell.prototype.execute = function (fn, args) {
-            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && fn !== this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile && fn !== this.shellRecoverFile && fn != this.shellSetScheduling;
+            var nonPrompt = fn !== this.shellCreateFile && fn !== this.shellFormatDisk && fn !== this.shellTrashFiles && fn !== this.shellReadFile && fn !== this.shellWriteFile && fn !== this.shellDeleteFile && fn !== this.shellRecoverFile && fn !== this.shellSetScheduling && fn !== this.shellKillProcess;
 
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
@@ -594,17 +594,42 @@ var TSOS;
             }
         };
         Shell.prototype.shellKillProcess = function (args) {
-            var program = (args[0] !== "*") ? parseInt(args[0]) : -1;
-            if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program) && args[0] !== '*') {
+            var program = parseInt(args[0]) || args[0];
+            if (program === '*') {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, -1));
+                _OsShell.putPromptNextLine();
+            } else if (program === "me") {
+                _StdOut.putText("0_0");
+                _StdOut.advanceLine();
+                _StdOut.putText("-_-");
+                _StdOut.advanceLine();
+                _StdOut.putText("0_0");
+                _StdOut.advanceLine();
+                _StdOut.putText("If you insist.");
+                _StdOut.advanceLine();
+
+                for (var i = 0; i < 25; i++) {
+                    _StdOut.putText("x-x");
+                    _StdOut.advanceLine();
+                }
+            } else if (program === "yourself") {
+                if (_SarcasticMode) {
+                    _StdOut.putText("MEANIE.");
+                    _Kernel.krnTrapError("TEST");
+                } else {
+                    _StdOut.putText("Goodbye cruel world~");
+                    _Kernel.krnTrapError("TEST");
+                }
+            } else if (_ExecutingProgramPID !== program && !_Scheduler.readyQueue.inQueue(program) && args[0] !== '*') {
                 if (_SarcasticMode)
                     _StdOut.putText("I cannot kill what which has no life.");
                 else
                     _StdOut.putText("Process cannot be killed because process is not running.");
-            } else if (program === -1) {
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, -1));
+                _OsShell.putPromptNextLine();
             } else {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, program));
                 _StdOut.putText("PID " + args[0] + " is dead.");
+                _OsShell.putPromptNextLine();
             }
         };
         Shell.prototype.shellSetScheduling = function (args) {

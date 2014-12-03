@@ -262,18 +262,20 @@ var TSOS;
             }
         };
         Console.prototype.computerOver = function () {
-            /*Old blue screen I dont wanna remove yet.
-            this.clearScreen();
-            _DrawingContext.fillStyle="#3a50b6";
-            _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
-            var img = new Image();
-            img.onload = function() {
-            _DrawingContext.drawImage(img, 0, 100);
-            };
-            img.src ="http://i.imgur.com/sOoqj6a.jpg";*/
-            //new blue screen of death
-            this.clearScreen();
-            TSOS.Control.c();
+            if (_SarcasticMode) {
+                this.clearScreen();
+                TSOS.Control.c();
+            } else {
+                this.clearScreen();
+                _DrawingContext.fillStyle = "#3a50b6";
+                _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+                var img = new Image();
+                img.onload = function () {
+                    _DrawingContext.drawImage(img, 0, 100);
+                };
+                img.src = "http://i.imgur.com/sOoqj6a.jpg";
+                //new blue screen of death
+            }
         };
         Console.prototype.startUp = function () {
             this.clearScreen();

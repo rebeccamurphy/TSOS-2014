@@ -383,7 +383,7 @@ module TSOS {
                 _DrawingContext.drawImage(img, x, y, _Canvas.width, _Canvas.height);
                 i+=.25;
                 x-=50;
-                y-=50;
+                y-=65;
             };
             img.src ="http://i.imgur.com/eD894xb.jpg";
             _DrawingContext.scale(i,i);
