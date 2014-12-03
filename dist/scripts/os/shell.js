@@ -480,8 +480,8 @@ var TSOS;
 
         Shell.prototype.shellClearMem = function (args) {
             //clear the running programs and the memory.
-            if (_CPU.isExecuting && args.length === 0) {
-                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
+            if (_CPU.isExecuting && args[0] !== "-force") {
+                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem -force instead.");
                 return;
             } else if (args[0] === "-force") {
                 //TODO clear memory interrupt
@@ -489,7 +489,6 @@ var TSOS;
             } else {
                 _StdOut.putText("Memory being cleared.");
             }
-
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CLEAR_MEMORY_IRQ));
         };
 

@@ -4,17 +4,19 @@ FUTURE ME PUT HELLA SWEET COMMENTS HERE.
 var TSOS;
 (function (TSOS) {
     var cpuScheduler = (function () {
-        function cpuScheduler(readyQueue, residentQueue, terminatedQueue, counter, reorder) {
+        function cpuScheduler(readyQueue, residentQueue, terminatedQueue, counter, reorder, clearMemCheck) {
             if (typeof readyQueue === "undefined") { readyQueue = new TSOS.Queue(); }
             if (typeof residentQueue === "undefined") { residentQueue = new TSOS.Queue(); }
             if (typeof terminatedQueue === "undefined") { terminatedQueue = new TSOS.Queue(); }
             if (typeof counter === "undefined") { counter = 0; }
             if (typeof reorder === "undefined") { reorder = false; }
+            if (typeof clearMemCheck === "undefined") { clearMemCheck = false; }
             this.readyQueue = readyQueue;
             this.residentQueue = residentQueue;
             this.terminatedQueue = terminatedQueue;
             this.counter = counter;
             this.reorder = reorder;
+            this.clearMemCheck = clearMemCheck;
         }
         cpuScheduler.prototype.loadProgramMem = function (program, priority) {
             //if loading a program directly into memory
@@ -89,11 +91,12 @@ var TSOS;
         };
         cpuScheduler.prototype.clearMem = function () {
             //clear current executing program
+            this.clearMemCheck = true;
             var tempProgramPCB = _ExecutingProgramPCB;
-            _ExecutingProgramPCB = null;
-            _ExecutingProgramPID = null;
+            if (_ExecutingProgramPCB.location === 0 /* Memory */)
+                _ExecutingProgramPID = -1; //so we don't accidentalyl enqueue a bunch of interrupts
 
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
             var sizeRQ = this.readyQueue.getSize();
             var sizeRL = this.residentQueue.getSize();
 
@@ -102,23 +105,20 @@ var TSOS;
 
                 //check if the program is in memory
                 if (tempProgramPCB.location === 0 /* Memory */) {
-                    //remove program from the ready queue
-                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
-
                     //and kill program if so
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
-                } else
-                    this.readyQueue.enqueue(tempProgramPCB);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
+                }
+                this.readyQueue.enqueue(tempProgramPCB);
             }
 
             for (var i = 0; i < sizeRL; i++) {
                 tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === 0 /* Memory */) {
-                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
-                } else
-                    this.residentQueue.enqueue(tempProgramPCB);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
+                }
+                this.residentQueue.enqueue(tempProgramPCB);
             }
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPCB.pid));
         };
         cpuScheduler.prototype.clearDisk = function () {
             var tempProgramPCB;
@@ -128,24 +128,21 @@ var TSOS;
             for (var i = 0; i < sizeRQ; i++) {
                 tempProgramPCB = this.readyQueue.dequeue();
 
-                //check if the program is in memory
+                //check if the program is in disk
                 if (tempProgramPCB.location === 1 /* Disk */) {
-                    //remove program from the ready queue
-                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
-
                     //and kill program if so
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
-                } else
-                    this.readyQueue.enqueue(tempProgramPCB);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
+                }
+                this.readyQueue.enqueue(tempProgramPCB);
             }
 
             for (var i = 0; i < sizeRL; i++) {
                 tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === 1 /* Disk */) {
                     this.residentQueue.getAndRemove(tempProgramPCB.pid);
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
-                } else
-                    this.residentQueue.enqueue(tempProgramPCB);
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
+                }
+                this.residentQueue.enqueue(tempProgramPCB);
             }
         };
         cpuScheduler.prototype.emptyReadyQueue = function () {
@@ -194,7 +191,9 @@ var TSOS;
             _CPU.loadProgram();
         };
         cpuScheduler.prototype.contextSwitch = function () {
-            if (_ExecutingProgramPCB !== null) {
+            this.clearMemCheck = false;
+            debugger;
+            if (_ExecutingProgramPCB !== null && _ExecutingProgramPCB.state !== 4 /* Killed */) {
                 //enqueue the current executing program back into the ready queue
                 _ExecutingProgramPCB.state = 2 /* Ready */;
                 this.readyQueue.enqueue(_ExecutingProgramPCB);
@@ -253,22 +252,27 @@ var TSOS;
             }
         };
         cpuScheduler.prototype.stopRunning = function (pid) {
+            debugger;
+
             //stops a program if it is currently running and puts it back on the resident queue with a new pcb
             var tempProgramPCB = null;
-            if (_ExecutingProgramPID === pid) {
+            if (_ExecutingProgramPCB.pid === pid) {
                 //reset the pcb so if the program is restarted it will start from the beginning
                 tempProgramPCB = _ExecutingProgramPCB;
 
                 //reset the executing program variables
-                _ExecutingProgramPID = null;
-                _ExecutingProgramPCB = null;
+                if (!this.clearMem) {
+                    _ExecutingProgramPID = null;
+                    _ExecutingProgramPCB = null;
+                }
             } else {
                 //remove the program from the ready queue
                 tempProgramPCB = this.readyQueue.getAndRemove(pid);
             }
 
             //mark the memory the program was living in as free
-            _MemoryManager.setNextFreeBlock(tempProgramPCB);
+            if (tempProgramPCB.location === 0 /* Memory */)
+                _MemoryManager.setNextFreeBlock(tempProgramPCB);
 
             //update the cpu display
             _CPU.updateDisplay();

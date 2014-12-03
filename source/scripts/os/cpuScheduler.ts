@@ -9,7 +9,8 @@ module TSOS {
                     public residentQueue: Queue = new Queue(),
                     public terminatedQueue:Queue = new Queue(),
                     public counter :number =0,
-                    public reorder :boolean=false
+                    public reorder :boolean=false,
+                    public clearMemCheck:boolean =false
 
                     ) {
 
@@ -83,11 +84,12 @@ module TSOS {
         }
         public clearMem(){
             //clear current executing program
-            var tempProgramPCB = _ExecutingProgramPCB;
-            _ExecutingProgramPCB =null;
-            _ExecutingProgramPID =null;
+            this.clearMemCheck=true;
+            var tempProgramPCB = _ExecutingProgramPCB;  
+            if (_ExecutingProgramPCB.location === Locations.Memory)
+                _ExecutingProgramPID=-1; //so we don't accidentalyl enqueue a bunch of interrupts
 
-            _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+            _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
             var sizeRQ = this.readyQueue.getSize();
             var sizeRL = this.residentQueue.getSize();
             //clear programs in memory from ready queue
@@ -95,24 +97,20 @@ module TSOS {
                 tempProgramPCB = this.readyQueue.dequeue();
                 //check if the program is in memory 
                 if (tempProgramPCB.location === Locations.Memory){
-                    //remove program from the ready queue
-                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
                     //and kill program if so
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
                 }
-                else
-                    this.readyQueue.enqueue(tempProgramPCB);
+                this.readyQueue.enqueue(tempProgramPCB);
             }
             //clear programs in memory from resident list.
             for (var i=0; i<sizeRL; i++){
                 tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === Locations.Memory){
-                    this.residentQueue.getAndRemove(tempProgramPCB.pid);
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
                 }
-                else
-                    this.residentQueue.enqueue(tempProgramPCB);
+                this.residentQueue.enqueue(tempProgramPCB);
             }
+            _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPCB.pid));
         }
         public clearDisk(){
 
@@ -122,25 +120,21 @@ module TSOS {
             //clear programs in memory from ready queue
             for (var i=0; i<sizeRQ; i++){
                 tempProgramPCB = this.readyQueue.dequeue();
-                //check if the program is in memory 
+                //check if the program is in disk
                 if (tempProgramPCB.location === Locations.Disk){
-                    //remove program from the ready queue
-                    this.readyQueue.getAndRemove(tempProgramPCB.pid);
                     //and kill program if so
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
                 }
-                else
-                    this.readyQueue.enqueue(tempProgramPCB);
+                this.readyQueue.enqueue(tempProgramPCB);
             }
             //clear programs in memory from resident list.
             for (var i=0; i<sizeRL; i++){
                 tempProgramPCB = this.residentQueue.dequeue();
                 if (tempProgramPCB.location === Locations.Disk){
                     this.residentQueue.getAndRemove(tempProgramPCB.pid);
-                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB));
+                    _KernelInterruptQueue.enqueue(new Interrupt(PROCESS_KILLED_IRQ, tempProgramPCB.pid));
                 }
-                else
-                    this.residentQueue.enqueue(tempProgramPCB);
+                this.residentQueue.enqueue(tempProgramPCB);
             }   
         }
         public emptyReadyQueue() :boolean {
@@ -192,7 +186,9 @@ module TSOS {
 
         }
         public contextSwitch(){
-        	if (_ExecutingProgramPCB!==null){
+            this.clearMemCheck=false;
+            debugger;
+        	if (_ExecutingProgramPCB!==null && _ExecutingProgramPCB.state!==State.Killed){
         		//enqueue the current executing program back into the ready queue
         		_ExecutingProgramPCB.state = State.Ready;
         		this.readyQueue.enqueue(_ExecutingProgramPCB);
@@ -239,10 +235,7 @@ module TSOS {
                     else
                         this.residentQueue.addLeastImportant(lastPCB);
                 }
-               
-               
-
-
+                
             }
             else{
         	   //load it into the cpu
@@ -250,23 +243,26 @@ module TSOS {
             }
         }
         public stopRunning(pid){
-            
+            debugger;
         	//stops a program if it is currently running and puts it back on the resident queue with a new pcb
         	var tempProgramPCB =null;
-        	if (_ExecutingProgramPID === pid){
+        	if (_ExecutingProgramPCB.pid === pid){
         		//reset the pcb so if the program is restarted it will start from the beginning
         		tempProgramPCB = _ExecutingProgramPCB;	
         		
         		//reset the executing program variables
-        		_ExecutingProgramPID=null;
-        		_ExecutingProgramPCB=null;
+                if (!this.clearMem){
+        		  _ExecutingProgramPID=null;
+        		  _ExecutingProgramPCB=null;
+                }
         	}
         	else{
         		//remove the program from the ready queue
         		tempProgramPCB = this.readyQueue.getAndRemove(pid);
         	}
             //mark the memory the program was living in as free
-            _MemoryManager.setNextFreeBlock(tempProgramPCB);
+            if (tempProgramPCB.location===Locations.Memory)
+                _MemoryManager.setNextFreeBlock(tempProgramPCB);
             //update the cpu display
             _CPU.updateDisplay();
         	//finally enqueue an interrupt

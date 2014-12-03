@@ -203,6 +203,7 @@ module TSOS {
                     //load it into the cpu
                     _CPU.loadProgram();
                     _ExecutingProgram = null;
+                    TSOS.Control.updateAllQueueDisplays()
                     break;
                 }
 

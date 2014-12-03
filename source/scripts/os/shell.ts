@@ -562,8 +562,8 @@ module TSOS {
 
         public shellClearMem(args){
             //clear the running programs and the memory.
-            if (_CPU.isExecuting && args.length===0){ 
-                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem-force instead.");
+            if (_CPU.isExecuting && args[0]!=="-force"){ 
+                _StdOut.putText("Are you sure you want to clear memory? This will stop programs from executing. Enter clearmem -force instead.");
                 return;    
             }
             else if (args[0] ==="-force"){
@@ -573,7 +573,6 @@ module TSOS {
             else {
                 _StdOut.putText("Memory being cleared.");
             }
-
             _KernelInterruptQueue.enqueue(new Interrupt(CLEAR_MEMORY_IRQ));
         }
         
