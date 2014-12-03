@@ -101,7 +101,7 @@ var TSOS;
             this.krnTrace("end shutdown OS");
             clearInterval(_hardwareClockID);
 
-            this.krnTrace("Shutdown successful.");
+            this.krnTrace("Shutdown successful");
         };
 
         Kernel.prototype.krnOnCPUClockPulse = function () {
