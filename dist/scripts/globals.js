@@ -102,6 +102,7 @@ var _CPU;
 var _SingleStep = false;
 var _Stepping = false;
 var _StartUp = true;
+var _StartUpTime = 10000;
 
 //Memory Vars
 var _MemoryManager;

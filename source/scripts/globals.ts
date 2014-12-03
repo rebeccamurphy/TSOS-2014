@@ -74,6 +74,7 @@ var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 var _SingleStep= false;
 var _Stepping = false;
 var _StartUp = true;
+var _StartUpTime = 10000; //10secs
 //Memory Vars
 var _MemoryManager: TSOS.MemoryManager;
 var _Scheduler: TSOS.cpuScheduler;

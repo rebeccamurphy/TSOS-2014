@@ -65,7 +65,7 @@ var TSOS;
 
                     //update help
                     TSOS.Control.updateHelp();
-                }, 8000);
+                }, _StartUpTime);
             } else {
                 TSOS.Control.startUp();
             }

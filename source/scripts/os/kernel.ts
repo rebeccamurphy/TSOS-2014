@@ -70,7 +70,7 @@ module TSOS {
                 _OsShell.init();
                 //update help
                 TSOS.Control.updateHelp();
-                }, 8000);
+                }, _StartUpTime);
             }
             else{
                 TSOS.Control.startUp();    

@@ -885,11 +885,11 @@ var TSOS;
                 return;
             }
             _StdOut.putText("Recoverable files in trash are:");
-            _StdOut.advanceLine();
             for (var i = 0; i < _Trash.getSize(); i++) {
+                _StdOut.advanceLine();
                 _StdOut.putText(_Trash.get(i));
-                _OsShell.putPromptNextLine();
             }
+            _OsShell.putPromptNextLine();
         };
         Shell.prototype.shellStartUp = function (args) {
             var option = args[0];
