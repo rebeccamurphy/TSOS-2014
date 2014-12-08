@@ -221,11 +221,16 @@ td {
   overflow-y: auto;
   width: 745px;
 }
+
+#FileSystemWrapper > table >tbody>tr>td{
+  font-family: monospace;
+}
 #Queues{
   padding-top: 5px;
 }
 #memDisplay>tr>td{
   padding:5px!important;
+  font-family: monospace;
 }
 .modal:nth-of-type(even) {
     z-index: 1042 !important;

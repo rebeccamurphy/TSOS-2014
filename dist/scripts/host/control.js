@@ -433,7 +433,7 @@ var TSOS;
                         } else {
                             //trick the user into think they're data is deleted
                             output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + "000" + "</td>";
-                            output += "<td>" + new Array(61).join('0') + "</td></tr>";
+                            output += "<td>" + new Array(blockStr.length + 1).join('0') + "</td></tr>";
                         }
                     }
                 }

@@ -169,6 +169,20 @@ module TSOS {
         return str;
     }
     
+    public static splitString(data:string, limit:number){
+        debugger;
+        var dataArray =[];
+        var strArr = data.split('');
+        for (var i=0; i<strArr.length;i+=limit){
+            if (i+limit> strArr.length)
+                dataArray.push(strArr.slice(i, strArr.length).join(""));       
+            else
+                dataArray.push(strArr.slice(i,i+limit).join(""));
+        }
+
+        return dataArray; 
+
+    }
     // Method to determine if the browser that the user is using supports
     // the HTML5 localStorage
     // Taken from http://diveintohtml5.info/storage.html
