@@ -507,10 +507,9 @@ var TSOS;
                     if (success) {
                         _FileNames = new TSOS.Queue();
                         _Trash = new TSOS.Queue();
-                        if (_CPU.isExecuting) {
-                            //clear programs on disk
-                            _Scheduler.clearDisk();
-                        }
+
+                        //clear programs on disk
+                        _Scheduler.clearDisk();
                     }
                     break;
                 }
@@ -519,10 +518,9 @@ var TSOS;
                     if (success) {
                         _Trash = _FileNames;
                         _FileNames = new TSOS.Queue();
-                        if (_CPU.isExecuting) {
-                            //clear programs on disk
-                            _Scheduler.clearDisk();
-                        }
+
+                        //clear programs on disk
+                        _Scheduler.clearDisk();
                     }
                     break;
                 }

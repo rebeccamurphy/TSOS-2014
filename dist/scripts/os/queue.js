@@ -85,6 +85,7 @@ var TSOS;
                     }
                 }
             }
+            return retVal;
         };
         Queue.prototype.priorityOrder = function () {
             this.q.sort(this.comparePriority);

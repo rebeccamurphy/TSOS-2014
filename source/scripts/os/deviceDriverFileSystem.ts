@@ -519,10 +519,9 @@ module TSOS {
               if (success){
                 _FileNames= new Queue();
                 _Trash = new Queue();
-                if (_CPU.isExecuting){
                   //clear programs on disk 
                   _Scheduler.clearDisk();   
-                }
+                
               }
               break;
             }
@@ -531,10 +530,9 @@ module TSOS {
               if (success){
                 _Trash = _FileNames;
                 _FileNames= new Queue();
-                if (_CPU.isExecuting){
                   //clear programs on disk 
                   _Scheduler.clearDisk();   
-                }
+                
               }
               break;
             }

@@ -113,7 +113,7 @@ module TSOS {
             _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, _ExecutingProgramPCB.pid));
         }
         public clearDisk(){
-
+            debugger;
             var tempProgramPCB;
             var sizeRQ = this.readyQueue.getSize();
             var sizeRL = this.residentQueue.getSize();
@@ -246,7 +246,8 @@ module TSOS {
             debugger;
         	//stops a program if it is currently running and puts it back on the resident queue with a new pcb
         	var tempProgramPCB =null;
-        	if (_ExecutingProgramPCB.pid === pid){
+
+        	if (_ExecutingProgramPCB!== undefined &&_ExecutingProgramPCB.pid === pid){
         		//reset the pcb so if the program is restarted it will start from the beginning
         		tempProgramPCB = _ExecutingProgramPCB;	
         		
@@ -259,6 +260,8 @@ module TSOS {
         	else{
         		//remove the program from the ready queue
         		tempProgramPCB = this.readyQueue.getAndRemove(pid);
+                if (tempProgramPCB === null)
+                    tempProgramPCB  = this.residentQueue.getAndRemove(pid);
         	}
             //mark the memory the program was living in as free
             if (tempProgramPCB.location===Locations.Memory)

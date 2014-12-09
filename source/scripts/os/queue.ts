@@ -87,6 +87,7 @@ module TSOS {
                     }
                 }
             }
+            return retVal;
         }
         public priorityOrder(){
             this.q.sort(this.comparePriority);
