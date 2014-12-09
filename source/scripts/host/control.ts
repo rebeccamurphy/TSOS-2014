@@ -235,7 +235,7 @@ module TSOS {
         }
 
         public static updateMemoryDisplay(){
-            ;
+            
             var numData =0;
             if (_CPU.IR==='A9'||_CPU.IR==='A2'||_CPU.IR==='A0'||_CPU.IR==='D0')
                 numData =1
@@ -249,7 +249,10 @@ module TSOS {
             for (var i=0; i<_MemoryManager.memory.byteSize; i++){
                 if (i % 8 ===0){
                     rowID="rowID"+(i/8);
-                    output += "</tr><tr id="+rowID+"><td> <b>" + Utils.createHexIndex(i) + " </td>";
+                    if (i % _ProgramSize==0)
+                        output += "</tr><tr id="+rowID+"><td style='color:green;'> <b>" + Utils.createHexIndex(i) + " </td>";
+                    else
+                        output += "</tr><tr id="+rowID+"><td> <b>" + Utils.createHexIndex(i) + " </td>";
                 }
                 if (_CPU.displayPC===i&&_CPU.isExecuting){
                     output += "<td id='dataID" + i + "'class='instruct'>" + _MemoryManager.memory.Data[i] + '</td>';
