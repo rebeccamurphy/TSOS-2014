@@ -722,7 +722,7 @@ var TSOS;
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FILESYSTEM_IRQ, [1 /* CreateForce */, firstParam]));
             } else {
                 //file already exits and -force not used
-                _StdOut.putPrompt("File already exists. Delete file or use -force to write over file.");
+                _OsShell.putPrompt("File already exists. Delete file or use -force to write over file.");
             }
         };
         Shell.prototype.shellDeleteFile = function (args) {
