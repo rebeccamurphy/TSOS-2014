@@ -510,6 +510,7 @@ module TSOS {
           var fileName = params[1];
           var data= params[2];
           var success=false;
+          var overwrite = false;
           fileName = (fileName===undefined)? "" : fileName;
           var notSwap = fileName.charAt(0)!== SWAP_FILE_START_CHAR;
           
@@ -636,11 +637,11 @@ module TSOS {
                   this.clearFile(fileName);
                   this.createFile(fileName, false);
                   success =this.writeFile(fileName, data, false);
+                  overwrite = true;
                   if (!success){
                     _StdOut.advanceLine();
                     this.clearFile(fileName);
-                    _StdOut.putText("File name track full, please empty trash or delete files.");
-                    var overwrite = true;
+                    _StdOut.putText("File name track full, please empty trash or delete files."); 
                     break;
                   }
                 }

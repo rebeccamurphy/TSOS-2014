@@ -839,7 +839,7 @@ module TSOS {
             }
             else {
                 //file already exits and -force not used
-                _StdOut.putText("File already exists. Delete file or use -force to write over file.");
+                _StdOut.putPrompt("File already exists. Delete file or use -force to write over file.");
             }
         }
         public shellDeleteFile(args){
