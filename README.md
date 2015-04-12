@@ -1,8 +1,11 @@
-TSOS-2014
+MysteriOS Bloop
 ============
 
 This is my Fall 2014 Operating Systems class initial project.
 See http://www.labouseur.com/courses/os/ for details.
+
+To see the project running go here:
+http://rebeccamurphy.github.io/TSOS-2014/
 
 Setup TypeScript/Gulp
 =====================
