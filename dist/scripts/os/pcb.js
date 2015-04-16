@@ -4,21 +4,27 @@ FUTURE ME PUT HELLA SWEET COMMENTS HERE.
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(//process stuff
-        PC, Acc, Xreg, Yreg, Zflag, pid, IR, // memory stuff
-        base, limit, state, priority, location) {
-            if (typeof PC === "undefined") { PC = 0; }
-            if (typeof Acc === "undefined") { Acc = 0; }
-            if (typeof Xreg === "undefined") { Xreg = 0; }
-            if (typeof Yreg === "undefined") { Yreg = 0; }
-            if (typeof Zflag === "undefined") { Zflag = 0; }
-            if (typeof pid === "undefined") { pid = 0; }
-            if (typeof IR === "undefined") { IR = ""; }
-            if (typeof base === "undefined") { base = 0; }
-            if (typeof limit === "undefined") { limit = 0; }
-            if (typeof state === "undefined") { state = 0 /* New */; }
-            if (typeof priority === "undefined") { priority = DEFAULT_PRIORITY; }
-            if (typeof location === "undefined") { location = 0 /* Memory */; }
+        function PCB(
+            //process stuff
+            PC, Acc, Xreg, Yreg, Zflag, pid, IR, 
+            // memory stuff
+            base, //starting location in the mems
+            limit, //max location in the mems. to prevent
+            state, //new, ready, or running state of program
+            priority, location //defaults to memory, if written to disk will switch to disk
+            ) {
+            if (PC === void 0) { PC = 0; }
+            if (Acc === void 0) { Acc = 0; }
+            if (Xreg === void 0) { Xreg = 0; }
+            if (Yreg === void 0) { Yreg = 0; }
+            if (Zflag === void 0) { Zflag = 0; }
+            if (pid === void 0) { pid = 0; }
+            if (IR === void 0) { IR = ""; }
+            if (base === void 0) { base = 0; }
+            if (limit === void 0) { limit = 0; }
+            if (state === void 0) { state = State.New; }
+            if (priority === void 0) { priority = DEFAULT_PRIORITY; }
+            if (location === void 0) { location = Locations.Memory; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;

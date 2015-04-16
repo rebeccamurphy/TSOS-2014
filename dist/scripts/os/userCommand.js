@@ -2,8 +2,8 @@ var TSOS;
 (function (TSOS) {
     var UserCommand = (function () {
         function UserCommand(command, args) {
-            if (typeof command === "undefined") { command = ""; }
-            if (typeof args === "undefined") { args = []; }
+            if (command === void 0) { command = ""; }
+            if (args === void 0) { args = []; }
             this.command = command;
             this.args = args;
         }

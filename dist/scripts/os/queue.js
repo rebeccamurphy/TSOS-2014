@@ -1,17 +1,19 @@
 /* ------------
-Queue.ts
-A simple Queue, which is really just a dressed-up JavaScript Array.
-See the Javascript Array documentation at
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
-Look at the push and shift methods, as they are the least obvious here.
------------- */
+   Queue.ts
+
+   A simple Queue, which is really just a dressed-up JavaScript Array.
+   See the Javascript Array documentation at
+   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+   Look at the push and shift methods, as they are the least obvious here.
+
+   ------------ */
 var TSOS;
 (function (TSOS) {
     var Queue = (function () {
         function Queue(q, leastIndex, ordered) {
-            if (typeof q === "undefined") { q = new Array(); }
-            if (typeof leastIndex === "undefined") { leastIndex = null; }
-            if (typeof ordered === "undefined") { ordered = false; }
+            if (q === void 0) { q = new Array(); }
+            if (leastIndex === void 0) { leastIndex = null; }
+            if (ordered === void 0) { ordered = false; }
             this.q = q;
             this.leastIndex = leastIndex;
             this.ordered = ordered;
@@ -19,19 +21,15 @@ var TSOS;
         Queue.prototype.getSize = function () {
             return this.q.length;
         };
-
         Queue.prototype.isEmpty = function () {
             return (this.q.length == 0);
         };
-
         Queue.prototype.isOrdered = function () {
             return this.ordered;
         };
-
         Queue.prototype.enqueue = function (element) {
             this.q.push(element);
         };
-
         Queue.prototype.dequeue = function () {
             var retVal = null;
             if (this.q.length > 0) {
@@ -39,7 +37,6 @@ var TSOS;
             }
             return retVal;
         };
-
         Queue.prototype.get = function (i) {
             //gets pcb
             return this.q[i];
@@ -54,7 +51,8 @@ var TSOS;
                         return true;
                     }
                 }
-            } else {
+            }
+            else {
                 for (var i = 0; i < this.q.length; i++) {
                     if (this.q[i] === pid) {
                         return true;
@@ -75,7 +73,8 @@ var TSOS;
                         return retVal;
                     }
                 }
-            } else {
+            }
+            else {
                 for (var i = 0; i < this.q.length; i++) {
                     if (this.q[i] === pid) {
                         retVal = this.q[i];
@@ -99,21 +98,21 @@ var TSOS;
             var retVal = null;
             var leastPriority = 0;
             for (var i = 0; i < this.q.length; i++) {
-                if (SCHEDULE_TYPE === 2 /* priority */) {
+                if (SCHEDULE_TYPE === scheduleType.priority) {
                     //gets last program in memory with highest priority
-                    if (this.q[i].location === 0 /* Memory */ && this.q[i].priority >= leastPriority) {
+                    if (this.q[i].location === Locations.Memory && this.q[i].priority >= leastPriority) {
                         retVal = this.q[i];
                         this.leastIndex = i;
                         leastPriority = retVal.priority;
                     }
-                } else {
-                    if (this.q[i].location === 0 /* Memory */) {
+                }
+                else {
+                    if (this.q[i].location === Locations.Memory) {
                         retVal = this.q[i];
                         this.leastIndex = i;
                     }
                 }
             }
-
             this.q.splice(this.leastIndex, 1);
             return retVal;
         };
@@ -140,7 +139,6 @@ var TSOS;
             retVal.q = this.q.splice(0);
             return retVal;
         };
-
         Queue.prototype.toString = function () {
             var retVal = "";
             for (var i in this.q) {

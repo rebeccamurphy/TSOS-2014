@@ -42,6 +42,10 @@ var CONSOLE_VIEWPORT_WIDTH :number = 500;
 var CONSOLE_VIEWPORT_HEIGHT :number= 500;
 var QUANTUM: number = 6;
 var DEFAULT_PRIORITY:number =4;
+
+enum scheduleType {rr, fcfs, priority};
+var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
+
 var SCHEDULE_TYPE :scheduleType= scheduleType.rr; 
 var PREVIOUS_MESSAGE:string ="";
 var DISK_IN_USE:boolean = false;
@@ -57,8 +61,6 @@ window.onload = function() {
 enum State {New,Running, Ready, Done, Killed};
 var States =["New","Running","Ready","Ran", "Killed"];
 
-enum scheduleType {rr, fcfs, priority};
-var scheduleTypes = ["Round Robin", "First Come First Served", "Priority"];
 
 enum Locations {Memory, Disk};
 var LocationsStr = ["Memory", "Disk"];

@@ -252,7 +252,7 @@ module TSOS {
         		tempProgramPCB = _ExecutingProgramPCB;	
         		
         		//reset the executing program variables
-                if (!this.clearMem){
+                if (!this.clearMem()){
         		  _ExecutingProgramPID=null;
         		  _ExecutingProgramPCB=null;
                 }

@@ -6,10 +6,12 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 /* ----------------------------------
-DeviceDriverKeyboard.ts
-Requires deviceDriver.ts
-The Kernel Keyboard Device Driver.
----------------------------------- */
+   DeviceDriverKeyboard.ts
+
+   Requires deviceDriver.ts
+
+   The Kernel Keyboard Device Driver.
+   ---------------------------------- */
 var TSOS;
 (function (TSOS) {
     // Extends DeviceDriver
@@ -25,37 +27,39 @@ var TSOS;
             this.status = "Keyboard Loaded";
             // More?
         };
-
         DeviceDriverKeyboard.prototype.krnKbdDispatchKeyPress = function (params) {
             // Parse the params.    TODO: Check that they are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
-
             if (keyCode == 20 && !this.capslockOn)
                 this.capslockOn = true;
             else if (keyCode == 20 && this.capslockOn)
                 this.capslockOn = false;
-
             if (this.capslockOn && params[1])
                 isShifted = false;
             else if (this.capslockOn && !isShifted)
                 isShifted = this.capslockOn;
-
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
-
             // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) || ((keyCode >= 97) && (keyCode <= 123))) {
+            if (((keyCode >= 65) && (keyCode <= 90)) ||
+                ((keyCode >= 97) && (keyCode <= 123))) {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
                 chr = String.fromCharCode(keyCode + 32);
-
                 // ... then check the shift key and re-adjust if necessary.
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) || (keyCode == 32) || (keyCode == 13) || (keyCode == 8) || (keyCode == 9) || (keyCode == 38 && !isShifted) || (keyCode == 40 && !isShifted)) {
+            }
+            else if (((keyCode >= 48) && (keyCode <= 57) && !isShifted) ||
+                (keyCode == 32) ||
+                (keyCode == 13) ||
+                (keyCode == 8) ||
+                (keyCode == 9) ||
+                (keyCode == 38 && !isShifted) ||
+                (keyCode == 40 && !isShifted)) {
                 if (keyCode == 38)
                     chr = "UP"; //special case for up
                 else if (keyCode == 40)
@@ -63,8 +67,12 @@ var TSOS;
                 else
                     chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
-            } else if ((keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222) || ((keyCode >= 48) && (keyCode <= 57) && isShifted)) {
+            }
+            else if ((keyCode >= 186 && keyCode <= 192) ||
+                (keyCode >= 219 && keyCode <= 222) ||
+                ((keyCode >= 48) && (keyCode <= 57) && isShifted)) {
                 switch (keyCode) {
+                    //number punctation/symbols keys
                     case 48: {
                         //0
                         chr = ")";
@@ -115,7 +123,7 @@ var TSOS;
                         chr = "(";
                         break;
                     }
-
+                    //normal punctuation keys
                     case 186: {
                         //semicolon
                         chr = (isShifted) ? ":" : ";";

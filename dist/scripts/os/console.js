@@ -1,23 +1,25 @@
 ///<reference path="../globals.ts" />
 /* ------------
-Console.ts
-Requires globals.ts
-The OS Console - stdIn and stdOut by default.
-Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or interpreter for this console.
------------- */
+     Console.ts
+
+     Requires globals.ts
+
+     The OS Console - stdIn and stdOut by default.
+     Note: This is not the Shell.  The Shell is the "command line interface" (CLI) or interpreter for this console.
+     ------------ */
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
         function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, currentLine, prevXLineEnd, enteredCommandsList, enteredCommandsIndex) {
-            if (typeof currentFont === "undefined") { currentFont = _DefaultFontFamily; }
-            if (typeof currentFontSize === "undefined") { currentFontSize = _DefaultFontSize; }
-            if (typeof currentXPosition === "undefined") { currentXPosition = 0; }
-            if (typeof currentYPosition === "undefined") { currentYPosition = _DefaultFontSize + _FontHeightMargin; }
-            if (typeof buffer === "undefined") { buffer = ""; }
-            if (typeof currentLine === "undefined") { currentLine = 0; }
-            if (typeof prevXLineEnd === "undefined") { prevXLineEnd = []; }
-            if (typeof enteredCommandsList === "undefined") { enteredCommandsList = [""]; }
-            if (typeof enteredCommandsIndex === "undefined") { enteredCommandsIndex = 0; }
+            if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
+            if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
+            if (currentXPosition === void 0) { currentXPosition = 0; }
+            if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize + _FontHeightMargin; }
+            if (buffer === void 0) { buffer = ""; }
+            if (currentLine === void 0) { currentLine = 0; }
+            if (prevXLineEnd === void 0) { prevXLineEnd = []; }
+            if (enteredCommandsList === void 0) { enteredCommandsList = [""]; }
+            if (enteredCommandsIndex === void 0) { enteredCommandsIndex = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -32,64 +34,59 @@ var TSOS;
             this.clearScreen();
             this.resetXY();
         };
-
         Console.prototype.clearScreen = function () {
             _Canvas.height = CONSOLE_VIEWPORT_HEIGHT; //resets console height
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         };
-
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize + _FontHeightMargin;
         };
-
         Console.prototype.handleInput = function () {
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
-
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
                 if (chr === String.fromCharCode(13)) {
                     if (this.buffer !== "") {
                         // The enter key marks the end of a console command, so ...
                         // ... tell the shell ...
                         _OsShell.handleInput(this.buffer);
-
                         //add into the previous command list
                         this.enteredCommandsList.push(this.buffer);
-
                         //reset the enteredcommandlist index
                         this.enteredCommandsIndex = this.enteredCommandsList.length;
-
                         // ... and reset our buffer.
                         this.buffer = "";
                     }
-                } else if (chr === String.fromCharCode(8)) {
+                }
+                else if (chr === String.fromCharCode(8)) {
                     this.eraseText(this.buffer.slice(-1)); //remove last character from canvas
-
                     this.buffer = this.buffer.slice(0, -1); //remove last character from buffer
-                } else if (chr === String.fromCharCode(9)) {
+                }
+                else if (chr === String.fromCharCode(9)) {
                     this.matchCommand();
-                } else if ((chr === "UP") || (chr === "DOWN")) {
+                }
+                else if ((chr === "UP") ||
+                    (chr === "DOWN")) {
                     this.enteredCommands(chr);
-                } else {
+                }
+                else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
-
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
-                // TODO: Write a case for Ctrl-C.
             }
         };
-
         Console.prototype.putText = function (text, color) {
             //takes in a string or character and implements line wrap.
             if (text !== "" && text.length === 1) {
-                this.putChar(text, color); //might be  problem
-            } else if (text !== "" && text.length > 1) {
-                var words = text.split(" ");
+                this.putChar(text, color); //might be  problem      
+            }
+            else if (text !== "" && text.length > 1) {
+                var words = text.split(" "); //split string by spaces from part of line wrapping
                 for (var i = 0; i < words.length; i++) {
                     var word = words[i];
                     var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, word);
@@ -120,17 +117,15 @@ var TSOS;
             else {
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, color);
             }
-
             // Move the current X position.
             this.currentXPosition = this.currentXPosition + offset;
         };
         Console.prototype.eraseText = function (text) {
             //measure offset of letter going to be erased
             var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-
             //change the current x position
             this.currentXPosition = this.currentXPosition - offset;
-            var roundedXPos = Math.round(this.currentXPosition);
+            var roundedXPos = Math.round(this.currentXPosition); // work around rounding bug
             if (roundedXPos < 0)
                 this.backLine(offset); //needs to be erased from the previous line so we go back a line
             _DrawingContext.fillStyle = CONSOLE_BGC;
@@ -138,18 +133,15 @@ var TSOS;
             //leaving in next line for later virus mode or something
             //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text, CONSOLE_BGC);
         };
-
         Console.prototype.advanceLine = function () {
-            this.currentXPosition = 0; // resets x position
+            this.currentXPosition = 0; // resets x position 
             this.currentYPosition += _DefaultFontSize + _FontHeightMargin; //increases y position
             this.currentLine++; // increases current line
             if (this.currentYPosition >= _Canvas.height) {
-                var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height); //creates image of old canvas
                 this.clearScreen();
-
                 //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
                 _DrawingContext.putImageData(img, 0, _Canvas.height - this.currentYPosition - 5, 0, 0, _Canvas.width, _Canvas.height);
-
                 //this.moveCanvasUp(); //grows canvas if current y is greater than current canvas height
                 this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
             }
@@ -160,7 +152,7 @@ var TSOS;
             this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
             this.currentLine--; //decreases current line
             //if (this.currentYPosition > CONSOLE_VIEWPORT_HEIGHT)
-            //    this.changeCanvasLength();
+            //    this.changeCanvasLength(); 
             //if the current y is still greater than default console size
             //decrease the size of the canvas
         };
@@ -172,9 +164,8 @@ var TSOS;
             this.buffer = "";
         };
         Console.prototype.moveCanvasUp = function () {
-            var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+            var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height); //creates image of old canvas
             this.clearScreen();
-
             //_Canvas.height = this.currentYPosition +5; //increases length of console, +5 for bottom buffer
             _DrawingContext.putImageData(img, 0, 0); //redraws old canvas on longer canvas
             //this.moveScrollbar("bottom");//move view to new line
@@ -187,24 +178,23 @@ var TSOS;
         Console.prototype.matchCommand = function () {
             //checks if any commands match when a user presses tab
             var matchingCommands = [];
-            var matchingCommand = "";
+            var matchingCommand = ""; //where the rest of a matching command is stored
             for (var i = 0; i < _OsShell.commandList.length; i++) {
                 var msgLength = this.buffer.length;
                 var command = _OsShell.commandList[i].command;
                 if (this.buffer == command.substr(0, msgLength)) {
                     matchingCommands.push(command); //push entire matching command
                     matchingCommand = command.slice(msgLength); //add end of string to matching command
-                    //so buffer + matchingCommand = command
                 }
             }
             if (matchingCommands.length === 1) {
                 this.buffer += matchingCommand;
                 this.putText(matchingCommand);
-            } else if (matchingCommands.length > 1) {
+            }
+            else if (matchingCommands.length > 1) {
                 this.advanceLine();
                 for (var i = 0; i < matchingCommands.length; i++)
                     this.putText(matchingCommands[i] + " ");
-
                 //after printing matching commands, give the user what they started with
                 this.advanceLine();
                 _OsShell.putPrompt();
@@ -212,7 +202,6 @@ var TSOS;
             }
             //else do nothing basically
         };
-
         Console.prototype.approxMatchCommand = function () {
             //gives suggestions of invalid command contains character of valid command
             var approxMatchingCommands = [];
@@ -239,15 +228,16 @@ var TSOS;
                     this.putText(approxMatchingCommands[i] + " ");
             }
         };
-
         Console.prototype.enteredCommands = function (chr) {
-            if ((chr === "UP") && (this.enteredCommandsIndex > 1)) {
+            if ((chr === "UP") &&
+                (this.enteredCommandsIndex > 1)) {
                 this.enteredCommandsIndex--; //moves up item in list
                 this.clearLine();
                 _OsShell.putPrompt();
                 this.putText(this.enteredCommandsList[this.enteredCommandsIndex]);
                 this.buffer = this.enteredCommandsList[this.enteredCommandsIndex];
-            } else if (chr === "DOWN") {
+            }
+            else if (chr === "DOWN") {
                 if (this.enteredCommandsIndex < this.enteredCommandsList.length) {
                     this.enteredCommandsIndex++; //moves down item in list
                     this.clearLine();
@@ -265,7 +255,8 @@ var TSOS;
             if (_SarcasticMode) {
                 this.clearScreen();
                 TSOS.Control.c();
-            } else {
+            }
+            else {
                 this.clearScreen();
                 _DrawingContext.fillStyle = "#3a50b6";
                 _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
@@ -274,7 +265,6 @@ var TSOS;
                     _DrawingContext.drawImage(img, 0, 100);
                 };
                 img.src = "http://i.imgur.com/sOoqj6a.jpg";
-                //new blue screen of death
             }
         };
         Console.prototype.startUp = function () {
@@ -294,15 +284,15 @@ var TSOS;
                 this.putText((_CPU.Yreg).toString());
                 this.advanceLine();
                 _OsShell.putPrompt();
-            } else if (_CPU.Xreg === 2) {
+            }
+            else if (_CPU.Xreg === 2) {
                 //print the 00-terminated string stored at the address in the Y register
                 var string00 = "";
                 var curPos = _CPU.Yreg + _ExecutingProgramPCB.base;
                 var curData = _MemoryManager.getMemory(curPos);
                 while (curData !== "00") {
-                    //convert current data from hex to dec to char to string. YAY.
+                    //convert current data from hex to dec to char to string. YAY. 
                     string00 += String.fromCharCode(_MemoryManager.convertHexData(curData));
-
                     //move to next byte of data
                     curData = _MemoryManager.getMemory(++curPos);
                 }

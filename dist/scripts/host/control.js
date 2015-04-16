@@ -1,19 +1,23 @@
 ///<reference path="../globals.ts" />
 ///<reference path="../os/canvastext.ts" />
 /* ------------
-Control.ts
-Requires globals.ts.
-Routines for the hardware simulation, NOT for our client OS itself.
-These are static because we are never going to instantiate them, because they represent the hardware.
-In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
-is the "bare metal" (so to speak) for which we write code that hosts our client OS.
-But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
-in both the host and client environments.
-This (and other host/simulation scripts) is the only place that we should see "web" code, such as
-DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
-This code references page numbers in the text book:
-Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
------------- */
+     Control.ts
+
+     Requires globals.ts.
+
+     Routines for the hardware simulation, NOT for our client OS itself.
+     These are static because we are never going to instantiate them, because they represent the hardware.
+     In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
+     is the "bare metal" (so to speak) for which we write code that hosts our client OS.
+     But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
+     in both the host and client environments.
+
+     This (and other host/simulation scripts) is the only place that we should see "web" code, such as
+     DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
+
+     This code references page numbers in the text book:
+     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+     ------------ */
 //
 // Control Services
 //
@@ -25,69 +29,58 @@ var TSOS;
         Control.hostInit = function () {
             // Get a global reference to the canvas.  TODO: Move this stuff into a Display Device Driver, maybe?
             _Canvas = document.getElementById('display');
-
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext('2d');
             _ConsoleScrollbar = document.getElementById("divConsole");
-
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             TSOS.CanvasTextFunctions.enable(_DrawingContext); // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun.
-
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("taHostLog").value = "";
-
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("btnStartOS").focus();
-
             // Check for our testing and enrichment core.
             if (typeof Glados === "function") {
                 _GLaDOS = new Glados();
                 _GLaDOS.init();
             }
         };
-
         Control.hostLog = function (msg, source) {
-            if (typeof source === "undefined") { source = "?"; }
+            if (source === void 0) { source = "?"; }
             // Note the OS CLOCK.
             var clock = _OSclock;
-
             // Note the REAL clock in milliseconds since January 1, 1970.
             var date = new Date();
             var strSecs = Array(2 - (String(date.getSeconds()).length - 1)).join("0") + String(date.getSeconds());
             var strHours = Array(2 - (String(date.getHours()).length - 1)).join("0") + String(date.getHours());
             var strMins = Array(2 - (String(date.getMinutes()).length - 1)).join("0") + String(date.getMinutes());
             var now = strHours + ":" + strMins + ":" + strSecs;
-
             // Build the log string.
             var str = "";
-            str += "<div id ='osclock'>" + _OSclock + "</div>" + "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>" + "<div class='log_time'> <small id='logtime'>" + now + "</small></div>";
-
+            str += "<div id ='osclock'>" + _OSclock + "</div>" + "<div class='log_source'>" + source + " </div>" + "<div class='log_msg'>" + msg + " </div>"
+                + "<div class='log_time'> <small id='logtime'>" + now + "</small></div>";
             // Update the log console.
             if (PREVIOUS_MESSAGE === "Idle" && msg === "Idle") {
                 //so the host log doesn't have a million idles, just changes the time if the previous messages was also idle
                 document.getElementById("logtime").innerHTML = now;
                 document.getElementById("osclock").innerHTML = "" + _OSclock;
-            } else {
+            }
+            else {
                 var taLog = document.getElementById("taHostLog");
                 taLog.innerHTML = "<div class='logmsg'>" + str + "</div>" + taLog.innerHTML;
             }
-
             // Optionally update a log database or some streaming service.
             //start clock display
             this.updateClockDisplay();
-
             //update previous message
             PREVIOUS_MESSAGE = msg;
         };
-
         // Host Events
         //
         Control.hostBtnStartOS_click = function (btn) {
             // Disable the (passed-in) start button...
             btn.disabled = true;
-
             //window onload added to prevent resource loading error
             ///window.onload =function(){
             //check for startup preference
@@ -98,54 +91,40 @@ var TSOS;
             var readyStateCheckInterval = setInterval(function () {
                 if (document.readyState === "complete") {
                     TSOS.Utils.setStartScreen();
-
                     // .. enable the Halt and Reset buttons ...
                     document.getElementById("btnHaltOS").disabled = false;
                     document.getElementById("btnReset").disabled = false;
                     document.getElementById("btnSingleStep").disabled = false;
-
                     // .. set focus on the OS console display ...
                     document.getElementById("display").focus();
-
                     if (_StartUp)
                         TSOS.Control.startUp(true);
-
                     // ... Create and initialize the CPU (because it's part of the hardware)  ...
                     _CPU = new TSOS.Cpu();
                     _CPU.init();
-
                     // Initialize Memory Manager
                     _MemoryManager = new TSOS.MemoryManager();
                     _MemoryManager.init();
-
                     _Scheduler = new TSOS.cpuScheduler();
-
                     // ... then set the host clock pulse ...
                     _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
-
                     // .. and call the OS Kernel Bootstrap routine.
                     _Kernel = new TSOS.Kernel();
                     _Kernel.krnBootstrap();
-
                     TSOS.Control.updateFileSystemDisplay();
-
                     clearInterval(readyStateCheckInterval);
                 }
             }, 10);
         };
-
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
             Control.hostLog("Attempting Kernel shutdown.", "host");
-
             // Call the OS shutdown routine.
             _Kernel.krnShutdown();
-
             // Stop the interval that's simulating our clock pulse.
             clearInterval(_hardwareClockID);
             // TODO: Is there anything else we need to do here?
         };
-
         Control.hostBtnReset_click = function (btn) {
             // The easiest and most thorough way to do this is to reload (not refresh) the document.
             location.reload(true);
@@ -160,14 +139,14 @@ var TSOS;
                 _SingleStep = true;
                 btn.innerHTML = "Single Step On";
                 document.getElementById("btnStep").disabled = false;
-            } else {
+            }
+            else {
                 _Kernel.krnTrace("Single Step Off");
                 _SingleStep = false;
                 btn.innerHTML = "Single Step Off";
                 document.getElementById("btnStep").disabled = true;
             }
         };
-
         Control.hostBtnStep_click = function (btn) {
             //probably need to update the kernal here too
             //clear the interval of the clock pulse
@@ -181,11 +160,10 @@ var TSOS;
             if (start) {
                 $("#startScreen").fadeIn();
                 $('#startScreen').attr('src', 'http://i.imgur.com/o72Gvss.gif');
-            } else {
+            }
+            else {
                 //fade out and remove gif
-                $("#startScreen").fadeOut(300, function () {
-                    $(this).remove();
-                });
+                $("#startScreen").fadeOut(300, function () { $(this).remove(); });
                 $("#display").fadeIn();
             }
         };
@@ -208,7 +186,6 @@ var TSOS;
         Control.displayUserStatus = function (msg) {
             document.getElementById("statusDisplay").innerHTML = msg;
         };
-
         Control.updateClockDisplay = function () {
             var date = new Date();
             var strSecs = String(date.getSeconds());
@@ -217,13 +194,11 @@ var TSOS;
             strHours = Array(2 - strHours.length).join("0") + strHours;
             var strSecs = Array(2 - (String(date.getSeconds()).length - 1)).join("0") + String(date.getSeconds());
             var strMins = Array(2 - (String(date.getMinutes()).length - 1)).join("0") + String(date.getMinutes());
-
-            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " " + strHours + ":" + strMins + ":" + strSecs;
-
+            var now = String(date.getMonth() + 1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()).slice(-2) + " "
+                + strHours + ":" + strMins + ":" + strSecs;
             //changes clock tag to current time
             document.getElementById("clockDisplay").innerHTML = now;
         };
-
         Control.updateMemoryDisplay = function () {
             var numData = 0;
             if (_CPU.IR === 'A9' || _CPU.IR === 'A2' || _CPU.IR === 'A0' || _CPU.IR === 'D0')
@@ -246,21 +221,21 @@ var TSOS;
                 if (_CPU.displayPC === i && _CPU.isExecuting) {
                     output += "<td id='dataID" + i + "'class='instruct'>" + _MemoryManager.memory.Data[i] + '</td>';
                     currentrowID = rowID;
-                } else if (numData !== 0 && i > _CPU.displayPC) {
+                }
+                else if (numData !== 0 && i > _CPU.displayPC) {
                     output += "<td id='dataID" + i + "' class='instructData'>" + _MemoryManager.memory.Data[i] + '</td>';
                     numData--;
-                } else
+                }
+                else
                     output += "<td id='dataID" + i + "'>" + _MemoryManager.memory.Data[i] + '</td>';
             }
             output += "</tr>";
             document.getElementById("memDisplay").innerHTML = output;
-
             var mem = document.getElementById("memory");
             var row = document.getElementById(currentrowID);
             if (currentrowID !== '') {
                 //setTimeout(function() {
                 mem.scrollTop = row.offsetTop;
-                //}, 10);
             }
         };
         Control.updateCpuDisplay = function () {
@@ -272,7 +247,6 @@ var TSOS;
             document.getElementById("zDisplay").innerHTML = String(_CPU.Zflag);
             document.getElementById("instructID").innerHTML = _Assembly;
         };
-
         Control.updateRQDisplay = function () {
             var output = "";
             if (_ExecutingProgramPCB !== null && _ExecutingProgramPCB !== undefined) {
@@ -349,7 +323,6 @@ var TSOS;
             }
             document.getElementById("TerminatedListDisplay").innerHTML = output;
         };
-
         Control.updateAllQueueDisplays = function () {
             this.updateTLDisplay();
             this.updateRLDisplay();
@@ -403,7 +376,6 @@ var TSOS;
                     break;
                 }
             }
-
             document.getElementById("taProgramInput").value = output;
             document.getElementById("upi").setAttribute("class", "active");
             document.getElementById("pi").setAttribute("class", "active");
@@ -414,25 +386,24 @@ var TSOS;
             document.getElementById("memory").className += " active";
             document.getElementById("programInput").className += " active";
         };
-
         Control.updateFileSystemDisplay = function () {
             var output = "";
             var blockStr = "";
             var metaStr = "";
             var tsbStr = "";
-
+            //loop through all of the files 
             for (var t = 0; t < _krnFileSystemDriver.tracks; t++) {
                 for (var s = 0; s < _krnFileSystemDriver.sectors; s++) {
                     for (var b = 0; b < _krnFileSystemDriver.blocks; b++) {
                         tsbStr = t + "" + s + "" + b;
                         blockStr = _krnFileSystemDriver.getDataBytes(tsbStr);
                         metaStr = _krnFileSystemDriver.getMetaData(tsbStr);
-
                         output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
                         if (metaStr.charAt(0) === "1") {
                             output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + metaStr.substring(1, 4) + "</td>";
                             output += "<td>" + blockStr + "</td></tr>";
-                        } else {
+                        }
+                        else {
                             //trick the user into think they're data is deleted
                             output += "<td>" + "<b>" + metaStr.charAt(0) + "</b>" + "000" + "</td>";
                             output += "<td>" + new Array(blockStr.length + 1).join('0') + "</td></tr>";

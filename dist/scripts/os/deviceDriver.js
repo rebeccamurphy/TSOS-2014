@@ -1,13 +1,14 @@
 /* ------------------------------
-DeviceDriver.ts
-The "base class" for all Device Drivers.
------------------------------- */
+     DeviceDriver.ts
+
+     The "base class" for all Device Drivers.
+     ------------------------------ */
 var TSOS;
 (function (TSOS) {
     var DeviceDriver = (function () {
         function DeviceDriver(driverEntry, isr) {
-            if (typeof driverEntry === "undefined") { driverEntry = null; }
-            if (typeof isr === "undefined") { isr = null; }
+            if (driverEntry === void 0) { driverEntry = null; }
+            if (isr === void 0) { isr = null; }
             this.driverEntry = driverEntry;
             this.isr = isr;
             this.version = '0.07';

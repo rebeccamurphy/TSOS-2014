@@ -5,16 +5,23 @@ var TSOS;
 (function (TSOS) {
     var MemoryManager = (function () {
         function MemoryManager(memory, nextFreeMem) {
-            if (typeof memory === "undefined") { memory = new TSOS.Memory(_MemorySize); }
-            if (typeof nextFreeMem === "undefined") { nextFreeMem = 0; }
+            if (memory === void 0) { memory = new TSOS.Memory(_MemorySize); }
+            if (nextFreeMem === void 0) { nextFreeMem = 0; }
             this.memory = memory;
             this.nextFreeMem = nextFreeMem;
         }
         MemoryManager.prototype.init = function () {
             TSOS.Control.updateMemoryDisplay();
         };
-
         MemoryManager.prototype.findNextFreeBlock = function () {
+            //THIS IS WRONG REWRITE TEST 
+            /*
+            for (var i =0; i< _ProgramSize; i++){
+                if (this.memory.Data[i]==="00")
+                    return i;
+            }
+            return null;
+            */
             for (var j = 0; j < _NumPrograms; j++) {
                 var blockEmpty = true;
                 var base = 255 * j;
@@ -34,18 +41,15 @@ var TSOS;
         };
         MemoryManager.prototype.loadProgram = function (currPCB, program) {
             //set the location to in memory
-            currPCB.location = 0 /* Memory */;
-
+            currPCB.location = Locations.Memory;
             for (var i = 0; i < program.length; i++) {
                 this.memory.Data[i + currPCB.base] = program[i];
             }
-
+            //if program is short override previous programs
             for (var j = program.length + currPCB.base; j < currPCB.limit; j++)
                 this.memory.Data[j] = "00";
-
             //set the next free block of memory
             this.nextFreeMem = this.findNextFreeBlock();
-
             //update display
             TSOS.Control.updateMemoryDisplay();
         };
@@ -63,10 +67,10 @@ var TSOS;
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, TSOS.Utils.dec2hex(address)));
                 else
                     return this.memory.Data[address];
-            } else {
+            }
+            else {
                 //add base of program to position so it remains in the program block
                 var decAddress = TSOS.Utils.hex2dec(address) + _ExecutingProgramPCB.base;
-
                 //checking memory in bounds
                 if (decAddress > _ExecutingProgramPCB.limit || decAddress < _ExecutingProgramPCB.base)
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, decAddress));
@@ -85,16 +89,14 @@ var TSOS;
         };
         MemoryManager.prototype.storeInMemory = function (startAddress, value) {
             var valueHex = TSOS.Utils.dec2hex(value);
-
             valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
-
             //add the base of the Executing program so it knows where to go
             var position = this.getDecAddressFromHex(startAddress) + _ExecutingProgramPCB.base;
-
             //check if memory is in bounds
             if (position > _ExecutingProgramPCB.limit || position < _ExecutingProgramPCB.base) {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, position));
-            } else
+            }
+            else
                 this.memory.Data[position] = valueHex;
         };
         MemoryManager.prototype.clearProgramFromMemory = function (pcb) {
@@ -102,7 +104,8 @@ var TSOS;
                 for (var i = _ExecutingProgramPCB.base; i < _ExecutingProgramPCB.limit; i++) {
                     this.memory.Data[i] = "00";
                 }
-            } else {
+            }
+            else {
                 for (var i = pcb.base; i < pcb.limit; i++) {
                     this.memory.Data[i] = "00";
                 }

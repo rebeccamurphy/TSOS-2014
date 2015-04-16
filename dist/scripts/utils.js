@@ -1,7 +1,8 @@
 /* --------
-Utils.ts
-Utility functions.
--------- */
+   Utils.ts
+
+   Utility functions.
+   -------- */
 var TSOS;
 (function (TSOS) {
     var Utils = (function () {
@@ -19,12 +20,11 @@ var TSOS;
             - "" is nothing, which is what we replace the whitespace with.
             */
         };
-
         Utils.rot13 = function (str) {
             /*
-            This is an easy-to understand implementation of the famous and common Rot13 obfuscator.
-            You can do this in three lines with a complex regular expression, but I'd have
-            trouble explaining it in the future.  There's a lot to be said for obvious code.
+               This is an easy-to understand implementation of the famous and common Rot13 obfuscator.
+               You can do this in three lines with a complex regular expression, but I'd have
+               trouble explaining it in the future.  There's a lot to be said for obvious code.
             */
             var retVal = "";
             for (var i in str) {
@@ -33,16 +33,17 @@ var TSOS;
                 if ("abcedfghijklmABCDEFGHIJKLM".indexOf(ch) >= 0) {
                     code = str.charCodeAt(i) + 13; // It's okay to use 13.  It's not a magic number, it's called rot13.
                     retVal = retVal + String.fromCharCode(code);
-                } else if ("nopqrstuvwxyzNOPQRSTUVWXYZ".indexOf(ch) >= 0) {
+                }
+                else if ("nopqrstuvwxyzNOPQRSTUVWXYZ".indexOf(ch) >= 0) {
                     code = str.charCodeAt(i) - 13; // It's okay to use 13.  See above.
                     retVal = retVal + String.fromCharCode(code);
-                } else {
+                }
+                else {
                     retVal = retVal + ch;
                 }
             }
             return retVal;
         };
-
         Utils.checkValidProgram = function (code) {
             //assumes code has already been parsed to array
             //check if empty
@@ -52,20 +53,21 @@ var TSOS;
                 if (code[k].length !== 32) {
                     validProgramBB = "";
                     break;
-                } else if (!(validProgramBB === "")) {
+                }
+                else if (!(validProgramBB === "")) {
                     for (var h = 0; h < 32; h += 4) {
                         var bb = code[k].substring(h, h + 4).toUpperCase();
-                        ;
+                        ; //should be a beep or boop
                         if (!(bb === "BEEP") && !(bb === "BOOP")) {
                             //break out of loop
                             validProgramBB = "";
                             break;
                         }
                     }
-                } else
-                    break;
+                }
+                else
+                    break; //breaks encasing forloop if validProgramBB is false
             }
-
             //now it checks if the code could be valid hex
             var hexChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
             for (var i = 0; i < code.length; i++) {
@@ -82,10 +84,11 @@ var TSOS;
                             break;
                         }
                     }
-                } else
-                    break;
+                }
+                else
+                    break; //breaks out of encasing for loop if validProgramHex is false
             }
-            return validProgramHex + validProgramBB;
+            return validProgramHex + validProgramBB; //should only return HEX, BB, or ""
         };
         Utils.convertProgram = function (lang, code, priority) {
             var beepboop = [];
@@ -106,11 +109,11 @@ var TSOS;
                     beepboop.push(numBB);
                 }
                 var tempBBStr = beepboop.join(" ");
-
                 //puts beepboop in textarea
                 TSOS.Control.displayUserProgram(tempBBStr);
                 return true;
-            } else if (lang === "BB" || lang === "runnableBB") {
+            }
+            else if (lang === "BB" || lang === "runnableBB") {
                 for (var i = 0; i < code.length; i++) {
                     numBB = code[i];
                     numBin = "";
@@ -126,11 +129,13 @@ var TSOS;
                 var tempHexStr = hex.join(" ");
                 if (lang === "runnableBB") {
                     return hex;
-                } else
+                }
+                else
                     //puts hex in text area
                     TSOS.Control.displayUserProgram(tempHexStr);
                 return true;
-            } else
+            }
+            else
                 return false;
         };
         Utils.dec2hex = function (numDec) {
@@ -139,7 +144,6 @@ var TSOS;
         Utils.hex2dec = function (numHex) {
             return parseInt(numHex, 16);
         };
-
         Utils.createHexIndex = function (numDec) {
             var numHex = this.dec2hex(numDec);
             return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
@@ -162,7 +166,6 @@ var TSOS;
             }
             return str;
         };
-
         Utils.splitString = function (data, limit) {
             debugger;
             var dataArray = [];
@@ -173,29 +176,25 @@ var TSOS;
                 else
                     dataArray.push(strArr.slice(i, i + limit).join(""));
             }
-
             return dataArray;
         };
-
         // Method to determine if the browser that the user is using supports
         // the HTML5 localStorage
         // Taken from http://diveintohtml5.info/storage.html
         Utils.supports_html5_storage = function () {
-            try  {
+            try {
                 return 'localStorage' in window && window['localStorage'] !== null;
-            } catch (e) {
+            }
+            catch (e) {
                 return false;
             }
         };
-
         Utils.InvalidFileName = function (fileName) {
             return fileName.indexOf(' ') !== -1 || fileName.charAt(0) === '.' || fileName.length > 30;
         };
-
         Utils.trimTrailingChars = function (s, charToTrim) {
             var regExp = new RegExp(charToTrim + "+$");
             var result = s.replace(regExp, "");
-
             return result;
         };
         Utils.capitaliseFirstLetter = function (string) {
@@ -205,9 +204,11 @@ var TSOS;
             if (sessionStorage.getItem('startUp') === null) {
                 sessionStorage.setItem('startUp', 'true');
                 _StartUp = true;
-            } else if (sessionStorage.getItem('startUp') === 'false') {
+            }
+            else if (sessionStorage.getItem('startUp') === 'false') {
                 _StartUp = false;
-            } else {
+            }
+            else {
                 _StartUp = true;
             }
         };

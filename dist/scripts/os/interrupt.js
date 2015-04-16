@@ -1,6 +1,6 @@
 /* ------------
-Interrupt.ts
------------- */
+   Interrupt.ts
+   ------------ */
 var TSOS;
 (function (TSOS) {
     var Interrupt = (function () {
